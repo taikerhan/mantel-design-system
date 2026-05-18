@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mantel — Components</title>
+<link rel="stylesheet" href="../styles/mantel.css">
+<style>
+  body { padding: 48px; background: var(--ink-50); }
+  .wrap { max-width: 1100px; margin: 0 auto; }
+  .head { display: flex; align-items: baseline; justify-content: space-between; border-bottom: 1px solid var(--ink-150); padding-bottom: 16px; margin-bottom: 32px; }
+  .head h1 { font-size: 20px; font-weight: 600; letter-spacing: -0.019em; }
+  .head .tag { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-500); font-weight: 600; }
+  .section-title { font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-500); margin: 36px 0 12px; font-weight: 600; }
+
+  .card { background: #fff; box-shadow: var(--shadow-card); border-radius: var(--radius-2xl); padding: 24px; }
+  .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+
+  /* ---------- Buttons ---------- */
+  .btn { font-family: var(--font-sans); display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 16px; border-radius: 9999px; font-size: 14px; font-weight: 500; border: 0; cursor: pointer; transition: all 220ms cubic-bezier(0.2,0.8,0.2,1); }
+  .btn-primary { background: var(--brand-600); color: #fff; height: 40px; padding: 0 20px; font-size: 13px; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+  .btn-primary:hover { background: var(--brand-700); }
+  .btn-secondary { background: #fff; color: var(--brand-700); box-shadow: 0 0 0 1px rgba(0,83,167,0.4) inset; }
+  .btn-secondary:hover { background: var(--brand-50); box-shadow: 0 0 0 1px rgba(0,83,167,0.6) inset; }
+  .btn-icon { width: 36px; height: 36px; padding: 0; justify-content: center; background: transparent; color: var(--ink-500); border-radius: 9999px; }
+  .btn-icon:hover { background: var(--ink-100); color: var(--ink-900); }
+  .btn-compact { height: 28px; padding: 0 12px; font-size: 13px; }
+
+  /* ---------- Pills ---------- */
+  .pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 8px; font-size: 13px; font-weight: 600; }
+  .pill .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .pill-draft   { background: var(--ink-100);          color: var(--ink-700);          box-shadow: 0 0 0 1px var(--ink-200) inset; }
+  .pill-sent    { background: var(--life-sent-bg);     color: var(--life-sent-fg);     box-shadow: 0 0 0 1px var(--life-sent-ring) inset; }
+  .pill-viewed  { background: var(--life-viewed-bg);   color: var(--life-viewed-fg);   box-shadow: 0 0 0 1px var(--life-viewed-ring) inset; }
+  .pill-signed  { background: var(--life-signed-bg);   color: var(--life-signed-fg);   box-shadow: 0 0 0 1px var(--life-signed-ring) inset; }
+  .pill-lost    { background: var(--life-lost-bg);     color: var(--life-lost-fg);     box-shadow: 0 0 0 1px var(--life-lost-ring) inset; }
+  .pill-neutral { background: var(--ink-100);          color: var(--ink-600);          box-shadow: 0 0 0 1px var(--ink-200) inset; }
+  .mono-caps { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600; }
+
+  /* ---------- Strength badge ---------- */
+  .badge { width: 32px; height: 32px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .badge-high { background: var(--accent-green-bg); color: var(--accent-green); }
+  .badge-med  { background: var(--accent-amber-bg); color: var(--accent-amber); }
+  .badge-low  { background: var(--accent-red-bg);   color: var(--accent-red); }
+
+  /* ---------- Avatars ---------- */
+  .av { width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; }
+  .av-stack { display: inline-flex; }
+  .av-stack > .av { box-shadow: 0 0 0 2px #fff; }
+  .av-stack > .av:not(:first-child) { margin-left: -6px; }
+  .av-stack .more { background: var(--ink-100); color: var(--ink-700); }
+
+  /* ---------- Segmented control ---------- */
+  .seg { display: inline-flex; height: 36px; border-radius: 9999px; box-shadow: 0 0 0 1px var(--brand-600) inset; background: #fff; overflow: hidden; }
+  .seg button { all: unset; cursor: pointer; padding: 0 16px; display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 500; color: var(--brand-700); border-right: 1px solid var(--brand-600); }
+  .seg button:last-child { border-right: 0; }
+  .seg button.on { background: var(--brand-600); color: #fff; }
+  .seg button .cnt { font-variant-numeric: tabular-nums; color: rgba(0,83,167,0.55); font-size: 13px; }
+  .seg button.on .cnt { color: rgba(255,255,255,0.7); }
+
+  /* ---------- Tabs ---------- */
+  .tabs { border-bottom: 1px solid var(--ink-200); display: flex; gap: 4px; align-items: flex-end; }
+  .tab { all: unset; cursor: pointer; padding: 0 16px; height: 48px; display: inline-flex; align-items: center; font-size: 16px; font-weight: 500; color: var(--ink-500); border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color 200ms; }
+  .tab:hover { color: var(--ink-800); }
+  .tab.active { color: var(--brand-700); border-bottom-color: var(--brand-600); }
+  .tab .cnt { margin-left: 8px; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--brand-600); }
+  .tab .cnt.urgent { color: var(--accent-red); }
+
+  /* ---------- Search & pickers ---------- */
+  .search { display: inline-flex; align-items: center; gap: 10px; height: 36px; width: 280px; padding: 0 16px; border-radius: 9999px; background: var(--ink-50); box-shadow: 0 0 0 1px var(--ink-200) inset; transition: all 200ms; }
+  .search:hover { background: #fff; box-shadow: 0 0 0 1px var(--ink-300) inset; }
+  .search input { all: unset; flex: 1; font-size: 13px; color: var(--ink-800); }
+  .search input::placeholder { color: var(--ink-500); }
+  .search .icn { color: var(--brand-600); }
+  .picker { display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 14px; border-radius: 9999px; background: #fff; box-shadow: 0 0 0 1px var(--ink-200) inset; font-size: 13px; color: var(--ink-700); cursor: pointer; }
+  .picker:hover { box-shadow: 0 0 0 1px var(--ink-300) inset; }
+
+  /* ---------- Focus card ---------- */
+  .focus { border-radius: var(--radius-2xl); padding: 18px 20px 18px; position: relative; transition: transform 320ms cubic-bezier(0.22,0.9,0.2,1), box-shadow 320ms cubic-bezier(0.22,0.9,0.2,1); }
+  .focus:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+  .focus.now     { background: #EEF4FB; box-shadow: 0 0 0 1px rgba(0,83,167,0.10) inset; }
+  .focus.urgent  { background: #FDECEA; box-shadow: 0 0 0 1px rgba(180,35,24,0.14) inset; }
+  .focus.cool    { background: #FCEFD9; box-shadow: 0 0 0 1px rgba(178,94,9,0.12) inset; }
+  .focus.strong  { background: #E6F4EE; box-shadow: 0 0 0 1px rgba(14,133,89,0.12) inset; }
+  .focus .top { display: flex; justify-content: space-between; align-items: flex-start; }
+  .focus .name { font-size: 18px; font-weight: 600; color: var(--ink-900); margin-top: 14px; letter-spacing: -0.014em; }
+  .focus .price { font-size: 15px; color: var(--ink-700); font-variant-numeric: tabular-nums; margin-top: 2px; }
+  .focus .reason { font-size: 13px; color: var(--ink-700); margin-top: 8px; line-height: 1.5; }
+  .focus .cta-row { display: flex; justify-content: flex-end; margin-top: 14px; }
+
+  /* ---------- Activity feed ---------- */
+  .activity { display: flex; flex-direction: column; }
+  .activity .item { display: flex; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--ink-150); align-items: center; }
+  .activity .item:last-child { border-bottom: 0; }
+  .activity .bubble { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; }
+  .activity .bubble.view    { background: var(--brand-50);          color: var(--brand-700); }
+  .activity .bubble.send    { background: var(--life-sent-bg);      color: var(--life-sent-fg); }
+  .activity .bubble.signed  { background: var(--accent-green-bg);   color: var(--accent-green); }
+  .activity .bubble.lost    { background: var(--accent-red-bg);     color: var(--accent-red); }
+  .activity .txt { flex: 1; font-size: 14px; color: var(--ink-700); line-height: 1.5; }
+  .activity .txt strong { color: var(--ink-900); font-weight: 600; }
+  .activity .ts { font-size: 13px; color: var(--ink-500); font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <h1>Components</h1>
+    <span class="tag">Buttons · pills · badges · avatars · tabs · cards</span>
+  </div>
+
+  <!-- BUTTONS -->
+  <div class="section-title">Buttons — all rounded-full, ≤1 primary per surface</div>
+  <div class="card row">
+    <button class="btn btn-primary">Reply now</button>
+    <button class="btn btn-secondary">View details →</button>
+    <button class="btn btn-icon" aria-label="Close">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M6 18L18 6"/></svg>
+    </button>
+    <button class="btn btn-secondary btn-compact">Compact</button>
+    <button class="btn btn-primary" style="height: 36px; padding: 0 16px; font-size: 14px;">Default primary</button>
+  </div>
+
+  <!-- LIFECYCLE PILLS -->
+  <div class="section-title">Status pills — lifecycle</div>
+  <div class="card row">
+    <span class="pill pill-draft"><span class="dot"></span>Draft</span>
+    <span class="pill pill-sent"><span class="dot"></span>Sent · 2d</span>
+    <span class="pill pill-viewed"><span class="dot"></span>Viewed · 3h ago</span>
+    <span class="pill pill-signed"><span class="dot"></span>Signed</span>
+    <span class="pill pill-lost"><span class="dot"></span>Lost</span>
+  </div>
+
+  <!-- NEUTRAL PILLS -->
+  <div class="section-title">Stalled / non-actionable — neutral grey only</div>
+  <div class="card row">
+    <span class="pill pill-neutral">No action</span>
+    <span class="pill pill-neutral">No response</span>
+    <span class="pill pill-neutral">Expired</span>
+    <span class="pill pill-neutral">Archived</span>
+  </div>
+
+  <!-- MONO CAPS -->
+  <div class="section-title">Mono caps tag — focus card &amp; eyebrows</div>
+  <div class="card row">
+    <span class="mono-caps" style="color: var(--brand-700);">Just viewed</span>
+    <span style="width: 1px; height: 16px; background: var(--ink-150);"></span>
+    <span class="mono-caps" style="color: var(--accent-amber);">Going cold</span>
+    <span style="width: 1px; height: 16px; background: var(--ink-150);"></span>
+    <span class="mono-caps" style="color: var(--accent-red);">Urgent reply</span>
+    <span style="width: 1px; height: 16px; background: var(--ink-150);"></span>
+    <span class="mono-caps" style="color: var(--accent-green);">Strong intent</span>
+  </div>
+
+  <!-- STRENGTH BADGES -->
+  <div class="section-title">Strength badge — 32px circle, tabular nums</div>
+  <div class="card row">
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;"><span class="badge badge-high">92</span><span style="font-size: 11.5px; font-family: var(--font-mono); letter-spacing: 0.005em; color: var(--ink-500);">≥ 80</span></div>
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;"><span class="badge badge-med">71</span><span style="font-size: 11.5px; font-family: var(--font-mono); letter-spacing: 0.005em; color: var(--ink-500);">60–79</span></div>
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;"><span class="badge badge-low">42</span><span style="font-size: 11.5px; font-family: var(--font-mono); letter-spacing: 0.005em; color: var(--ink-500);">&lt; 60</span></div>
+  </div>
+
+  <!-- AVATARS -->
+  <div class="section-title">Avatars — hashed tone palette + stacked</div>
+  <div class="card row" style="gap: 24px;">
+    <div class="av-stack">
+      <span class="av" style="background: var(--av-1-bg); color: var(--av-1-fg);">RT</span>
+      <span class="av" style="background: var(--av-2-bg); color: var(--av-2-fg);">SP</span>
+      <span class="av" style="background: var(--av-3-bg); color: var(--av-3-fg);">LK</span>
+      <span class="av more">+4</span>
+    </div>
+    <span class="av" style="width: 36px; height: 36px; background: var(--av-user-gradient); color: #fff; font-size: 13px;">JD</span>
+    <span style="font-size: 13px; color: var(--ink-500);">User avatar — navy gradient, signed-in only</span>
+  </div>
+
+  <!-- SEGMENTED -->
+  <div class="section-title">Segmented control — ≤4 mutually-exclusive options</div>
+  <div class="card row">
+    <div class="seg">
+      <button class="on"><span>All</span><span class="cnt" style="color: rgba(255,255,255,0.7);">12</span></button>
+      <button><span>Sent</span><span class="cnt">8</span></button>
+      <button><span>Viewed</span><span class="cnt">3</span></button>
+      <button><span>Signed</span><span class="cnt">1</span></button>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="section-title">Tabs — underline, brand-600 indicator</div>
+  <div class="card" style="padding-bottom: 0;">
+    <div class="tabs">
+      <button class="tab active">Active <span class="cnt">12</span></button>
+      <button class="tab">Drafts <span class="cnt" style="color: var(--ink-500);">4</span></button>
+      <button class="tab">Credit hold <span class="cnt urgent">2</span></button>
+      <button class="tab">Signed <span class="cnt" style="color: var(--ink-500);">28</span></button>
+      <button class="tab">Lost <span class="cnt" style="color: var(--ink-500);">5</span></button>
+    </div>
+  </div>
+
+  <!-- SEARCH & PICKER -->
+  <div class="section-title">Search &amp; pickers</div>
+  <div class="card row">
+    <div class="search">
+      <svg class="icn" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input placeholder="Search sellers, proposals…">
+    </div>
+    <button class="picker">Last 30 days <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+    <button class="picker">All channels <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+  </div>
+
+  <!-- FOCUS CARDS -->
+  <div class="section-title">Focus cards — Today's Focus</div>
+  <div class="card" style="background: var(--ink-50); box-shadow: none; padding: 16px;">
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
+      <div class="focus now">
+        <div class="top">
+          <span class="mono-caps" style="color: var(--brand-700);">Just viewed</span>
+          <button class="btn btn-icon" aria-label="Dismiss" style="margin: -8px -8px 0 0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M6 18L18 6"/></svg></button>
+        </div>
+        <div class="name">Robert &amp; Linda Tan</div>
+        <div class="price mt-num">$1,245,000 · 442 Oak Ridge Dr</div>
+        <div class="reason">Opened the proposal 4 minutes ago and is still on the financing section.</div>
+        <div class="cta-row"><button class="btn btn-primary" style="height: 36px;">Reply now</button></div>
+      </div>
+      <div class="focus urgent">
+        <div class="top">
+          <span class="mono-caps" style="color: var(--accent-red);">Urgent reply</span>
+          <button class="btn btn-icon" aria-label="Dismiss" style="margin: -8px -8px 0 0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M6 18L18 6"/></svg></button>
+        </div>
+        <div class="name">Sasha Patel</div>
+        <div class="price mt-num">$895,000 · 18 Larkspur Ln</div>
+        <div class="reason">Question pending for 27 hours. Asked about closing costs.</div>
+        <div class="cta-row"><button class="btn btn-primary" style="height: 36px;">Reply now</button></div>
+      </div>
+      <div class="focus cool">
+        <div class="top">
+          <span class="mono-caps" style="color: var(--accent-amber);">Going cold</span>
+          <button class="btn btn-icon" aria-label="Dismiss" style="margin: -8px -8px 0 0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M6 18L18 6"/></svg></button>
+        </div>
+        <div class="name">Marcus Jensen</div>
+        <div class="price mt-num">$675,000 · 902 Sycamore Pl</div>
+        <div class="reason">Last open was 9 days ago. Proposal still unsigned.</div>
+        <div class="cta-row"><button class="btn btn-secondary" style="height: 36px;">Send nudge →</button></div>
+      </div>
+      <div class="focus strong">
+        <div class="top">
+          <span class="mono-caps" style="color: var(--accent-green);">Strong intent</span>
+          <button class="btn btn-icon" aria-label="Dismiss" style="margin: -8px -8px 0 0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M6 18L18 6"/></svg></button>
+        </div>
+        <div class="name">Alicia Brown</div>
+        <div class="price mt-num">$2,100,000 · 5 Birchwood Ave</div>
+        <div class="reason">Three sessions in two days. Reviewed warranty add-on twice.</div>
+        <div class="cta-row"><button class="btn btn-primary" style="height: 36px;">Close now</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTIVITY FEED -->
+  <div class="section-title">Activity feed</div>
+  <div class="card" style="padding: 0 24px;">
+    <div class="activity">
+      <div class="item">
+        <span class="bubble view"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></span>
+        <div class="txt"><strong>Robert &amp; Linda Tan</strong> opened the proposal for the 3rd time.</div>
+        <span class="ts">14:32</span>
+      </div>
+      <div class="item">
+        <span class="bubble send"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4z"/></svg></span>
+        <div class="txt">You sent <strong>$895,000 proposal</strong> to Sasha Patel.</div>
+        <span class="ts">13:08</span>
+      </div>
+      <div class="item">
+        <span class="bubble signed"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l5 5 9-11"/></svg></span>
+        <div class="txt"><strong>Alicia Brown</strong> signed her offer for $2,100,000.</div>
+        <span class="ts">11:42</span>
+      </div>
+      <div class="item">
+        <span class="bubble lost"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M6 18L18 6"/></svg></span>
+        <div class="txt">Credit declined for <strong>902 Sycamore Pl</strong>.</div>
+        <span class="ts">Yesterday</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
