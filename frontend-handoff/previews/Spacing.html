@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mantel — Spacing, Radius & Shadows</title>
+<link rel="stylesheet" href="../styles/mantel.css">
+<style>
+  body { padding: 48px; background: #fff; }
+  .wrap { max-width: 980px; margin: 0 auto; }
+  .head { display: flex; align-items: baseline; justify-content: space-between; border-bottom: 1px solid var(--ink-150); padding-bottom: 16px; margin-bottom: 32px; }
+  .head h1 { font-size: 20px; font-weight: 600; letter-spacing: -0.019em; }
+  .head .tag { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-500); font-weight: 600; }
+  .section-title { font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-500); margin: 40px 0 14px; font-weight: 600; }
+  .sub { font-size: 13px; color: var(--ink-500); margin: -10px 0 14px; }
+
+  .space-row { display: grid; grid-template-columns: 100px 1fr 220px; gap: 24px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--ink-150); }
+  .space-row .token { font-family: var(--font-mono); font-size: 12px; color: var(--ink-800); font-variant-numeric: tabular-nums; letter-spacing: 0.005em; }
+  .space-row .bar { height: 14px; background: var(--brand-600); border-radius: 4px; }
+  .space-row .note { font-size: 13px; color: var(--ink-500); text-align: right; }
+  .space-row .note strong { color: var(--ink-700); font-weight: 500; }
+
+  .radii { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+  .r { box-shadow: var(--shadow-card); border-radius: var(--radius-2xl); padding: 16px; }
+  .r .box { width: 100%; aspect-ratio: 1.5 / 1; background: var(--brand-50); border: 1px solid var(--brand-100); }
+  .r .lbl { font-size: 13px; font-weight: 600; margin-top: 12px; }
+  .r .hex { font-family: var(--font-mono); font-size: 11px; color: var(--ink-500); margin-top: 2px; letter-spacing: 0.005em; }
+
+  .elev { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .elev .e { background: #fff; border-radius: var(--radius-2xl); padding: 28px 24px; min-height: 160px; display: flex; flex-direction: column; justify-content: space-between; }
+  .elev .e .lbl { font-size: 14px; font-weight: 600; }
+  .elev .e .desc { font-size: 13px; color: var(--ink-500); margin-top: 4px; }
+  .elev .e .code { font-family: var(--font-mono); font-size: 11px; color: var(--ink-400); margin-top: 16px; letter-spacing: 0.005em; }
+  .elev .e.card { box-shadow: var(--shadow-card); }
+  .elev .e.pop { box-shadow: var(--shadow-pop); }
+  .elev .e.hover { box-shadow: var(--shadow-hover); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <h1>Spacing, radius &amp; shadows</h1>
+    <span class="tag">4px unit · 16px card · hairline ring</span>
+  </div>
+
+  <div class="section-title">Spacing scale (4px unit, Tailwind)</div>
+  <div class="sub">Cards use 1.5rem (24px) horizontal · 1.25rem (20px) vertical padding. 2rem (32px) between stacked sections.</div>
+  <div>
+    <div class="space-row"><div class="token">1 · 4px</div><div><div class="bar" style="width: 4px;"></div></div><div class="note">Icon ↔ label inside a pill</div></div>
+    <div class="space-row"><div class="token">2 · 8px</div><div><div class="bar" style="width: 8px;"></div></div><div class="note">Tight chip gaps</div></div>
+    <div class="space-row"><div class="token">3 · 12px</div><div><div class="bar" style="width: 12px;"></div></div><div class="note">Default control gap</div></div>
+    <div class="space-row"><div class="token">4 · 16px</div><div><div class="bar" style="width: 16px;"></div></div><div class="note">Default cell gap</div></div>
+    <div class="space-row"><div class="token">5 · 20px</div><div><div class="bar" style="width: 20px;"></div></div><div class="note">Card inner padding (vertical)</div></div>
+    <div class="space-row"><div class="token">6 · 24px</div><div><div class="bar" style="width: 24px;"></div></div><div class="note"><strong>Card inner padding (horizontal)</strong></div></div>
+    <div class="space-row"><div class="token">8 · 32px</div><div><div class="bar" style="width: 32px;"></div></div><div class="note"><strong>Between stacked sections</strong></div></div>
+    <div class="space-row"><div class="token">10 · 40px</div><div><div class="bar" style="width: 40px;"></div></div><div class="note">Large groupings</div></div>
+    <div class="space-row"><div class="token">12 · 48px</div><div><div class="bar" style="width: 48px;"></div></div><div class="note">Page-level rhythm</div></div>
+  </div>
+
+  <div class="section-title">Border radius</div>
+  <div class="sub">Cards are canonically <strong>16px (rounded-2xl)</strong>. Buttons, pickers, search, avatars are <strong>fully rounded</strong>.</div>
+  <div class="radii">
+    <div class="r"><div class="box" style="border-radius: 8px;"></div><div class="lbl">md</div><div class="hex">8px · pills, chips</div></div>
+    <div class="r"><div class="box" style="border-radius: 12px;"></div><div class="lbl">lg</div><div class="hex">12px · swatches</div></div>
+    <div class="r"><div class="box" style="border-radius: 14px;"></div><div class="lbl">xl</div><div class="hex">14px</div></div>
+    <div class="r" style="box-shadow: 0 0 0 2px var(--brand-600), var(--shadow-card);"><div class="box" style="border-radius: 16px;"></div><div class="lbl">2xl ●</div><div class="hex">16px · cards (canonical)</div></div>
+    <div class="r"><div class="box" style="border-radius: 20px;"></div><div class="lbl">3xl</div><div class="hex">20px · hero</div></div>
+    <div class="r"><div class="box" style="border-radius: 9999px;"></div><div class="lbl">full</div><div class="hex">999px · buttons</div></div>
+  </div>
+
+  <div class="section-title">Shadows</div>
+  <div class="sub">Hairline ring + tight drop. Cards have <strong>no visible border</strong> — the inset 0 0 0 1px ring serves as the edge.</div>
+  <div class="elev">
+    <div class="e card">
+      <div><div class="lbl">shadow-card</div><div class="desc">All cards and major surfaces. Stays crisp at any zoom.</div></div>
+      <div class="code">0 0 0 1px · 0 1px 2px · 0 2px 6px −2px</div>
+    </div>
+    <div class="e pop">
+      <div><div class="lbl">shadow-pop</div><div class="desc">Popovers, dropdowns, tooltips, modals.</div></div>
+      <div class="code">0 1px 2px · 0 8px 28px −8px</div>
+    </div>
+    <div class="e hover">
+      <div><div class="lbl">shadow-hover</div><div class="desc">Focus card hover lift. Tinted navy.</div></div>
+      <div class="code">0 12px 32px −16px rgba(0,31,63,.18)</div>
+    </div>
+  </div>
+
+  <div class="section-title">Motion</div>
+  <div class="sub">Easing is always navy-snappy. Never <code style="font-family: var(--font-mono); font-size: 12px; background: var(--ink-100); padding: 1px 6px; border-radius: 4px;">ease-in-out</code>.</div>
+  <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+    <div style="box-shadow: var(--shadow-card); border-radius: var(--radius-2xl); padding: 20px 24px;">
+      <div style="font-size: 14px; font-weight: 600;">Standard ease</div>
+      <div style="font-family: var(--font-mono); font-size: 12px; color: var(--ink-500); margin-top: 8px; font-variant-numeric: tabular-nums;">cubic-bezier(0.2, 0.8, 0.2, 1)</div>
+      <div style="font-size: 13px; color: var(--ink-500); margin-top: 8px;">Buttons, pills, hover, focus rings. Duration 220ms.</div>
+    </div>
+    <div style="box-shadow: var(--shadow-card); border-radius: var(--radius-2xl); padding: 20px 24px;">
+      <div style="font-size: 14px; font-weight: 600;">Snap ease</div>
+      <div style="font-family: var(--font-mono); font-size: 12px; color: var(--ink-500); margin-top: 8px; font-variant-numeric: tabular-nums;">cubic-bezier(0.22, 0.9, 0.2, 1)</div>
+      <div style="font-size: 13px; color: var(--ink-500); margin-top: 8px;">Drawer in (280ms), focus card transform (320ms).</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

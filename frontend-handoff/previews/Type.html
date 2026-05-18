@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mantel — Type</title>
+<link rel="stylesheet" href="../styles/mantel.css">
+<style>
+  body { padding: 48px; background: #fff; }
+  .wrap { max-width: 900px; margin: 0 auto; }
+  .head { display: flex; align-items: baseline; justify-content: space-between; border-bottom: 1px solid var(--ink-150); padding-bottom: 16px; margin-bottom: 32px; }
+  .head h1 { font-size: 20px; font-weight: 600; letter-spacing: -0.019em; }
+  .head .tag { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-500); font-weight: 600; }
+
+  .families { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px; }
+  .family { box-shadow: var(--shadow-card); border-radius: var(--radius-2xl); padding: 28px 24px; background: #fff; }
+  .family .big { font-size: 80px; line-height: 1; letter-spacing: -0.04em; margin-bottom: 16px; color: var(--ink-900); font-weight: 500; }
+  .family .name { font-size: 14px; font-weight: 600; }
+  .family .note { font-size: 13px; color: var(--ink-500); margin-top: 4px; line-height: 1.5; }
+
+  .section-title { font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-500); margin: 40px 0 12px; font-weight: 600; }
+
+  .row { display: grid; grid-template-columns: 160px 1fr 140px; gap: 24px; align-items: baseline; padding: 14px 0; border-bottom: 1px solid var(--ink-150); }
+  .row:last-child { border-bottom: 0; }
+  .row .label { font-size: 13px; color: var(--ink-500); font-weight: 500; }
+  .row .meta { font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-400); text-align: right; font-variant-numeric: tabular-nums; }
+  .sample { color: var(--ink-900); }
+
+  .scale-3xl { font-size: 30px; line-height: 36px; letter-spacing: -0.022em; font-weight: 600; }
+  .scale-2xl { font-size: 24px; line-height: 30px; letter-spacing: -0.019em; font-weight: 600; }
+  .scale-xl  { font-size: 19px; line-height: 26px; letter-spacing: -0.014em; font-weight: 600; }
+  .scale-lg  { font-size: 16px; line-height: 22px; letter-spacing: -0.011em; font-weight: 500; }
+  .scale-base{ font-size: 14px; line-height: 20px; letter-spacing: -0.005em; font-weight: 400; }
+  .scale-sm  { font-size: 13px; line-height: 18px; font-weight: 500; }
+  .scale-xs  { font-size: 11.5px; line-height: 16px; letter-spacing: 0.005em; font-weight: 500; }
+  .scale-2xs { font-size: 10.5px; line-height: 14px; letter-spacing: 0.02em; font-weight: 500; }
+
+  .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  .mono-caps { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600; color: var(--brand-700); }
+
+  .roles { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .role-card { box-shadow: var(--shadow-card); border-radius: var(--radius-2xl); padding: 20px 24px; }
+  .role-card .lbl { font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-500); font-weight: 600; }
+  .role-card .demo { margin-top: 8px; color: var(--ink-900); }
+  .role-card .spec { font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-400); margin-top: 6px; font-variant-numeric: tabular-nums; letter-spacing: 0.005em; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <h1>Typography</h1>
+    <span class="tag">Geist · Geist Mono</span>
+  </div>
+
+  <div class="families">
+    <div class="family">
+      <div class="big" style="font-family: var(--font-sans);">Aa</div>
+      <div class="name">Geist</div>
+      <div class="note">All UI — headings, body, controls, table cells.<br>Weights 400 / 500 / 600 / 700.</div>
+    </div>
+    <div class="family">
+      <div class="big mono" style="font-family: var(--font-mono);">123</div>
+      <div class="name">Geist Mono</div>
+      <div class="note">Monospace caps, tag labels, tabular numbers in headers.<br>Weights 400 / 500 / 600 / 700.</div>
+    </div>
+  </div>
+
+  <div class="section-title">Type scale</div>
+  <div class="row"><div class="label">3xl · Page H1</div><div class="sample scale-3xl">Seller proposal dashboard</div><div class="meta">30 / 36 / -.022</div></div>
+  <div class="row"><div class="label">2xl · Section</div><div class="sample scale-2xl">Today's focus</div><div class="meta">24 / 30 / -.019</div></div>
+  <div class="row"><div class="label">xl</div><div class="sample scale-xl">Seller performance</div><div class="meta">19 / 26 / -.014</div></div>
+  <div class="row"><div class="label">lg · Tab label</div><div class="sample scale-lg">Active proposals</div><div class="meta">16 / 22 / -.011</div></div>
+  <div class="row"><div class="label">base · Body</div><div class="sample scale-base">A refined, type-driven hierarchy. Cell content sits here.</div><div class="meta">14 / 20 / -.005</div></div>
+  <div class="row"><div class="label">sm · Pill / dense</div><div class="sample scale-sm">Status pill text · dense controls</div><div class="meta">13 / 18 / 0</div></div>
+  <div class="row"><div class="label">xs · Mono caps</div><div class="sample scale-xs">Swatch labels &amp; micro-meta</div><div class="meta">11.5 / 16 / .005</div></div>
+  <div class="row"><div class="label">2xs · Micro</div><div class="sample scale-2xs">Hidden micro-label</div><div class="meta">10.5 / 14 / .02</div></div>
+
+  <div class="section-title">Roles</div>
+  <div class="roles">
+    <div class="role-card">
+      <div class="lbl">Page H1</div>
+      <div class="demo scale-3xl" style="font-size: 28px;">Active proposals</div>
+      <div class="spec">28 SemiBold · -tracking-tight · ink-900</div>
+    </div>
+    <div class="role-card">
+      <div class="lbl">Section H3</div>
+      <div class="demo" style="font-size: 20px; font-weight: 600; letter-spacing: -0.019em;">Seller performance</div>
+      <div class="spec">20 SemiBold · -tracking-tight · ink-900</div>
+    </div>
+    <div class="role-card">
+      <div class="lbl">Cell primary</div>
+      <div class="demo" style="font-size: 14px; font-weight: 500;">Robert &amp; Linda Tan</div>
+      <div class="spec">14 Medium · ink-900</div>
+    </div>
+    <div class="role-card">
+      <div class="lbl">Cell secondary</div>
+      <div class="demo" style="font-size: 14px; font-weight: 400; color: var(--ink-500);">442 Oak Ridge · sent 12d ago</div>
+      <div class="spec">14 Regular · ink-500</div>
+    </div>
+    <div class="role-card">
+      <div class="lbl">Status pill</div>
+      <div class="demo" style="font-size: 13px; font-weight: 600;">Viewed · 3h ago</div>
+      <div class="spec">13 SemiBold · tracking-0</div>
+    </div>
+    <div class="role-card">
+      <div class="lbl">Mono caps tag</div>
+      <div class="demo mono-caps">Just viewed</div>
+      <div class="spec">Geist Mono · 12 SemiBold · letter-spacing .12em</div>
+    </div>
+    <div class="role-card">
+      <div class="lbl">Tabular number</div>
+      <div class="demo mt-num" style="font-size: 16px; font-weight: 500;">$1,245,000  ·  +12%</div>
+      <div class="spec">font-variant-numeric: tabular-nums</div>
+    </div>
+    <div class="role-card">
+      <div class="lbl">Timestamp</div>
+      <div class="demo mt-num" style="font-size: 13px; color: var(--ink-500);">14:32 · Today</div>
+      <div class="spec">13 Regular · ink-500 · tabular-nums</div>
+    </div>
+  </div>
+
+  <div class="section-title">Feature settings</div>
+  <div class="row" style="grid-template-columns: 1fr;">
+    <div style="font-family: var(--font-mono); font-size: 12px; color: var(--ink-700); background: var(--ink-50); padding: 14px 16px; border-radius: var(--radius-md);">font-feature-settings: "ss01", "ss03", "cv11";<br>-webkit-font-smoothing: antialiased;<br>text-rendering: optimizeLegibility;</div>
+  </div>
+</div>
+</body>
+</html>

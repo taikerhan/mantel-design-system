@@ -1,0 +1,2027 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mantel — UI Kit</title>
+<link rel="stylesheet" href="styles/mantel.css">
+<style>
+  body { background: var(--ink-50); }
+
+  /* ============ Shell ============ */
+  .app { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
+  .nav { background: #fff; border-right: 1px solid var(--ink-150); padding: 24px 20px; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+  .nav .brand { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; margin-bottom: 28px; }
+  .nav .brand img { width: 84px; height: auto; display: block; }
+  .nav .brand .ver { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.14em; color: var(--ink-500); text-transform: uppercase; font-weight: 600; }
+  .nav .group { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-400); font-weight: 600; margin: 22px 8px 8px; }
+  .nav a { display: block; padding: 7px 10px; border-radius: 8px; font-size: 13px; color: var(--ink-700); text-decoration: none; transition: all 160ms var(--ease); }
+  .nav a:hover { background: var(--ink-100); color: var(--ink-900); }
+
+  main { padding: 48px 56px 80px; max-width: 1200px; }
+
+  /* ============ Page header ============ */
+  .pagehead { padding-bottom: 28px; border-bottom: 1px solid var(--ink-150); margin-bottom: 40px; }
+  .pagehead .eyebrow { font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--brand-700); font-weight: 600; }
+  .pagehead h1 { font-size: 36px; line-height: 1.05; letter-spacing: -0.024em; margin-top: 10px; }
+  .pagehead .lede { font-size: 15px; color: var(--ink-600); margin-top: 12px; max-width: 640px; line-height: 1.55; }
+  .pagehead .meta { display: flex; gap: 28px; margin-top: 24px; font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.005em; color: var(--ink-500); }
+  .pagehead .meta strong { color: var(--ink-900); font-weight: 600; }
+
+  /* ============ Section ============ */
+  section.block { margin-top: 56px; }
+  section.block > .head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px dashed var(--ink-200); }
+  section.block > .head h2 { font-size: 22px; letter-spacing: -0.019em; }
+  section.block > .head .num { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-400); font-weight: 600; }
+  section.block > .head .desc { font-size: 13px; color: var(--ink-500); margin-left: auto; }
+
+  /* Subsection inside a block */
+  .sub { margin-top: 28px; }
+  .sub-title { display: flex; align-items: baseline; gap: 12px; margin-bottom: 12px; }
+  .sub-title h3 { font-size: 15px; font-weight: 600; letter-spacing: -0.011em; }
+  .sub-title .token { font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-500); }
+  .sub-title .note { font-size: 12.5px; color: var(--ink-500); margin-left: auto; }
+
+  /* Spec card — wraps a sample with optional caption strip */
+  .spec { background: #fff; border-radius: var(--radius-2xl); box-shadow: var(--shadow-card); overflow: hidden; }
+  .spec .stage { padding: 28px 24px; display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+  .spec .stage.center { justify-content: center; }
+  .spec .stage.col { flex-direction: column; align-items: stretch; gap: 0; padding: 0; }
+  .spec .cap { display: grid; grid-template-columns: 1fr auto; gap: 12px; padding: 12px 20px; border-top: 1px solid var(--ink-150); font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-500); letter-spacing: 0.005em; }
+  .spec .cap b { color: var(--ink-800); font-weight: 600; }
+  .spec .cap .right { text-align: right; }
+
+  /* ============ Color swatches ============ */
+  .ramp { display: grid; grid-template-columns: repeat(10, 1fr); gap: 8px; }
+  .swatch { border-radius: var(--radius-lg); overflow: hidden; box-shadow: 0 0 0 1px rgba(15,14,13,0.05) inset; background: #fff; }
+  .swatch .chip { aspect-ratio: 1.4 / 1; }
+  .swatch .meta { padding: 8px 10px 10px; font-size: 11.5px; }
+  .swatch .meta .name { font-family: var(--font-mono); font-weight: 600; color: var(--ink-800); letter-spacing: 0.005em; }
+  .swatch .meta .hex { font-family: var(--font-mono); color: var(--ink-500); margin-top: 2px; letter-spacing: 0.005em; }
+
+  .pair-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .pair { border-radius: var(--radius-lg); overflow: hidden; box-shadow: 0 0 0 1px rgba(15,14,13,0.05) inset; }
+  .pair .top { display: flex; gap: 0; }
+  .pair .top .fg, .pair .top .bg { height: 64px; flex: 1; }
+  .pair .meta { background: #fff; padding: 10px 12px 12px; }
+  .pair .meta .h { font-size: 13px; font-weight: 600; letter-spacing: -0.005em; color: var(--ink-900); }
+  .pair .meta .toks { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-500); margin-top: 4px; letter-spacing: 0.005em; line-height: 1.5; }
+
+  .av-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+  .av-cell { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px 8px; background: #fff; border-radius: var(--radius-lg); box-shadow: 0 0 0 1px rgba(15,14,13,0.05) inset; }
+  .av-cell .av-big { width: 44px; height: 44px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; }
+  .av-cell .lab { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-500); letter-spacing: 0.005em; }
+
+  /* ============ Typography ramp ============ */
+  .type-table { width: 100%; border-collapse: collapse; background: #fff; box-shadow: var(--shadow-card); border-radius: var(--radius-2xl); overflow: hidden; }
+  .type-table th, .type-table td { padding: 16px 20px; text-align: left; border-bottom: 1px solid var(--ink-150); vertical-align: middle; }
+  .type-table th { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-500); font-weight: 600; background: var(--ink-50); border-bottom: 1px solid var(--ink-200); }
+  .type-table tr:last-child td { border-bottom: 0; }
+  .type-table .tok { font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-600); white-space: nowrap; letter-spacing: 0.005em; }
+  .type-table .specs { font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-500); white-space: nowrap; letter-spacing: 0.005em; }
+  .type-table .sample { color: var(--ink-900); }
+
+  .fonts { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .font-card { background: #fff; border-radius: var(--radius-2xl); box-shadow: var(--shadow-card); padding: 28px; }
+  .font-card .label { font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-500); font-weight: 600; }
+  .font-card .name { font-size: 28px; letter-spacing: -0.022em; margin-top: 6px; color: var(--ink-900); font-weight: 600; }
+  .font-card .name.mono { font-family: var(--font-mono); }
+  .font-card .glyphs { font-size: 26px; letter-spacing: -0.014em; margin-top: 16px; color: var(--ink-700); }
+  .font-card .glyphs.mono { font-family: var(--font-mono); font-size: 22px; letter-spacing: 0; }
+  .font-card .wts { display: flex; gap: 16px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--ink-150); }
+  .font-card .wts span { font-size: 14px; }
+  .font-card .wts span small { display: block; font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-500); font-weight: 400; letter-spacing: 0.005em; margin-top: 2px; }
+
+  /* ============ Spacing scale ============ */
+  .space-rows { background: #fff; border-radius: var(--radius-2xl); box-shadow: var(--shadow-card); padding: 8px 20px; }
+  .space-row { display: grid; grid-template-columns: 80px 80px 1fr 1fr; align-items: center; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--ink-150); }
+  .space-row:last-child { border-bottom: 0; }
+  .space-row .tok { font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-700); font-weight: 600; letter-spacing: 0.005em; }
+  .space-row .px { font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-500); letter-spacing: 0.005em; }
+  .space-row .bar { height: 10px; background: var(--brand-600); border-radius: 2px; }
+  .space-row .use { font-size: 12.5px; color: var(--ink-500); }
+
+  /* ============ Radius ============ */
+  .rad-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+  .rad-cell { background: #fff; padding: 20px 12px; box-shadow: 0 0 0 1px rgba(15,14,13,0.05) inset; border-radius: 12px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .rad-cell .demo { width: 64px; height: 64px; background: var(--brand-50); box-shadow: 0 0 0 1px rgba(0,83,167,0.20) inset; }
+  .rad-cell .tok { font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-700); font-weight: 600; letter-spacing: 0.005em; }
+  .rad-cell .px { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-500); letter-spacing: 0.005em; }
+
+  /* ============ Shadows ============ */
+  .shad-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .shad-cell { background: var(--ink-50); padding: 28px; border-radius: var(--radius-2xl); display: flex; flex-direction: column; align-items: center; gap: 18px; }
+  .shad-cell .demo { width: 100%; height: 80px; background: #fff; border-radius: var(--radius-2xl); }
+  .shad-cell .lab { text-align: center; }
+  .shad-cell .lab .tok { font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-700); font-weight: 600; letter-spacing: 0.005em; }
+  .shad-cell .lab .use { font-size: 12px; color: var(--ink-500); margin-top: 3px; }
+
+  /* ============ Motion ============ */
+  .motion-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .motion-card { background: #fff; border-radius: var(--radius-2xl); box-shadow: var(--shadow-card); padding: 20px 24px; }
+  .motion-card h4 { font-size: 13px; font-family: var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-500); font-weight: 600; }
+  .motion-card ul { list-style: none; padding: 0; margin: 12px 0 0; }
+  .motion-card li { display: grid; grid-template-columns: 130px 90px 1fr; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--ink-150); font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.005em; }
+  .motion-card li:last-child { border-bottom: 0; }
+  .motion-card li .t { color: var(--ink-700); font-weight: 600; }
+  .motion-card li .v { color: var(--ink-500); }
+  .motion-card li .u { color: var(--ink-500); font-family: var(--font-sans); font-size: 12.5px; letter-spacing: 0; }
+
+  /* ============ Components — copied wholesale from previews/Components ============ */
+  .btn { font-family: var(--font-sans); display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 16px; border-radius: 9999px; font-size: 14px; font-weight: 500; border: 0; cursor: pointer; transition: all 220ms var(--ease); }
+  .btn-primary { background: var(--brand-600); color: #fff; height: 40px; padding: 0 20px; font-size: 13px; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+  .btn-primary:hover { background: var(--brand-700); }
+  /* SECONDARY — thin blue border (per latest feedback) */
+  .btn-secondary { background: #fff; color: var(--brand-700); border: 1px solid var(--brand-600); }
+  .btn-secondary:hover { background: var(--brand-50); border-color: var(--brand-700); }
+  .btn-icon { width: 36px; height: 36px; padding: 0; justify-content: center; background: transparent; color: var(--ink-500); border-radius: 9999px; }
+  .btn-icon:hover { background: var(--ink-100); color: var(--ink-900); }
+  .btn-compact { height: 28px; padding: 0 12px; font-size: 13px; }
+  .btn-disabled { background: var(--ink-100); color: var(--ink-400); cursor: not-allowed; }
+  .btn-disabled:hover { background: var(--ink-100); }
+
+  /* Pills */
+  .pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 8px; font-size: 13px; font-weight: 600; }
+  .pill .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .pill-draft   { background: var(--ink-100);          color: var(--ink-700);          box-shadow: 0 0 0 1px var(--ink-200) inset; }
+  .pill-sent    { background: var(--life-sent-bg);     color: var(--life-sent-fg);     box-shadow: 0 0 0 1px var(--life-sent-ring) inset; }
+  .pill-viewed  { background: var(--life-viewed-bg);   color: var(--life-viewed-fg);   box-shadow: 0 0 0 1px var(--life-viewed-ring) inset; }
+  .pill-signed  { background: var(--life-signed-bg);   color: var(--life-signed-fg);   box-shadow: 0 0 0 1px var(--life-signed-ring) inset; }
+  .pill-lost    { background: var(--life-lost-bg);     color: var(--life-lost-fg);     box-shadow: 0 0 0 1px var(--life-lost-ring) inset; }
+  .pill-neutral { background: var(--ink-100);          color: var(--ink-600);          box-shadow: 0 0 0 1px var(--ink-200) inset; }
+  .mono-caps { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600; }
+
+  /* Badges */
+  .badge { width: 32px; height: 32px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .badge-high { background: var(--accent-green-bg); color: var(--accent-green); }
+  .badge-med  { background: var(--accent-amber-bg); color: var(--accent-amber); }
+  .badge-low  { background: var(--accent-red-bg);   color: var(--accent-red); }
+
+  /* Avatars */
+  .av { width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; }
+  .av-stack { display: inline-flex; }
+  .av-stack > .av { box-shadow: 0 0 0 2px #fff; }
+  .av-stack > .av:not(:first-child) { margin-left: -6px; }
+  .av-stack .more { background: var(--ink-100); color: var(--ink-700); }
+
+  /* Segmented */
+  .seg { display: inline-flex; height: 36px; border-radius: 9999px; box-shadow: 0 0 0 1px var(--brand-600) inset; background: #fff; overflow: hidden; }
+  .seg button { all: unset; cursor: pointer; padding: 0 16px; display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 500; color: var(--brand-600); border-right: 1px solid var(--brand-600); }
+  .seg button:last-child { border-right: 0; }
+  .seg button:not(.on):hover { color: var(--brand-700); }
+  .seg button.on { background: var(--brand-600); color: #fff; border-right-color: rgba(255, 255, 255, 0.25); }
+  .seg button.on:hover { background: var(--brand-700); }
+  .seg button .cnt { font-variant-numeric: tabular-nums; color: var(--brand-400); font-size: 13px; font-weight: 500; }
+  .seg button.on .cnt { color: rgba(255,255,255,0.75); }
+
+  /* Tabs */
+  .tabs { border-bottom: 1px solid var(--ink-200); display: flex; gap: 4px; align-items: flex-end; padding: 0 24px; }
+  .tab { all: unset; cursor: pointer; padding: 0 16px; height: 48px; display: inline-flex; align-items: center; font-size: 16px; font-weight: 500; color: var(--ink-500); border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color 200ms; }
+  .tab:hover { color: var(--ink-900); }
+  .tab.active { color: var(--brand-700); border-bottom-color: var(--brand-600); }
+  .tab.active:hover { color: var(--brand-700); }
+  .tab .cnt { margin-left: 8px; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--brand-600); }
+  .tab .cnt.urgent { color: var(--accent-red); }
+  .tab .cnt.muted { color: var(--ink-500); }
+
+  /* Search + picker */
+  .search { display: inline-flex; align-items: center; gap: 10px; height: 36px; width: 280px; padding: 0 16px; border-radius: 9999px; background: var(--ink-50); box-shadow: 0 0 0 1px var(--ink-200) inset; transition: all 200ms; }
+  .search:hover { background: #fff; box-shadow: 0 0 0 1px var(--ink-300) inset; }
+  .search input { all: unset; flex: 1; font-size: 13px; color: var(--ink-800); font-family: var(--font-sans); }
+  .search input::placeholder { color: var(--ink-500); }
+  .search .icn { color: var(--brand-600); }
+  .picker { display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 14px; border-radius: 9999px; background: #fff; box-shadow: 0 0 0 1px var(--ink-200) inset; font-size: 13px; color: var(--ink-700); cursor: pointer; font-family: var(--font-sans); border: 0; }
+  .picker:hover { box-shadow: 0 0 0 1px var(--ink-300) inset; }
+
+  /* Stats */
+  .stat { background: #fff; box-shadow: var(--shadow-card); border-radius: var(--radius-2xl); padding: 20px 24px; }
+  .stat .label { font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-500); font-weight: 600; }
+  .stat .val { font-size: 28px; font-weight: 600; color: var(--ink-900); margin-top: 8px; font-variant-numeric: tabular-nums; letter-spacing: -0.022em; }
+  .stat .delta { font-size: 13px; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .stat .delta.up { color: var(--accent-green); }
+  .stat .delta.down { color: var(--accent-red); }
+  .stat .delta.flat { color: var(--ink-500); }
+
+  /* Focus card */
+  .focus { border-radius: var(--radius-2xl); padding: 18px 20px; position: relative; transition: transform 320ms var(--ease-snap), box-shadow 320ms var(--ease-snap); }
+  .focus:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+  .focus.now     { background: #EEF4FB; box-shadow: 0 0 0 1px rgba(0,83,167,0.10) inset; }
+  .focus.urgent  { background: #FDECEA; box-shadow: 0 0 0 1px rgba(180,35,24,0.14) inset; }
+  .focus.cool    { background: #FCEFD9; box-shadow: 0 0 0 1px rgba(178,94,9,0.12) inset; }
+  .focus.strong  { background: #E6F4EE; box-shadow: 0 0 0 1px rgba(14,133,89,0.12) inset; }
+  .focus .top { display: flex; justify-content: space-between; align-items: flex-start; }
+  .focus .name { font-size: 18px; font-weight: 600; color: var(--ink-900); margin-top: 14px; letter-spacing: -0.014em; }
+  .focus .price { font-size: 14px; color: var(--ink-700); font-variant-numeric: tabular-nums; margin-top: 4px; }
+  .focus .reason { font-size: 13px; color: var(--ink-700); margin-top: 10px; line-height: 1.5; }
+  .focus .cta-row { display: flex; justify-content: flex-end; margin-top: 14px; }
+  .focus .cta-row .btn-primary { height: 36px; padding: 0 16px; font-size: 13px; }
+
+  /* Table row */
+  .row { display: grid; grid-template-columns: 1.8fr 1fr 1fr 1fr 80px 56px; padding: 14px 24px; align-items: center; border-bottom: 1px solid var(--ink-150); transition: background 150ms; }
+  .row:last-child { border-bottom: 0; }
+  .row:hover { background: rgba(248,249,251,0.7); }
+  .row .cell-primary { font-size: 14px; font-weight: 500; color: var(--ink-900); }
+  .row .cell-primary .sub-t { font-size: 13px; font-weight: 400; color: var(--ink-500); margin-top: 2px; }
+  .row .cell-num { font-size: 14px; color: var(--ink-800); font-variant-numeric: tabular-nums; text-align: right; }
+  .row .cell-center { display: flex; justify-content: center; }
+  .row-flex { display: flex; align-items: center; gap: 10px; }
+  .th-row { display: grid; grid-template-columns: 1.8fr 1fr 1fr 1fr 80px 56px; padding: 12px 24px; border-bottom: 1px solid var(--ink-150); align-items: center; }
+  .th { font-size: 14px; font-weight: 500; color: var(--ink-500); }
+  .th.right { text-align: right; }
+  .th.center { text-align: center; }
+
+  /* Activity */
+  .activity { padding: 0 24px; }
+  .activity .item { display: flex; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--ink-150); align-items: center; }
+  .activity .item:last-child { border-bottom: 0; }
+  .activity .bubble { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; }
+  .activity .bubble.view    { background: var(--brand-50);          color: var(--brand-700); }
+  .activity .bubble.send    { background: var(--life-sent-bg);      color: var(--life-sent-fg); }
+  .activity .bubble.signed  { background: var(--accent-green-bg);   color: var(--accent-green); }
+  .activity .bubble.lost    { background: var(--accent-red-bg);     color: var(--accent-red); }
+  .activity .txt { flex: 1; font-size: 14px; color: var(--ink-700); line-height: 1.5; }
+  .activity .txt strong { color: var(--ink-900); font-weight: 600; }
+  .activity .ts { font-size: 13px; color: var(--ink-500); font-variant-numeric: tabular-nums; flex-shrink: 0; }
+
+  /* Live dot */
+  @keyframes pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(14,133,89,0.45); } 70% { box-shadow: 0 0 0 6px rgba(14,133,89,0); } 100% { box-shadow: 0 0 0 0 rgba(14,133,89,0); } }
+  .live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-green); display: inline-block; animation: pulse-ring 1.8s ease-out infinite; }
+
+  /* Two-up specimen rows */
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  /* Tiny "do/don't" rule blocks */
+  .rules { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .rule { background: #fff; box-shadow: var(--shadow-card); border-radius: var(--radius-xl); padding: 14px 18px; }
+  .rule .h { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; }
+  .rule .h.do  { color: var(--accent-green); }
+  .rule .h.dnt { color: var(--accent-red); }
+  .rule p { font-size: 13px; color: var(--ink-700); margin-top: 6px; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- ============ NAV ============ -->
+  <aside class="nav">
+    <div class="brand">
+      <img src="assets/mantel-logo.svg" alt="Mantel" style="width: 84px; height: auto;">
+      <div class="ver" style="margin-top: 6px;">UI Kit · v2.0</div>
+    </div>
+
+    <div class="group">Foundations</div>
+    <a href="#type">Typography</a>
+    <a href="#color">Color</a>
+    <a href="#spacing">Spacing</a>
+    <a href="#radius">Radius</a>
+    <a href="#shadow">Shadow</a>
+    <a href="#motion">Motion</a>
+
+    <div class="group">Components</div>
+    <a href="#buttons">Buttons</a>
+    <a href="#pills">Status pills</a>
+    <a href="#monocaps">Mono-caps tags</a>
+    <a href="#badges">Strength badges</a>
+    <a href="#avatars">Avatars</a>
+    <a href="#segmented">Segmented control</a>
+    <a href="#tabs">Tabs</a>
+    <a href="#pill-tabs">Pill tabs</a>
+    <a href="#inputs">Search &amp; pickers</a>
+    <a href="#stats">Stat card</a>
+    <a href="#focus">Focus card</a>
+    <a href="#table">Table row</a>
+    <a href="#activity">Activity feed</a>
+    <a href="#live">Live indicator</a>
+    <a href="#modal">Modal</a>
+    <a href="#sheet">Sheet / drawer</a>
+    <a href="#form-inputs">Form inputs</a>
+    <a href="#toggles">Switch / checkbox / radio</a>
+    <a href="#alerts">Alerts</a>
+    <a href="#toasts">Toasts</a>
+    <a href="#tooltips">Tooltips</a>
+    <a href="#menu">Dropdown menu</a>
+    <a href="#crumbs">Breadcrumbs</a>
+    <a href="#pager">Pagination</a>
+    <a href="#empty">Empty state</a>
+    <a href="#skeleton">Skeleton</a>
+    <a href="#btn-group">Button group</a>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main>
+    <div class="pagehead">
+      <div class="eyebrow">Mantel Design System</div>
+      <h1>UI Kit</h1>
+      <p class="lede">Every token and component used in Mantel surfaces. Source of truth for color, type, spacing, shadow, motion, and the component library. All values mirror <code style="font-family: var(--font-mono); font-size: 12.5px; color: var(--ink-700);">styles/mantel.css</code>.</p>
+      <div class="meta">
+        <span><strong>v2.0</strong> · last reviewed May 2026</span>
+        <span>Stylesheet: <strong>styles/mantel.css</strong></span>
+        <span>In context: <strong><a href="Dashboard.html">Dashboard.html</a></strong></span>
+      </div>
+    </div>
+
+    <!-- ============================ FOUNDATIONS ============================ -->
+
+    <!-- TYPE -->
+    <section class="block" id="type">
+      <div class="head">
+        <span class="num">01</span>
+        <h2>Typography</h2>
+        <span class="desc">Geist for UI · Geist Mono for tabular &amp; eyebrow</span>
+      </div>
+
+      <div class="fonts">
+        <div class="font-card">
+          <div class="label">Sans · primary</div>
+          <div class="name">Geist</div>
+          <div class="glyphs">Aa Bb Cc · 0123 · — →</div>
+          <div class="wts">
+            <span style="font-weight: 400;">Regular<small>400</small></span>
+            <span style="font-weight: 500;">Medium<small>500</small></span>
+            <span style="font-weight: 600;">Semibold<small>600</small></span>
+            <span style="font-weight: 700;">Bold<small>700</small></span>
+          </div>
+        </div>
+        <div class="font-card">
+          <div class="label">Mono · numerics &amp; eyebrows</div>
+          <div class="name mono">Geist Mono</div>
+          <div class="glyphs mono">Aa Bb Cc · 0123 · — →</div>
+          <div class="wts" style="font-family: var(--font-mono);">
+            <span style="font-weight: 400;">Regular<small>400</small></span>
+            <span style="font-weight: 500;">Medium<small>500</small></span>
+            <span style="font-weight: 600;">Semibold<small>600</small></span>
+            <span style="font-weight: 700;">Bold<small>700</small></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>Type scale</h3><span class="token">--fs-* / --lh-* / --ls-*</span><span class="note">8 steps · px-based</span></div>
+        <table class="type-table">
+          <thead><tr><th>Token</th><th>Specs</th><th>Sample</th></tr></thead>
+          <tbody>
+            <tr><td class="tok">--fs-3xl</td><td class="specs">30 / 36 / −0.022em / 600</td><td class="sample" style="font-size: 30px; line-height: 36px; letter-spacing: -0.022em; font-weight: 600;">Display heading</td></tr>
+            <tr><td class="tok">--fs-2xl</td><td class="specs">24 / 30 / −0.019em / 600</td><td class="sample" style="font-size: 24px; line-height: 30px; letter-spacing: -0.019em; font-weight: 600;">Page H1</td></tr>
+            <tr><td class="tok">--fs-xl</td><td class="specs">19 / 26 / −0.014em / 600</td><td class="sample" style="font-size: 19px; line-height: 26px; letter-spacing: -0.014em; font-weight: 600;">Section H3</td></tr>
+            <tr><td class="tok">--fs-lg</td><td class="specs">16 / 22 / −0.011em / 500</td><td class="sample" style="font-size: 16px; line-height: 22px; letter-spacing: -0.011em; font-weight: 500;">Tab label / H4</td></tr>
+            <tr><td class="tok">--fs-base</td><td class="specs">14 / 20 / −0.005em / 400</td><td class="sample" style="font-size: 14px; line-height: 20px; letter-spacing: -0.005em;">Body — default running text</td></tr>
+            <tr><td class="tok">--fs-sm</td><td class="specs">13 / 18 / 0 / 400</td><td class="sample" style="font-size: 13px; line-height: 18px;">Secondary text, pill labels</td></tr>
+            <tr><td class="tok">--fs-xs</td><td class="specs">11.5 / 16 / 0.005em / 600</td><td class="sample" style="font-size: 11.5px; line-height: 16px; letter-spacing: 0.005em; font-weight: 600;">Eyebrow / footnote</td></tr>
+            <tr><td class="tok">--fs-2xs</td><td class="specs">10.5 / 14 / 0.02em / 600</td><td class="sample" style="font-size: 10.5px; line-height: 14px; letter-spacing: 0.02em; font-weight: 600; text-transform: uppercase;">Micro caps</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>Numerics</h3><span class="token">font-variant-numeric: tabular-nums</span><span class="note">Applied to every number in cells, badges, timestamps</span></div>
+        <div class="spec">
+          <div class="stage">
+            <div style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 22px; color: var(--ink-900); letter-spacing: -0.014em;">$1,245,000.00</div>
+            <div style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 22px; color: var(--ink-900); letter-spacing: -0.014em;">28.4%</div>
+            <div style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 22px; color: var(--ink-900); letter-spacing: -0.014em;">14:32</div>
+            <div style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 22px; color: var(--ink-900); letter-spacing: -0.014em;">+11.2%</div>
+          </div>
+          <div class="cap"><span><b>Geist Mono</b> · tabular-nums for column alignment</span><span class="right">.mt-tabular</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- COLOR -->
+    <section class="block" id="color">
+      <div class="head">
+        <span class="num">02</span>
+        <h2>Color</h2>
+        <span class="desc">Brand · ink · accent · lifecycle · avatar</span>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>Brand — Mantel navy</h3><span class="token">--brand-50 → --brand-900</span><span class="note">Canonical: <b style="color: var(--ink-700);">--brand-600</b> for primary actions</span></div>
+        <div class="ramp">
+          <div class="swatch"><div class="chip" style="background: var(--brand-50);"></div><div class="meta"><div class="name">50</div><div class="hex">#EEF4FB</div></div></div>
+          <div class="swatch"><div class="chip" style="background: var(--brand-100);"></div><div class="meta"><div class="name">100</div><div class="hex">#D8E6F3</div></div></div>
+          <div class="swatch"><div class="chip" style="background: var(--brand-200);"></div><div class="meta"><div class="name">200</div><div class="hex">#AAC8E4</div></div></div>
+          <div class="swatch"><div class="chip" style="background: var(--brand-300);"></div><div class="meta"><div class="name">300</div><div class="hex">#74A3D1</div></div></div>
+          <div class="swatch"><div class="chip" style="background: var(--brand-400);"></div><div class="meta"><div class="name">400</div><div class="hex">#3D7DBB</div></div></div>
+          <div class="swatch"><div class="chip" style="background: var(--brand-500);"></div><div class="meta"><div class="name">500</div><div class="hex">#1561A8</div></div></div>
+          <div class="swatch" style="box-shadow: 0 0 0 2px var(--brand-600) inset;"><div class="chip" style="background: var(--brand-600);"></div><div class="meta"><div class="name" style="color: var(--brand-700);">600 ●</div><div class="hex">#0053A7</div></div></div>
+          <div class="swatch"><div class="chip" style="background: var(--brand-700);"></div><div class="meta"><div class="name">700</div><div class="hex">#003F80</div></div></div>
+          <div class="swatch"><div class="chip" style="background: var(--brand-800);"></div><div class="meta"><div class="name">800</div><div class="hex">#002F5E</div></div></div>
+          <div class="swatch"><div class="chip" style="background: var(--brand-900);"></div><div class="meta"><div class="name">900</div><div class="hex">#001F3F</div></div></div>
+        </div>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>Ink — cool neutral</h3><span class="token">--ink-50 → --ink-900</span><span class="note">Body text on <b style="color: var(--ink-700);">--ink-800</b></span></div>
+        <div class="ramp">
+          <div class="swatch"><div class="chip" style="background: var(--ink-50);"></div><div class="meta"><div class="name">50</div><div class="hex">#F8F9FB</div></div></div>
+          <div class="swatch"><div class="chip" style="background: var(--ink-100);"></div><div class="meta"><div class="name">100</div><div class="hex">#F2F4F7</div></div></div>
+          <div class="swatch"><div class="chip" style="background: var(--ink-150);"></div><div class="meta"><div class="name">150</div><div class="hex">#EBEEF2</div></div></div>
+          <div class="swatch"><div class="chip" style="background: var(--ink-200);"></div><div class="meta"><div class="name">200</div><div class="hex">#DEE2E8</div></div></div>
+          <div class="swatch"><div class="chip" style="background: var(--ink-300);"></div><div class="meta"><div class="name">300</div><div class="hex">#BFC4CC</div></div></div>
+          <div class="swatch"><div class="chip" style="background: var(--ink-400);"></div><div class="meta"><div class="name">400</div><div class="hex">#94999F</div></div></div>
+          <div class="swatch"><div class="chip" style="background: var(--ink-500);"></div><div class="meta"><div class="name">500</div><div class="hex">#6A6E75</div></div></div>
+          <div class="swatch"><div class="chip" style="background: var(--ink-600);"></div><div class="meta"><div class="name">600</div><div class="hex">#474B51</div></div></div>
+          <div class="swatch" style="box-shadow: 0 0 0 2px var(--brand-600) inset;"><div class="chip" style="background: var(--ink-800);"></div><div class="meta"><div class="name" style="color: var(--brand-700);">800 ●</div><div class="hex">#1B1D20</div></div></div>
+          <div class="swatch"><div class="chip" style="background: var(--ink-900);"></div><div class="meta"><div class="name">900</div><div class="hex">#0E1014</div></div></div>
+        </div>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>Accents — semantic only</h3><span class="token">--accent-{green,amber,red,violet}</span><span class="note">Never decorative</span></div>
+        <div class="pair-row">
+          <div class="pair">
+            <div class="top"><div class="fg" style="background: var(--accent-green);"></div><div class="bg" style="background: var(--accent-green-bg);"></div></div>
+            <div class="meta"><div class="h">Green · signed / strong</div><div class="toks">#0E8559 · #E6F4EE</div></div>
+          </div>
+          <div class="pair">
+            <div class="top"><div class="fg" style="background: var(--accent-amber);"></div><div class="bg" style="background: var(--accent-amber-bg);"></div></div>
+            <div class="meta"><div class="h">Amber · cool / going cold</div><div class="toks">#B25E09 · #FCEFD9</div></div>
+          </div>
+          <div class="pair">
+            <div class="top"><div class="fg" style="background: var(--accent-red);"></div><div class="bg" style="background: var(--accent-red-bg);"></div></div>
+            <div class="meta"><div class="h">Red · urgent / lost</div><div class="toks">#B42318 · #FDECEA</div></div>
+          </div>
+          <div class="pair">
+            <div class="top"><div class="fg" style="background: var(--accent-violet);"></div><div class="bg" style="background: var(--accent-violet-bg);"></div></div>
+            <div class="meta"><div class="h">Violet · reserved</div><div class="toks">#5D3FD3 · #EEE9FA</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>Proposal lifecycle</h3><span class="token">--life-{draft,sent,viewed,signed,lost}-*</span><span class="note">Sent uses Tailwind cyan — distinct from Viewed</span></div>
+        <div class="pair-row" style="grid-template-columns: repeat(5, 1fr);">
+          <div class="pair">
+            <div class="top"><div class="fg" style="background: var(--life-draft-fg);"></div><div class="bg" style="background: var(--life-draft-bg);"></div></div>
+            <div class="meta"><div class="h">Draft</div><div class="toks">ink-700 · ink-100</div></div>
+          </div>
+          <div class="pair">
+            <div class="top"><div class="fg" style="background: var(--life-sent-fg);"></div><div class="bg" style="background: var(--life-sent-bg);"></div></div>
+            <div class="meta"><div class="h">Sent</div><div class="toks">#0E7490 · #ECFEFF</div></div>
+          </div>
+          <div class="pair">
+            <div class="top"><div class="fg" style="background: var(--life-viewed-fg);"></div><div class="bg" style="background: var(--life-viewed-bg);"></div></div>
+            <div class="meta"><div class="h">Viewed</div><div class="toks">brand-700 · brand-50</div></div>
+          </div>
+          <div class="pair">
+            <div class="top"><div class="fg" style="background: var(--life-signed-fg);"></div><div class="bg" style="background: var(--life-signed-bg);"></div></div>
+            <div class="meta"><div class="h">Signed</div><div class="toks">green · green-bg</div></div>
+          </div>
+          <div class="pair">
+            <div class="top"><div class="fg" style="background: var(--life-lost-fg);"></div><div class="bg" style="background: var(--life-lost-bg);"></div></div>
+            <div class="meta"><div class="h">Lost</div><div class="toks">red · red-bg</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>Avatar palette</h3><span class="token">--av-1 → --av-6 (bg/fg pairs)</span><span class="note">Hash seller id → pick deterministically</span></div>
+        <div class="av-grid">
+          <div class="av-cell"><span class="av-big" style="background: var(--av-1-bg); color: var(--av-1-fg);">RT</span><div class="lab">av-1</div></div>
+          <div class="av-cell"><span class="av-big" style="background: var(--av-2-bg); color: var(--av-2-fg);">SP</span><div class="lab">av-2</div></div>
+          <div class="av-cell"><span class="av-big" style="background: var(--av-3-bg); color: var(--av-3-fg);">AB</span><div class="lab">av-3</div></div>
+          <div class="av-cell"><span class="av-big" style="background: var(--av-4-bg); color: var(--av-4-fg);">MJ</span><div class="lab">av-4</div></div>
+          <div class="av-cell"><span class="av-big" style="background: var(--av-5-bg); color: var(--av-5-fg);">CR</span><div class="lab">av-5</div></div>
+          <div class="av-cell"><span class="av-big" style="background: var(--av-6-bg); color: var(--av-6-fg);">DN</span><div class="lab">av-6</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SPACING -->
+    <section class="block" id="spacing">
+      <div class="head">
+        <span class="num">03</span>
+        <h2>Spacing</h2>
+        <span class="desc">4px unit · Tailwind scale</span>
+      </div>
+      <div class="space-rows">
+        <div class="space-row"><span class="tok">--space-1</span><span class="px">4px</span><div class="bar" style="width: 4px;"></div><span class="use">Icon ↔ label inside a pill</span></div>
+        <div class="space-row"><span class="tok">--space-2</span><span class="px">8px</span><div class="bar" style="width: 8px;"></div><span class="use">Tight chip gaps</span></div>
+        <div class="space-row"><span class="tok">--space-3</span><span class="px">12px</span><div class="bar" style="width: 12px;"></div><span class="use">Default control gap</span></div>
+        <div class="space-row"><span class="tok">--space-4</span><span class="px">16px</span><div class="bar" style="width: 16px;"></div><span class="use">Default cell gap</span></div>
+        <div class="space-row"><span class="tok">--space-5</span><span class="px">20px</span><div class="bar" style="width: 20px;"></div><span class="use">Card padding (vertical)</span></div>
+        <div class="space-row"><span class="tok">--space-6</span><span class="px">24px</span><div class="bar" style="width: 24px;"></div><span class="use">Card padding (horizontal)</span></div>
+        <div class="space-row"><span class="tok">--space-8</span><span class="px">32px</span><div class="bar" style="width: 32px;"></div><span class="use">Between stacked sections</span></div>
+        <div class="space-row"><span class="tok">--space-10</span><span class="px">40px</span><div class="bar" style="width: 40px;"></div><span class="use">Page gutters (compact)</span></div>
+        <div class="space-row"><span class="tok">--space-12</span><span class="px">48px</span><div class="bar" style="width: 48px;"></div><span class="use">Page gutters (default)</span></div>
+      </div>
+    </section>
+
+    <!-- RADIUS -->
+    <section class="block" id="radius">
+      <div class="head">
+        <span class="num">04</span>
+        <h2>Radius</h2>
+        <span class="desc">Pills / cards / hero — each has one</span>
+      </div>
+      <div class="rad-grid">
+        <div class="rad-cell"><div class="demo" style="border-radius: var(--radius-md);"></div><div class="tok">--radius-md</div><div class="px">8px · pills</div></div>
+        <div class="rad-cell"><div class="demo" style="border-radius: var(--radius-lg);"></div><div class="tok">--radius-lg</div><div class="px">12px · swatches</div></div>
+        <div class="rad-cell"><div class="demo" style="border-radius: var(--radius-xl);"></div><div class="tok">--radius-xl</div><div class="px">14px</div></div>
+        <div class="rad-cell"><div class="demo" style="border-radius: var(--radius-2xl); box-shadow: 0 0 0 2px var(--brand-600) inset;"></div><div class="tok" style="color: var(--brand-700);">--radius-2xl ●</div><div class="px">16px · cards</div></div>
+        <div class="rad-cell"><div class="demo" style="border-radius: var(--radius-3xl);"></div><div class="tok">--radius-3xl</div><div class="px">20px · hero</div></div>
+        <div class="rad-cell"><div class="demo" style="border-radius: var(--radius-full);"></div><div class="tok">--radius-full</div><div class="px">9999px · buttons</div></div>
+      </div>
+    </section>
+
+    <!-- SHADOW -->
+    <section class="block" id="shadow">
+      <div class="head">
+        <span class="num">05</span>
+        <h2>Shadow</h2>
+        <span class="desc">Hairline ring + tight drop · buttons get no shadow</span>
+      </div>
+      <div class="shad-grid">
+        <div class="shad-cell"><div class="demo" style="box-shadow: var(--shadow-card);"></div><div class="lab"><div class="tok">--shadow-card</div><div class="use">All cards</div></div></div>
+        <div class="shad-cell"><div class="demo" style="box-shadow: var(--shadow-pop);"></div><div class="lab"><div class="tok">--shadow-pop</div><div class="use">Popovers, menus</div></div></div>
+        <div class="shad-cell"><div class="demo" style="box-shadow: var(--shadow-hover);"></div><div class="lab"><div class="tok">--shadow-hover</div><div class="use">Focus-card hover lift</div></div></div>
+        <div class="shad-cell"><div class="demo" style="box-shadow: var(--shadow-focus);"></div><div class="lab"><div class="tok">--shadow-focus</div><div class="use">Keyboard focus ring</div></div></div>
+      </div>
+    </section>
+
+    <!-- MOTION -->
+    <section class="block" id="motion">
+      <div class="head">
+        <span class="num">06</span>
+        <h2>Motion</h2>
+        <span class="desc">Never ease-in-out</span>
+      </div>
+      <div class="motion-grid">
+        <div class="motion-card">
+          <h4>Easing</h4>
+          <ul>
+            <li><span class="t">--ease</span><span class="v">0.2, 0.8, 0.2, 1</span><span class="u">Standard</span></li>
+            <li><span class="t">--ease-snap</span><span class="v">0.22, 0.9, 0.2, 1</span><span class="u">Snap (cards)</span></li>
+            <li><span class="t">--ease-in</span><span class="v">0.4, 0, 1, 1</span><span class="u">Exits</span></li>
+          </ul>
+        </div>
+        <div class="motion-card">
+          <h4>Duration</h4>
+          <ul>
+            <li><span class="t">--dur-fast</span><span class="v">120ms</span><span class="u">Micro states</span></li>
+            <li><span class="t">--dur</span><span class="v">220ms</span><span class="u">Default</span></li>
+            <li><span class="t">--dur-card</span><span class="v">320ms</span><span class="u">Card transform</span></li>
+            <li><span class="t">--dur-drawer-in</span><span class="v">280ms</span><span class="u">Drawer in</span></li>
+            <li><span class="t">--dur-drawer-out</span><span class="v">240ms</span><span class="u">Drawer out</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ COMPONENTS ============================ -->
+
+    <!-- BUTTONS -->
+    <section class="block" id="buttons">
+      <div class="head">
+        <span class="num">07</span>
+        <h2>Buttons</h2>
+        <span class="desc">All rounded-full · ≤1 primary per surface</span>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>Primary</h3><span class="token">.btn .btn-primary</span><span class="note">40px tall · brand-600 fill</span></div>
+        <div class="spec">
+          <div class="stage">
+            <button class="btn btn-primary">Reply now</button>
+            <button class="btn btn-primary">Close now</button>
+            <button class="btn btn-primary" disabled style="opacity: 0.5; cursor: not-allowed;">Disabled</button>
+          </div>
+          <div class="cap"><span>Idle <b>brand-600</b> · hover <b>brand-700</b> · text white · 13px / 500</span><span class="right">height 40 · radius 9999</span></div>
+        </div>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>Secondary</h3><span class="token">.btn .btn-secondary</span><span class="note">Thin blue border · default CTA</span></div>
+        <div class="spec">
+          <div class="stage">
+            <button class="btn btn-secondary">View details →</button>
+            <button class="btn btn-secondary">Send nudge</button>
+            <button class="btn btn-secondary btn-compact">Compact</button>
+          </div>
+          <div class="cap"><span><b>1px solid brand-600</b> border · text brand-700 · bg white · hover bg brand-50</span><span class="right">height 36 · radius 9999</span></div>
+        </div>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>Icon / ghost</h3><span class="token">.btn .btn-icon</span><span class="note">36×36 circular · transparent until hover</span></div>
+        <div class="spec">
+          <div class="stage">
+            <button class="btn btn-icon" aria-label="Close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M6 18L18 6"/></svg></button>
+            <button class="btn btn-icon" aria-label="More"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="6" r="1"/><circle cx="12" cy="18" r="1"/></svg></button>
+            <button class="btn btn-icon" aria-label="Bell"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 16v-5a6 6 0 1 0-12 0v5l-2 3h16l-2-3z"/><path d="M10 21a2 2 0 0 0 4 0"/></svg></button>
+          </div>
+          <div class="cap"><span>Idle transparent · hover bg <b>ink-100</b> · icon ink-500 → ink-900</span><span class="right">36 × 36 · radius 9999</span></div>
+        </div>
+      </div>
+
+      <div class="rules">
+        <div class="rule"><div class="h do">Do</div><p>One primary action per surface. Pair primary + secondary side-by-side; icon buttons trail.</p></div>
+        <div class="rule"><div class="h dnt">Don't</div><p>Stack two primaries. Don't add drop shadows or icons inside the icon-button hover state.</p></div>
+      </div>
+    </section>
+
+    <!-- STATUS PILLS -->
+    <section class="block" id="pills">
+      <div class="head">
+        <span class="num">08</span>
+        <h2>Status pills</h2>
+        <span class="desc">13px semibold · 8px radius · fg + tinted bg + matching ring</span>
+      </div>
+      <div class="sub">
+        <div class="sub-title"><h3>Lifecycle</h3><span class="token">.pill-{draft,sent,viewed,signed,lost}</span></div>
+        <div class="spec">
+          <div class="stage">
+            <span class="pill pill-draft"><span class="dot"></span>Draft</span>
+            <span class="pill pill-sent"><span class="dot"></span>Sent · 2d</span>
+            <span class="pill pill-viewed"><span class="dot"></span>Viewed · 3h ago</span>
+            <span class="pill pill-signed"><span class="dot"></span>Signed</span>
+            <span class="pill pill-lost"><span class="dot"></span>Lost</span>
+          </div>
+          <div class="cap"><span>Each pill: <b>fg</b> + <b>bg</b> + <b>ring</b> from the same lifecycle triplet</span><span class="right">.pill .dot</span></div>
+        </div>
+      </div>
+      <div class="sub">
+        <div class="sub-title"><h3>Neutral / non-actionable</h3><span class="token">.pill-neutral</span><span class="note">Stalled reasons — never use a status color</span></div>
+        <div class="spec">
+          <div class="stage">
+            <span class="pill pill-neutral">No action</span>
+            <span class="pill pill-neutral">No response</span>
+            <span class="pill pill-neutral">Expired</span>
+            <span class="pill pill-neutral">Archived</span>
+          </div>
+          <div class="cap"><span>Grey only · no dot · no ring color shift</span><span class="right">ink-100 · ink-600 · ink-200</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MONO CAPS -->
+    <section class="block" id="monocaps">
+      <div class="head">
+        <span class="num">09</span>
+        <h2>Mono-caps tags</h2>
+        <span class="desc">Eyebrows · focus-card labels · section starters</span>
+      </div>
+      <div class="spec">
+        <div class="stage" style="gap: 28px;">
+          <span class="mono-caps" style="color: var(--brand-700);">Just viewed</span>
+          <span class="mono-caps" style="color: var(--accent-amber);">Going cold</span>
+          <span class="mono-caps" style="color: var(--accent-red);">Urgent reply</span>
+          <span class="mono-caps" style="color: var(--accent-green);">Strong intent</span>
+          <span class="mono-caps" style="color: var(--ink-500);">Section title</span>
+        </div>
+        <div class="cap"><span>Geist Mono · 12px · 600 · 0.12em tracking · uppercase</span><span class="right">.mono-caps</span></div>
+      </div>
+    </section>
+
+    <!-- BADGES -->
+    <section class="block" id="badges">
+      <div class="head">
+        <span class="num">10</span>
+        <h2>Strength badges</h2>
+        <span class="desc">32px circle · tabular nums · three tiers</span>
+      </div>
+      <div class="spec">
+        <div class="stage" style="gap: 32px;">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;"><span class="badge badge-high">92</span><span class="mono-caps" style="color: var(--ink-500);">≥ 80</span></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;"><span class="badge badge-med">71</span><span class="mono-caps" style="color: var(--ink-500);">60–79</span></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;"><span class="badge badge-low">42</span><span class="mono-caps" style="color: var(--ink-500);">&lt; 60</span></div>
+        </div>
+        <div class="cap"><span>Color = tier. High green · medium amber · low red — semantic accent on tinted bg</span><span class="right">.badge-{high,med,low}</span></div>
+      </div>
+    </section>
+
+    <!-- AVATARS -->
+    <section class="block" id="avatars">
+      <div class="head">
+        <span class="num">11</span>
+        <h2>Avatars</h2>
+        <span class="desc">Hashed tone + 2px white ring on stacks</span>
+      </div>
+      <div class="two">
+        <div class="spec">
+          <div class="stage center">
+            <span class="av" style="background: var(--av-1-bg); color: var(--av-1-fg);">RT</span>
+            <span class="av" style="background: var(--av-2-bg); color: var(--av-2-fg);">SP</span>
+            <span class="av" style="background: var(--av-3-bg); color: var(--av-3-fg);">AB</span>
+            <span class="av" style="background: var(--av-4-bg); color: var(--av-4-fg);">MJ</span>
+            <span class="av" style="background: var(--av-5-bg); color: var(--av-5-fg);">CR</span>
+            <span class="av" style="background: var(--av-6-bg); color: var(--av-6-fg);">DN</span>
+          </div>
+          <div class="cap"><span>Single · 28 × 28 · initials 11px / 600</span><span class="right">.av</span></div>
+        </div>
+        <div class="spec">
+          <div class="stage center">
+            <div class="av-stack">
+              <span class="av" style="background: var(--av-1-bg); color: var(--av-1-fg);">RT</span>
+              <span class="av" style="background: var(--av-2-bg); color: var(--av-2-fg);">SP</span>
+              <span class="av" style="background: var(--av-3-bg); color: var(--av-3-fg);">LK</span>
+              <span class="av more">+4</span>
+            </div>
+            <span class="av" style="width: 36px; height: 36px; background: var(--av-user-gradient); color: #fff; font-size: 13px;">JD</span>
+          </div>
+          <div class="cap"><span>Stacked −6px overlap · user avatar = navy gradient</span><span class="right">.av-stack / --av-user-gradient</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEGMENTED -->
+    <section class="block" id="segmented">
+      <div class="head">
+        <span class="num">12</span>
+        <h2>Segmented control</h2>
+        <span class="desc">≤4 mutually exclusive options</span>
+      </div>
+      <div class="spec">
+        <div class="stage">
+          <div class="seg">
+            <button class="on"><span>All</span><span class="cnt">12</span></button>
+            <button><span>Sent</span><span class="cnt">8</span></button>
+            <button><span>Viewed</span><span class="cnt">3</span></button>
+            <button><span>Signed</span><span class="cnt">1</span></button>
+          </div>
+        </div>
+        <div class="cap"><span>One brand-600 throughout: 1px inset ring, dividers, label, and active fill. Counts step down to brand-400 for hierarchy.</span><span class="right">.seg / .seg button.on</span></div>
+      </div>
+    </section>
+
+    <!-- TABS -->
+    <section class="block" id="tabs">
+      <div class="head">
+        <span class="num">13</span>
+        <h2>Tabs</h2>
+        <span class="desc">Underline indicator · counts get tabular nums</span>
+      </div>
+      <div class="spec">
+        <div class="stage col">
+          <div class="tabs" style="padding: 0 24px;">
+            <button class="tab active">Active <span class="cnt">12</span></button>
+            <button class="tab">Drafts <span class="cnt muted">4</span></button>
+            <button class="tab">Credit hold <span class="cnt urgent">2</span></button>
+            <button class="tab">Signed <span class="cnt muted">28</span></button>
+            <button class="tab">Lost <span class="cnt muted">5</span></button>
+          </div>
+        </div>
+        <div class="cap"><span>Active: <b>brand-700</b> text + <b>brand-600</b> 2px bottom border · counts brand / red / muted</span><span class="right">.tab.active · .cnt.urgent</span></div>
+      </div>
+    </section>
+
+    <!-- PILL TABS -->
+    <section class="block" id="pill-tabs">
+      <div class="head">
+        <span class="num">14</span>
+        <h2>Pill tabs</h2>
+        <span class="desc">Soft segmented selector · white track + active filled pill</span>
+      </div>
+
+      <div class="sub" style="margin-top: 0;">
+        <div class="sub-title"><h3>When to use</h3><span class="note">Three related selectors — pick by density &amp; intent</span></div>
+        <div class="spec">
+          <div class="stage col">
+            <table style="width: 100%; border-collapse: collapse;">
+              <thead>
+                <tr>
+                  <th style="text-align: left; padding: 14px 24px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-500); font-weight: 600; border-bottom: 1px solid var(--ink-150); width: 26%;">Component</th>
+                  <th style="text-align: left; padding: 14px 16px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-500); font-weight: 600; border-bottom: 1px solid var(--ink-150); width: 26%;">Best for</th>
+                  <th style="text-align: left; padding: 14px 24px 14px 16px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-500); font-weight: 600; border-bottom: 1px solid var(--ink-150);">Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="padding: 14px 24px; font-size: 14px; color: var(--ink-900); font-weight: 600; vertical-align: top;">Pill tabs<div style="font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-500); font-weight: 400; margin-top: 2px; letter-spacing: 0.005em;">.mt-pill-tabs</div></td>
+                  <td style="padding: 14px 16px; font-size: 13px; color: var(--ink-700); vertical-align: top;">2–5 mutually exclusive view toggles</td>
+                  <td style="padding: 14px 24px 14px 16px; font-size: 13px; color: var(--ink-600); line-height: 1.55; vertical-align: top;">Soft, inline feel. Active is a filled black pill that sits inside the white track. Use inside cards for filtering payment methods, time ranges, or layout views.</td>
+                </tr>
+                <tr style="border-top: 1px solid var(--ink-150);">
+                  <td style="padding: 14px 24px; font-size: 14px; color: var(--ink-900); font-weight: 600; vertical-align: top;"><a href="#tabs" style="color: inherit; text-decoration: none;">Underline tabs</a><div style="font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-500); font-weight: 400; margin-top: 2px; letter-spacing: 0.005em;">.tabs</div></td>
+                  <td style="padding: 14px 16px; font-size: 13px; color: var(--ink-700); vertical-align: top;">Primary sub-page navigation</td>
+                  <td style="padding: 14px 24px 14px 16px; font-size: 13px; color: var(--ink-600); line-height: 1.55; vertical-align: top;">4–7 items with count badges. The main navigation inside a workspace (Active / Drafts / Credit hold / Signed / Lost).</td>
+                </tr>
+                <tr style="border-top: 1px solid var(--ink-150);">
+                  <td style="padding: 14px 24px; font-size: 14px; color: var(--ink-900); font-weight: 600; vertical-align: top;"><a href="#segmented" style="color: inherit; text-decoration: none;">Segmented control</a><div style="font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-500); font-weight: 400; margin-top: 2px; letter-spacing: 0.005em;">.seg</div></td>
+                  <td style="padding: 14px 16px; font-size: 13px; color: var(--ink-700); vertical-align: top;">Hard filter rows in headers</td>
+                  <td style="padding: 14px 24px 14px 16px; font-size: 13px; color: var(--ink-600); line-height: 1.55; vertical-align: top;">Brand-bordered, connected pill. Use in utility / toolbar strips, not as content navigation. ≤4 options.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="cap"><span>Pill tabs are the lightest of the three — reach for them first inside a card.</span><span class="right">decision guide</span></div>
+        </div>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>Default</h3><span class="token">.mt-pill-tabs</span><span class="note">Card-shadowed track · inactive items hover to ink-100</span></div>
+        <div class="spec">
+          <div class="stage" style="padding: 32px 24px; gap: 24px;">
+            <div class="mt-pill-tabs" role="tablist">
+              <button class="mt-pill-tab is-active" role="tab">Financing</button>
+              <button class="mt-pill-tab" role="tab">Credit card</button>
+              <button class="mt-pill-tab" role="tab">Cash / check</button>
+            </div>
+          </div>
+          <div class="cap"><span>Active fills ink-900 with white text · idle ink-700 · hover bg ink-100 / text ink-900</span><span class="right">.mt-pill-tab.is-active</span></div>
+        </div>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>With icons &amp; counts</h3><span class="note">Trailing tabular-nums count chip + leading Lucide icon</span></div>
+        <div class="spec">
+          <div class="stage" style="padding: 32px 24px;">
+            <div class="mt-pill-tabs" role="tablist">
+              <button class="mt-pill-tab is-active" role="tab">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                Active <span class="mt-pill-count">12</span>
+              </button>
+              <button class="mt-pill-tab" role="tab">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                Drafts <span class="mt-pill-count">4</span>
+              </button>
+              <button class="mt-pill-tab" role="tab">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M5 12l5 5 9-11"/></svg>
+                Signed <span class="mt-pill-count">28</span>
+              </button>
+              <button class="mt-pill-tab" role="tab" disabled>Archive</button>
+            </div>
+          </div>
+          <div class="cap"><span>14px Lucide icons · count uses .mt-pill-count (tabular-nums, 70% opacity) · disabled stays flat ink-300</span><span class="right">:disabled · .mt-pill-count</span></div>
+        </div>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>Sizes &amp; flat variant</h3><span class="note">.is-sm · default · .is-lg · .is-flat</span></div>
+        <div class="spec">
+          <div class="stage" style="padding: 28px 24px; gap: 18px; flex-direction: column; align-items: flex-start;">
+            <div class="mt-pill-tabs is-sm">
+              <button class="mt-pill-tab is-active">Day</button>
+              <button class="mt-pill-tab">Week</button>
+              <button class="mt-pill-tab">Month</button>
+              <button class="mt-pill-tab">Year</button>
+            </div>
+            <div class="mt-pill-tabs">
+              <button class="mt-pill-tab is-active">Day</button>
+              <button class="mt-pill-tab">Week</button>
+              <button class="mt-pill-tab">Month</button>
+              <button class="mt-pill-tab">Year</button>
+            </div>
+            <div class="mt-pill-tabs is-lg">
+              <button class="mt-pill-tab is-active">Day</button>
+              <button class="mt-pill-tab">Week</button>
+              <button class="mt-pill-tab">Month</button>
+              <button class="mt-pill-tab">Year</button>
+            </div>
+            <div class="mt-pill-tabs is-flat">
+              <button class="mt-pill-tab is-active">All</button>
+              <button class="mt-pill-tab">Mine</button>
+              <button class="mt-pill-tab">Team</button>
+            </div>
+          </div>
+          <div class="cap"><span>Default has shadow-card · flat uses ink-100 track for inline use on white surfaces</span><span class="right">.is-sm / .is-lg / .is-flat</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INPUTS -->
+    <section class="block" id="inputs">
+      <div class="head">
+        <span class="num">15</span>
+        <h2>Search &amp; pickers</h2>
+        <span class="desc">36px rounded-full · ink-50 fill · ink-200 ring</span>
+      </div>
+      <div class="spec">
+        <div class="stage">
+          <div class="search">
+            <svg class="icn" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+            <input placeholder="Search sellers, proposals…">
+          </div>
+          <button class="picker">Last 30 days <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+          <button class="picker">All channels <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+        </div>
+        <div class="cap"><span>Search hover: fill → white · ring → ink-300. Picker: same pattern, white default fill.</span><span class="right">.search · .picker</span></div>
+      </div>
+    </section>
+
+    <!-- STATS -->
+    <section class="block" id="stats">
+      <div class="head">
+        <span class="num">16</span>
+        <h2>Stat card</h2>
+        <span class="desc">Eyebrow + numeral + delta</span>
+      </div>
+      <div class="spec">
+        <div class="stage" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; padding: 24px;">
+          <div class="stat"><div class="label">Active</div><div class="val">12</div><div class="delta up">+3 this week</div></div>
+          <div class="stat"><div class="label">Avg response time</div><div class="val">2h 14m</div><div class="delta up">−18% vs target</div></div>
+          <div class="stat"><div class="label">Close rate · 30d</div><div class="val">28.4%</div><div class="delta flat">±0 vs last month</div></div>
+          <div class="stat"><div class="label">Volume · YTD</div><div class="val">$12.4M</div><div class="delta up">+11.2% MoM</div></div>
+        </div>
+        <div class="cap"><span>Label: <b>mono-caps</b> ink-500 · Value: 28px / 600 / tabular · Delta: 13px green / red / ink-500</span><span class="right">.stat .label / .val / .delta</span></div>
+      </div>
+    </section>
+
+    <!-- FOCUS -->
+    <section class="block" id="focus">
+      <div class="head">
+        <span class="num">17</span>
+        <h2>Focus card</h2>
+        <span class="desc">State-tinted bg · 4 tones — now / urgent / cool / strong</span>
+      </div>
+      <div class="spec">
+        <div class="stage" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; padding: 24px; background: var(--ink-50);">
+          <div class="focus now">
+            <div class="top"><span class="mono-caps" style="color: var(--brand-700);">Just viewed</span><button class="btn btn-icon" aria-label="Dismiss" style="margin: -8px -8px 0 0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M6 18L18 6"/></svg></button></div>
+            <div class="name">Robert &amp; Linda Tan</div>
+            <div class="price">$1,245,000 · 442 Oak Ridge Dr</div>
+            <div class="reason">Opened the proposal 4 minutes ago. Still on the financing section.</div>
+            <div class="cta-row"><button class="btn btn-primary">Reply now</button></div>
+          </div>
+          <div class="focus urgent">
+            <div class="top"><span class="mono-caps" style="color: var(--accent-red);">Urgent reply</span><button class="btn btn-icon" aria-label="Dismiss" style="margin: -8px -8px 0 0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M6 18L18 6"/></svg></button></div>
+            <div class="name">Sasha Patel</div>
+            <div class="price">$895,000 · 18 Larkspur Ln</div>
+            <div class="reason">Question pending for 27 hours about closing costs.</div>
+            <div class="cta-row"><button class="btn btn-primary">Reply now</button></div>
+          </div>
+          <div class="focus cool">
+            <div class="top"><span class="mono-caps" style="color: var(--accent-amber);">Going cold</span><button class="btn btn-icon" aria-label="Dismiss" style="margin: -8px -8px 0 0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M6 18L18 6"/></svg></button></div>
+            <div class="name">Marcus Jensen</div>
+            <div class="price">$675,000 · 902 Sycamore Pl</div>
+            <div class="reason">Last open was 9 days ago. Proposal still unsigned.</div>
+            <div class="cta-row"><button class="btn btn-secondary">Send nudge →</button></div>
+          </div>
+          <div class="focus strong">
+            <div class="top"><span class="mono-caps" style="color: var(--accent-green);">Strong intent</span><button class="btn btn-icon" aria-label="Dismiss" style="margin: -8px -8px 0 0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M6 18L18 6"/></svg></button></div>
+            <div class="name">Alicia Brown</div>
+            <div class="price">$2,100,000 · 5 Birchwood Ave</div>
+            <div class="reason">Three sessions in two days. Reviewed warranty add-on twice.</div>
+            <div class="cta-row"><button class="btn btn-primary">Close now</button></div>
+          </div>
+        </div>
+        <div class="cap"><span>Tone bg matches semantics · hover translates Y −2px + <b>--shadow-hover</b> tinted navy</span><span class="right">.focus.{now,urgent,cool,strong}</span></div>
+      </div>
+    </section>
+
+    <!-- TABLE -->
+    <section class="block" id="table">
+      <div class="head">
+        <span class="num">18</span>
+        <h2>Table row</h2>
+        <span class="desc">Numbers right · pills + text left · badges center</span>
+      </div>
+      <div class="spec">
+        <div class="stage col">
+          <div class="th-row">
+            <div class="th">Seller</div>
+            <div class="th">Stage</div>
+            <div class="th right">Price</div>
+            <div class="th">Last activity</div>
+            <div class="th center">Strength</div>
+            <div></div>
+          </div>
+          <div class="row">
+            <div class="row-flex"><span class="av" style="background: var(--av-2-bg); color: var(--av-2-fg);">RT</span><div class="cell-primary">Robert &amp; Linda Tan<div class="sub-t">442 Oak Ridge Dr</div></div></div>
+            <div><span class="pill pill-viewed"><span class="dot"></span>Viewed · 3h</span></div>
+            <div class="cell-num">$1,245,000</div>
+            <div class="cell-num" style="text-align: left;">14:32 today</div>
+            <div class="cell-center"><span class="badge badge-high">92</span></div>
+            <div style="text-align: right;"><button class="btn btn-icon" aria-label="More"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="6" r="1"/><circle cx="12" cy="18" r="1"/></svg></button></div>
+          </div>
+          <div class="row">
+            <div class="row-flex"><span class="av" style="background: var(--av-4-bg); color: var(--av-4-fg);">AB</span><div class="cell-primary">Alicia Brown<div class="sub-t">5 Birchwood Ave</div></div></div>
+            <div><span class="pill pill-sent"><span class="dot"></span>Sent · 4d</span></div>
+            <div class="cell-num">$2,100,000</div>
+            <div class="cell-num" style="text-align: left;">11:42 today</div>
+            <div class="cell-center"><span class="badge badge-high">88</span></div>
+            <div style="text-align: right;"><button class="btn btn-icon" aria-label="More"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="6" r="1"/><circle cx="12" cy="18" r="1"/></svg></button></div>
+          </div>
+          <div class="row">
+            <div class="row-flex"><span class="av" style="background: var(--av-1-bg); color: var(--av-1-fg);">MJ</span><div class="cell-primary">Marcus Jensen<div class="sub-t">902 Sycamore Pl</div></div></div>
+            <div><span class="pill pill-neutral">No response</span></div>
+            <div class="cell-num">$675,000</div>
+            <div class="cell-num" style="text-align: left;">9 days ago</div>
+            <div class="cell-center"><span class="badge badge-low">42</span></div>
+            <div style="text-align: right;"><button class="btn btn-icon" aria-label="More"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="6" r="1"/><circle cx="12" cy="18" r="1"/></svg></button></div>
+          </div>
+        </div>
+        <div class="cap"><span>Header text aligns with its column · row hover bg ink-50 / 70%</span><span class="right">.th-row · .row · .cell-{primary,num,center}</span></div>
+      </div>
+    </section>
+
+    <!-- ACTIVITY -->
+    <section class="block" id="activity">
+      <div class="head">
+        <span class="num">19</span>
+        <h2>Activity feed</h2>
+        <span class="desc">Borderless rows in a card · divider hairlines only</span>
+      </div>
+      <div class="spec">
+        <div class="stage col">
+          <div class="activity">
+            <div class="item">
+              <span class="bubble view"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></span>
+              <div class="txt"><strong>Robert &amp; Linda Tan</strong> opened the proposal for the 3rd time.</div>
+              <span class="ts">14:32</span>
+            </div>
+            <div class="item">
+              <span class="bubble send"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4z"/></svg></span>
+              <div class="txt">You sent <strong>$895,000 proposal</strong> to Sasha Patel.</div>
+              <span class="ts">13:08</span>
+            </div>
+            <div class="item">
+              <span class="bubble signed"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l5 5 9-11"/></svg></span>
+              <div class="txt"><strong>Alicia Brown</strong> signed her offer for $2,100,000.</div>
+              <span class="ts">11:42</span>
+            </div>
+            <div class="item">
+              <span class="bubble lost"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M6 18L18 6"/></svg></span>
+              <div class="txt">Credit declined for <strong>902 Sycamore Pl</strong>.</div>
+              <span class="ts">Yesterday</span>
+            </div>
+          </div>
+        </div>
+        <div class="cap"><span>32px bubble · 4 bubble tones (view / send / signed / lost) · subject bolded</span><span class="right">.activity .item / .bubble.{view,send,signed,lost}</span></div>
+      </div>
+    </section>
+
+    <!-- LIVE -->
+    <section class="block" id="live">
+      <div class="head">
+        <span class="num">20</span>
+        <h2>Live indicator</h2>
+        <span class="desc">Pulse-ring keyframe — active viewing</span>
+      </div>
+      <div class="spec">
+        <div class="stage">
+          <span style="display: inline-flex; align-items: center; gap: 8px; padding: 4px 10px; border-radius: 8px; background: var(--accent-green-bg); color: var(--accent-green); font-size: 13px; font-weight: 600;"><span class="live-dot"></span>Live · 4 viewing now</span>
+          <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink-700);"><span class="live-dot"></span>Active session</span>
+        </div>
+        <div class="cap"><span>8px dot · box-shadow expands 0 → 6px → 0 over 1.8s · accent-green / 0.45 opacity</span><span class="right">@keyframes pulse-ring · .live-dot</span></div>
+      </div>
+    </section>
+
+    <!-- MODAL -->
+    <section class="block" id="modal">
+      <div class="head">
+        <span class="num">21</span>
+        <h2>Modal</h2>
+        <span class="desc">Centered dialog · backdrop fade + scale-in</span>
+      </div>
+      <div class="spec">
+        <div class="stage col">
+          <div style="background: var(--ink-100); padding: 40px; display: flex; justify-content: center;">
+            <!-- Static surface preview (no transitions, fully visible) -->
+            <div style="position: relative; width: 480px; background: #fff; border-radius: var(--radius-2xl); box-shadow: var(--shadow-pop); display: flex; flex-direction: column;">
+              <div class="mt-overlay-head">
+                <div class="mt-overlay-title">
+                  <div class="mt-overlay-eyebrow">Send proposal</div>
+                  <h3>Confirm send to Robert &amp; Linda Tan</h3>
+                  <div class="mt-overlay-sub">Once sent, the proposal becomes view-tracked. You can revoke access from the row menu.</div>
+                </div>
+                <button class="btn btn-icon" aria-label="Close" style="margin: -6px -6px 0 0; flex-shrink: 0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M6 18L18 6"/></svg></button>
+              </div>
+              <div class="mt-overlay-body">
+                Recipient: <strong style="color: var(--ink-900);">robert.tan@example.com</strong><br>
+                Property: 442 Oak Ridge Dr · $1,245,000<br>
+                Channel: email + secure link
+              </div>
+              <div class="mt-overlay-foot">
+                <span class="mt-foot-aux">Esc to cancel</span>
+                <button class="btn btn-secondary">Cancel</button>
+                <button class="btn btn-primary">Send proposal</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="cap"><span>Surface: <b>16px radius · shadow-pop</b> · head + body + foot (foot bg ink-50)</span><span class="right">.mt-modal · .mt-overlay-head/body/foot</span></div>
+      </div>
+      <div style="margin-top: 12px;">
+        <button class="btn btn-secondary" data-open="demo-modal">Open modal demo →</button>
+      </div>
+      <div class="rules">
+        <div class="rule"><div class="h do">Do</div><p>Use for destructive confirmations, settings, or short single-step flows. ≤1 primary button in the foot, on the right.</p></div>
+        <div class="rule"><div class="h dnt">Don't</div><p>Stack modals. Don't put scrollable lists or multi-step forms in a modal — switch to a sheet.</p></div>
+      </div>
+    </section>
+
+    <!-- SHEET -->
+    <section class="block" id="sheet">
+      <div class="head">
+        <span class="num">22</span>
+        <h2>Sheet / drawer</h2>
+        <span class="desc">Bottom on mobile · right on desktop</span>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>Right sheet — desktop detail drawer</h3><span class="token">.mt-sheet-right</span><span class="note">440px wide · slides 280ms in / 240ms out</span></div>
+        <div class="spec">
+          <div class="stage col">
+            <div style="background: var(--ink-100); height: 460px; position: relative; overflow: hidden;">
+              <!-- Static right-sheet preview pinned to right edge -->
+              <div style="position: absolute; top: 0; right: 0; bottom: 0; width: 440px; background: #fff; box-shadow: var(--shadow-pop); display: flex; flex-direction: column;">
+                <div class="mt-overlay-head">
+                  <div class="mt-overlay-title">
+                    <div class="mt-overlay-eyebrow">Seller detail</div>
+                    <h3>Robert &amp; Linda Tan</h3>
+                    <div class="mt-overlay-sub">442 Oak Ridge Dr · $1,245,000</div>
+                  </div>
+                  <button class="btn btn-icon" aria-label="Close" style="margin: -6px -6px 0 0; flex-shrink: 0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M6 18L18 6"/></svg></button>
+                </div>
+                <div class="mt-overlay-body" style="flex: 1;">
+                  <div style="display: flex; gap: 8px; margin-bottom: 16px;"><span class="pill pill-viewed"><span class="dot"></span>Viewed · 3h</span><span class="badge badge-high" style="width: 28px; height: 28px; font-size: 12px;">92</span></div>
+                  <p style="margin-bottom: 14px;">Opened the proposal 4 minutes ago. Still on the financing section after three sessions in two days.</p>
+                  <div style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-500); font-weight: 600; margin: 18px 0 10px;">Recent activity</div>
+                  <div class="activity" style="padding: 0; margin: 0 -4px;">
+                    <div class="item" style="padding: 10px 4px;"><span class="bubble view" style="width: 28px; height: 28px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></span><div class="txt" style="font-size: 13px;">Opened proposal · 3rd time</div><span class="ts" style="font-size: 12px;">14:32</span></div>
+                    <div class="item" style="padding: 10px 4px;"><span class="bubble send" style="width: 28px; height: 28px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4z"/></svg></span><div class="txt" style="font-size: 13px;">You sent the proposal</div><span class="ts" style="font-size: 12px;">Mon</span></div>
+                  </div>
+                </div>
+                <div class="mt-overlay-foot">
+                  <button class="btn btn-secondary">Mark stalled</button>
+                  <button class="btn btn-primary">Reply now</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="cap"><span>Full-height · pinned right · no top radius · shadow-pop carries the edge</span><span class="right">.mt-sheet-right</span></div>
+        </div>
+        <div style="margin-top: 12px;">
+          <button class="btn btn-secondary" data-open="demo-sheet-right">Open right sheet demo →</button>
+        </div>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>Bottom sheet — mobile drawer</h3><span class="token">.mt-sheet-bottom</span><span class="note">Grabber handle · 20px top radius · slides up from bottom</span></div>
+        <div class="spec">
+          <div class="stage col">
+            <div style="background: var(--ink-100); height: 420px; position: relative; overflow: hidden; display: flex; justify-content: center;">
+              <!-- Static bottom-sheet preview pinned to bottom, ~mobile width -->
+              <div style="position: absolute; left: 50%; transform: translateX(-50%); bottom: 0; width: min(420px, 90%); background: #fff; border-radius: var(--radius-3xl) var(--radius-3xl) 0 0; box-shadow: var(--shadow-pop); display: flex; flex-direction: column;">
+                <div class="mt-grabber"><span></span></div>
+                <div class="mt-overlay-head">
+                  <div class="mt-overlay-title">
+                    <div class="mt-overlay-eyebrow">Filter</div>
+                    <h3>Filter proposals</h3>
+                  </div>
+                  <button class="btn btn-icon" aria-label="Close" style="margin: -6px -6px 0 0; flex-shrink: 0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M6 18L18 6"/></svg></button>
+                </div>
+                <div class="mt-overlay-body">
+                  <div style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-500); font-weight: 600; margin-bottom: 10px;">Lifecycle</div>
+                  <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                    <span class="pill pill-viewed"><span class="dot"></span>Viewed</span>
+                    <span class="pill pill-sent"><span class="dot"></span>Sent</span>
+                    <span class="pill pill-signed"><span class="dot"></span>Signed</span>
+                    <span class="pill pill-neutral">Draft</span>
+                  </div>
+                </div>
+                <div class="mt-overlay-foot">
+                  <span class="mt-foot-aux">3 selected</span>
+                  <button class="btn btn-secondary">Reset</button>
+                  <button class="btn btn-primary">Apply</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="cap"><span>Top corners 20px · 4px grabber bar · max-height 85vh, body scrolls</span><span class="right">.mt-sheet-bottom · .mt-grabber</span></div>
+        </div>
+        <div style="margin-top: 12px;">
+          <button class="btn btn-secondary" data-open="demo-sheet-bottom">Open bottom sheet demo →</button>
+        </div>
+      </div>
+
+      <div class="rules">
+        <div class="rule"><div class="h do">Do</div><p>Use right sheets for detail / inspection panels next to a list. Use bottom sheets for filters, pickers, and contextual actions on mobile.</p></div>
+        <div class="rule"><div class="h dnt">Don't</div><p>Mix the two on the same surface. Don't open a sheet from inside a modal — close the modal first.</p></div>
+      </div>
+    </section>
+
+    <!-- FORM INPUTS -->
+    <section class="block" id="form-inputs">
+      <div class="head">
+        <span class="num">23</span>
+        <h2>Form inputs</h2>
+        <span class="desc">Solid form chrome · 8px radius · 36px default height</span>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>Text input</h3><span class="token">.mt-input</span><span class="note">Plain, leading icon, error, disabled</span></div>
+        <div class="spec">
+          <div class="stage" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 24px;">
+            <div class="mt-field">
+              <label class="mt-label">Recipient email</label>
+              <input class="mt-input" type="email" placeholder="seller@example.com">
+            </div>
+            <div class="mt-field">
+              <label class="mt-label">Search<span class="mt-optional">optional</span></label>
+              <div class="mt-input-wrap">
+                <svg class="mt-icon-lead" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+                <input class="mt-input has-lead" type="text" placeholder="Filter sellers…">
+              </div>
+            </div>
+            <div class="mt-field">
+              <label class="mt-label">Property address</label>
+              <input class="mt-input is-error" type="text" value="442 Oak Ridge">
+              <div class="mt-help is-error">Address must include a city and ZIP.</div>
+            </div>
+            <div class="mt-field">
+              <label class="mt-label">Lender (synced)</label>
+              <input class="mt-input" type="text" value="First Sound Mortgage" disabled>
+              <div class="mt-help">Pulled from CRM · read-only.</div>
+            </div>
+          </div>
+          <div class="cap"><span>Idle ink-200 ring · hover ink-300 · focus brand-600 + shadow-focus · error accent-red</span><span class="right">.mt-input / .is-error / :disabled</span></div>
+        </div>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>Select &amp; textarea</h3><span class="token">.mt-select · .mt-textarea</span></div>
+        <div class="spec">
+          <div class="stage" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 24px;">
+            <div class="mt-field">
+              <label class="mt-label">Channel</label>
+              <select class="mt-select">
+                <option>Email + secure link</option>
+                <option>Email only</option>
+                <option>SMS</option>
+              </select>
+            </div>
+            <div class="mt-field">
+              <label class="mt-label">Stage</label>
+              <select class="mt-select">
+                <option>Active</option>
+                <option>Draft</option>
+                <option>On credit hold</option>
+              </select>
+            </div>
+            <div class="mt-field" style="grid-column: 1 / -1;">
+              <label class="mt-label">Personal note<span class="mt-optional">sent inside the proposal</span></label>
+              <textarea class="mt-textarea" placeholder="A short message to Robert &amp; Linda…">Hi Robert &amp; Linda — final terms on 442 Oak Ridge are attached. Happy to walk through anything tonight.</textarea>
+            </div>
+          </div>
+          <div class="cap"><span>Select renders a custom chevron · textarea min-height 88px, vertical resize only</span><span class="right">.mt-select / .mt-textarea</span></div>
+        </div>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>Sizes</h3><span class="token">.is-sm · default · .is-lg</span></div>
+        <div class="spec">
+          <div class="stage" style="gap: 14px;">
+            <input class="mt-input is-sm" type="text" placeholder="Small · 32px" style="width: 240px;">
+            <input class="mt-input" type="text" placeholder="Default · 36px" style="width: 240px;">
+            <input class="mt-input is-lg" type="text" placeholder="Large · 40px" style="width: 240px;">
+          </div>
+          <div class="cap"><span>Default matches header chrome height (search, pickers, secondary buttons)</span><span class="right">heights 32 / 36 / 40</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SWITCH / CHECKBOX / RADIO -->
+    <section class="block" id="toggles">
+      <div class="head">
+        <span class="num">24</span>
+        <h2>Switch · checkbox · radio</h2>
+        <span class="desc">Single-axis toggles · all use brand-600 when on</span>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>Switch</h3><span class="token">.mt-switch</span><span class="note">Track 36×20 · thumb 16</span></div>
+        <div class="spec">
+          <div class="stage" style="gap: 24px;">
+            <label class="mt-switch">
+              <input type="checkbox" checked>
+              <span class="mt-switch-track"></span>
+              <span class="mt-switch-label">Notify me on every view</span>
+            </label>
+            <label class="mt-switch">
+              <input type="checkbox">
+              <span class="mt-switch-track"></span>
+              <span class="mt-switch-label">Auto-send nudge after 48h</span>
+            </label>
+            <label class="mt-switch">
+              <input type="checkbox" disabled>
+              <span class="mt-switch-track"></span>
+              <span class="mt-switch-label" style="color: var(--ink-400);">SMS notifications</span>
+            </label>
+          </div>
+          <div class="cap"><span>Off ink-200 · on brand-600 · thumb slides 16px with snap easing</span><span class="right">220ms · ease-snap</span></div>
+        </div>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>Checkbox</h3><span class="token">.mt-check</span><span class="note">16px · 4px radius · indeterminate via .indeterminate JS prop</span></div>
+        <div class="spec">
+          <div class="stage" style="gap: 18px;">
+            <label class="mt-check">
+              <input type="checkbox" checked>
+              <span class="mt-check-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg>
+              </span>
+              <span class="mt-check-label">Include warranty</span>
+            </label>
+            <label class="mt-check">
+              <input type="checkbox">
+              <span class="mt-check-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg>
+              </span>
+              <span class="mt-check-label">Require co-signer</span>
+            </label>
+            <label class="mt-check" id="mt-check-indet">
+              <input type="checkbox">
+              <span class="mt-check-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 12h12"/></svg>
+              </span>
+              <span class="mt-check-label">Select all (some)</span>
+            </label>
+            <label class="mt-check">
+              <input type="checkbox" disabled>
+              <span class="mt-check-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg>
+              </span>
+              <span class="mt-check-label" style="color: var(--ink-400);">Disabled</span>
+            </label>
+          </div>
+          <div class="cap"><span>Off white + ink-300 ring · on brand-600 fill + white tick · indeterminate uses the dash glyph</span><span class="right">.mt-check / -box / -label</span></div>
+        </div>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>Radio</h3><span class="token">.mt-radio</span><span class="note">16px circle · inner 6px dot scales in</span></div>
+        <div class="spec">
+          <div class="stage" style="gap: 18px;">
+            <label class="mt-radio"><input type="radio" name="channel" checked><span class="mt-radio-dot"></span><span class="mt-radio-label">Email + secure link</span></label>
+            <label class="mt-radio"><input type="radio" name="channel"><span class="mt-radio-dot"></span><span class="mt-radio-label">Email only</span></label>
+            <label class="mt-radio"><input type="radio" name="channel"><span class="mt-radio-dot"></span><span class="mt-radio-label">SMS</span></label>
+            <label class="mt-radio"><input type="radio" name="channel" disabled><span class="mt-radio-dot"></span><span class="mt-radio-label" style="color: var(--ink-400);">Paper (coming soon)</span></label>
+          </div>
+          <div class="cap"><span>Inner dot scales 0 → 1 with snap easing · ring goes brand-600 on check</span><span class="right">.mt-radio / -dot / -label</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ALERTS -->
+    <section class="block" id="alerts">
+      <div class="head">
+        <span class="num">25</span>
+        <h2>Alerts</h2>
+        <span class="desc">Inline banners · 4 tones + neutral</span>
+      </div>
+      <div class="spec">
+        <div class="stage col" style="padding: 24px; gap: 12px; display: flex; flex-direction: column;">
+          <div class="mt-alert is-info">
+            <svg class="mt-alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+            <div class="mt-alert-body">
+              <div class="mt-alert-title">3 sellers haven't opened their proposals</div>
+              <div class="mt-alert-desc">Robert &amp; Linda Tan, Sasha Patel, and Marcus Jensen — all sent over 48 hours ago.</div>
+              <div class="mt-alert-actions">
+                <button class="btn btn-secondary btn-compact">Send nudge</button>
+                <button class="btn btn-icon" style="width: 28px; height: 28px;" aria-label="More"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="6" r="1"/><circle cx="12" cy="18" r="1"/></svg></button>
+              </div>
+            </div>
+            <button class="mt-alert-close" aria-label="Dismiss"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M6 18L18 6"/></svg></button>
+          </div>
+
+          <div class="mt-alert is-success">
+            <svg class="mt-alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg>
+            <div class="mt-alert-body">
+              <div class="mt-alert-title">Carla Reyes signed her $1,820,000 offer</div>
+              <div class="mt-alert-desc">Closing docs are queued for tomorrow.</div>
+            </div>
+            <button class="mt-alert-close" aria-label="Dismiss"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M6 18L18 6"/></svg></button>
+          </div>
+
+          <div class="mt-alert is-warning">
+            <svg class="mt-alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
+            <div class="mt-alert-body">
+              <div class="mt-alert-title">Credit hold on 2 active proposals</div>
+              <div class="mt-alert-desc">Both have soft-pull declines pending lender review.</div>
+            </div>
+            <button class="mt-alert-close" aria-label="Dismiss"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M6 18L18 6"/></svg></button>
+          </div>
+
+          <div class="mt-alert is-danger">
+            <svg class="mt-alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4"></path><path d="M12 16h.01"></path></svg>
+            <div class="mt-alert-body">
+              <div class="mt-alert-title">Diana Nguyen's lender declined the loan</div>
+              <div class="mt-alert-desc">301 Pinehurst Ct will move to Lost unless you re-route to a new lender by Friday.</div>
+              <div class="mt-alert-actions">
+                <button class="btn btn-secondary btn-compact">Re-route lender</button>
+              </div>
+            </div>
+            <button class="mt-alert-close" aria-label="Dismiss"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M6 18L18 6"/></svg></button>
+          </div>
+
+          <div class="mt-alert">
+            <svg class="mt-alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+            <div class="mt-alert-body">
+              <div class="mt-alert-title">Heads up</div>
+              <div class="mt-alert-desc">Neutral / informational tone when you don't want to imply urgency.</div>
+            </div>
+            <button class="mt-alert-close" aria-label="Dismiss"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M6 18L18 6"/></svg></button>
+          </div>
+        </div>
+        <div class="cap"><span>Tone-tinted bg + matching 1px inset ring · 18px Lucide icon · optional actions + close</span><span class="right">.mt-alert.is-{info,success,warning,danger}</span></div>
+      </div>
+    </section>
+
+    <!-- TOASTS -->
+    <section class="block" id="toasts">
+      <div class="head">
+        <span class="num">26</span>
+        <h2>Toasts</h2>
+        <span class="desc">Bottom-right notifications · slide in 280ms · auto-dismiss</span>
+      </div>
+      <div class="spec">
+        <div class="stage col">
+          <div style="position: relative; background: var(--ink-100); padding: 32px; min-height: 460px;">
+            <!-- Static toast stack preview -->
+            <div style="position: absolute; bottom: 24px; right: 24px; display: flex; flex-direction: column; gap: 10px; width: min(360px, calc(100% - 48px));">
+              <div class="mt-toast is-success" style="animation: none;">
+                <svg class="mt-toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg>
+                <div class="mt-toast-body">
+                  <div class="mt-toast-title">Proposal sent to Robert &amp; Linda</div>
+                  <div class="mt-toast-desc">They'll get an email and a tracked secure link.</div>
+                  <div class="mt-toast-actions">
+                    <button class="mt-toast-action">View seller</button>
+                    <button class="mt-toast-action is-muted">Undo</button>
+                  </div>
+                </div>
+                <button class="mt-toast-close" aria-label="Dismiss"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M6 18L18 6"/></svg></button>
+              </div>
+
+              <div class="mt-toast is-danger" style="animation: none;">
+                <svg class="mt-toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4"></path><path d="M12 16h.01"></path></svg>
+                <div class="mt-toast-body">
+                  <div class="mt-toast-title">Lender declined</div>
+                  <div class="mt-toast-desc">Re-route by Friday to keep the deal active.</div>
+                  <div class="mt-toast-actions">
+                    <button class="mt-toast-action">Re-route lender</button>
+                  </div>
+                </div>
+                <button class="mt-toast-close" aria-label="Dismiss"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M6 18L18 6"/></svg></button>
+              </div>
+
+              <div class="mt-toast is-inverse" style="animation: none;">
+                <svg class="mt-toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+                <div class="mt-toast-body">
+                  <div class="mt-toast-title">Saved · 442 Oak Ridge updated</div>
+                  <div class="mt-toast-desc">Last edit 2 seconds ago.</div>
+                  <div class="mt-toast-actions">
+                    <button class="mt-toast-action">Undo</button>
+                  </div>
+                </div>
+                <button class="mt-toast-close" aria-label="Dismiss"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M6 18L18 6"/></svg></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="cap"><span>Actions are text-style buttons that inherit tone color. Primary action first, muted secondary trails.</span><span class="right">.mt-toast-actions · .mt-toast-action · .is-muted</span></div>
+      </div>
+      <div style="margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap;">
+        <button class="btn btn-secondary" data-toast="success">Success</button>
+        <button class="btn btn-secondary" data-toast="info">Info</button>
+        <button class="btn btn-secondary" data-toast="warning">Warning</button>
+        <button class="btn btn-secondary" data-toast="danger">Danger</button>
+        <button class="btn btn-secondary" data-toast="inverse">Inverse</button>
+        <button class="btn btn-secondary" data-toast="cta-success">Success + CTA</button>
+        <button class="btn btn-secondary" data-toast="cta-danger">Danger + CTA</button>
+        <button class="btn btn-secondary" data-toast="cta-undo">Inverse + Undo</button>
+      </div>
+    </section>
+
+    <!-- TOOLTIPS -->
+    <section class="block" id="tooltips">
+      <div class="head">
+        <span class="num">27</span>
+        <h2>Tooltips</h2>
+        <span class="desc">Dark · hover-triggered · 4 placements</span>
+      </div>
+      <div class="spec">
+        <div class="stage" style="gap: 32px; padding: 48px 24px; justify-content: center;">
+          <span class="mt-tip">
+            <button class="btn btn-icon" aria-label="More"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="6" r="1"/><circle cx="12" cy="18" r="1"/></svg></button>
+            <span class="mt-tip-content">More actions</span>
+          </span>
+          <span class="mt-tip is-bottom">
+            <button class="btn btn-secondary btn-compact">Hover me ↓</button>
+            <span class="mt-tip-content">Tooltip below</span>
+          </span>
+          <span class="mt-tip is-right">
+            <button class="btn btn-icon" aria-label="Bell"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 16v-5a6 6 0 1 0-12 0v5l-2 3h16l-2-3z"/><path d="M10 21a2 2 0 0 0 4 0"/></svg></button>
+            <span class="mt-tip-content">3 unread</span>
+          </span>
+          <span class="mt-tip">
+            <span style="font-family: var(--font-mono); font-size: 12px; color: var(--brand-700); cursor: help; border-bottom: 1px dashed var(--brand-300); padding-bottom: 1px;">brand-600</span>
+            <span class="mt-tip-content">#0053A7 · primary action</span>
+          </span>
+        </div>
+        <div class="cap"><span>ink-900 bg · 12px medium text · 200ms fade + 4px slide on enter · arrow flips with placement</span><span class="right">.mt-tip / .is-{top,bottom,right}</span></div>
+      </div>
+      <div class="rules">
+        <div class="rule"><div class="h do">Do</div><p>Use for icon-only buttons and dense labels that need disambiguation. Keep copy to a short phrase.</p></div>
+        <div class="rule"><div class="h dnt">Don't</div><p>Don't put critical info in a tooltip — they're hover-only on desktop and unreachable on touch. Use a label or inline help instead.</p></div>
+      </div>
+    </section>
+
+    <!-- DROPDOWN MENU -->
+    <section class="block" id="menu">
+      <div class="head">
+        <span class="num">28</span>
+        <h2>Dropdown menu</h2>
+        <span class="desc">Surface only · wire up open/close to your trigger</span>
+      </div>
+      <div class="spec">
+        <div class="stage" style="padding: 32px 24px; gap: 32px; align-items: flex-start;">
+          <!-- Static menu — simple list -->
+          <div class="mt-menu" style="width: 220px;">
+            <button class="mt-menu-item is-active">
+              <svg class="mt-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+              View seller
+            </button>
+            <button class="mt-menu-item">
+              <svg class="mt-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4z"/></svg>
+              Send nudge
+              <span class="mt-menu-shortcut">⌘N</span>
+            </button>
+            <button class="mt-menu-item">
+              <svg class="mt-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 12l2 2 4-4"/></svg>
+              Mark as signed
+            </button>
+            <div class="mt-menu-divider"></div>
+            <button class="mt-menu-item is-danger">
+              <svg class="mt-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              Archive proposal
+            </button>
+          </div>
+
+          <!-- Static menu — sectioned with eyebrow + shortcuts -->
+          <div class="mt-menu" style="width: 240px;">
+            <div class="mt-menu-label">Group by</div>
+            <button class="mt-menu-item is-active">
+              <svg class="mt-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0 1 16 0v1"/></svg>
+              Seller
+            </button>
+            <button class="mt-menu-item">
+              <svg class="mt-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+              Week opened
+            </button>
+            <button class="mt-menu-item">
+              <svg class="mt-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l9 4-9 4-9-4 9-4z"/><path d="M3 12l9 4 9-4"/><path d="M3 18l9 4 9-4"/></svg>
+              Stage
+            </button>
+            <div class="mt-menu-divider"></div>
+            <div class="mt-menu-label">Sort</div>
+            <button class="mt-menu-item">
+              <svg class="mt-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M7 12h10"/><path d="M11 18h2"/></svg>
+              Newest first
+              <span class="mt-menu-shortcut">⌘S</span>
+            </button>
+            <button class="mt-menu-item is-disabled" disabled>
+              <svg class="mt-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              Reset to default
+            </button>
+          </div>
+        </div>
+        <div class="cap"><span>32px items · 8px radius · brand-50/700 active · mono shortcuts · danger items tinted red on hover</span><span class="right">.mt-menu · .mt-menu-item · .mt-menu-divider</span></div>
+      </div>
+    </section>
+
+    <!-- BREADCRUMBS -->
+    <section class="block" id="crumbs">
+      <div class="head">
+        <span class="num">29</span>
+        <h2>Breadcrumbs</h2>
+        <span class="desc">Hierarchy trail · chevron separator · collapses with ellipsis</span>
+      </div>
+      <div class="two">
+        <div class="spec">
+          <div class="stage" style="padding: 28px 24px;">
+            <nav class="mt-crumbs" aria-label="Breadcrumb">
+              <a href="#">Proposals</a>
+              <span class="mt-crumb-sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              <a href="#">Active</a>
+              <span class="mt-crumb-sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              <span class="mt-crumb-current">Robert &amp; Linda Tan</span>
+            </nav>
+          </div>
+          <div class="cap"><span>Inline trail · last item bolded as current</span><span class="right">.mt-crumbs</span></div>
+        </div>
+        <div class="spec">
+          <div class="stage" style="padding: 28px 24px;">
+            <nav class="mt-crumbs" aria-label="Breadcrumb">
+              <a href="#">Sellers</a>
+              <span class="mt-crumb-sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              <button class="mt-crumb-ellipsis" aria-label="Show collapsed crumbs">…</button>
+              <span class="mt-crumb-sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              <a href="#">442 Oak Ridge Dr</a>
+              <span class="mt-crumb-sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              <span class="mt-crumb-current">Financing</span>
+            </nav>
+          </div>
+          <div class="cap"><span>Long path collapses with an ellipsis button (opens a menu of skipped crumbs)</span><span class="right">.mt-crumb-ellipsis</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGINATION -->
+    <section class="block" id="pager">
+      <div class="head">
+        <span class="num">30</span>
+        <h2>Pagination</h2>
+        <span class="desc">Numbered · prev/next · ellipsis collapse</span>
+      </div>
+      <div class="spec">
+        <div class="stage" style="padding: 32px 24px; justify-content: center;">
+          <nav class="mt-pager" aria-label="Pagination">
+            <button class="mt-pager-btn" aria-label="Previous">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg>
+              Prev
+            </button>
+            <button class="mt-pager-btn">1</button>
+            <button class="mt-pager-btn is-active">2</button>
+            <button class="mt-pager-btn">3</button>
+            <button class="mt-pager-btn">4</button>
+            <span class="mt-pager-ellipsis">…</span>
+            <button class="mt-pager-btn">12</button>
+            <button class="mt-pager-btn" aria-label="Next">
+              Next
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>
+            </button>
+          </nav>
+        </div>
+        <div class="cap"><span>32px hit targets · active brand-600 · tabular nums · prev/next show edge-disabled state</span><span class="right">.mt-pager · .mt-pager-btn.is-active</span></div>
+      </div>
+      <div class="spec" style="margin-top: 12px;">
+        <div class="stage" style="padding: 20px 24px; justify-content: space-between;">
+          <div style="font-size: 13px; color: var(--ink-500); font-variant-numeric: tabular-nums;">Showing <strong style="color: var(--ink-900);">21–40</strong> of <strong style="color: var(--ink-900);">237</strong> proposals</div>
+          <nav class="mt-pager">
+            <button class="mt-pager-btn" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+            <button class="mt-pager-btn">1</button>
+            <button class="mt-pager-btn is-active">2</button>
+            <button class="mt-pager-btn">3</button>
+            <button class="mt-pager-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></button>
+          </nav>
+        </div>
+        <div class="cap"><span>Compact pattern — result count on the left, controls on the right · disabled prev/next at the edges</span><span class="right">:disabled</span></div>
+      </div>
+    </section>
+
+    <!-- EMPTY STATE -->
+    <section class="block" id="empty">
+      <div class="head">
+        <span class="num">31</span>
+        <h2>Empty state</h2>
+        <span class="desc">Placeholder inside cards / tables · glyph + title + body + CTA</span>
+      </div>
+      <div class="two">
+        <div class="spec">
+          <div class="stage" style="padding: 0;">
+            <div class="mt-empty" style="width: 100%;">
+              <span class="mt-empty-glyph">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+              </span>
+              <div class="mt-empty-title">No drafts yet</div>
+              <div class="mt-empty-desc">Proposals you start but don't send appear here so you can resume.</div>
+              <div class="mt-empty-actions">
+                <button class="btn btn-primary">Start a proposal</button>
+              </div>
+            </div>
+          </div>
+          <div class="cap"><span>Neutral default · 56px glyph circle in ink-100 · generous vertical padding</span><span class="right">.mt-empty</span></div>
+        </div>
+        <div class="spec">
+          <div class="stage" style="padding: 0;">
+            <div class="mt-empty is-info" style="width: 100%;">
+              <span class="mt-empty-glyph">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+              </span>
+              <div class="mt-empty-title">No sellers match “Sasha”</div>
+              <div class="mt-empty-desc">Try a different name or clear the filter to see all 47 active proposals.</div>
+              <div class="mt-empty-actions">
+                <button class="btn btn-secondary">Clear filter</button>
+              </div>
+            </div>
+          </div>
+          <div class="cap"><span>Info tone — glyph circle uses brand-50/700 · typical for filtered-zero-result</span><span class="right">.mt-empty.is-info</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SKELETON -->
+    <section class="block" id="skeleton">
+      <div class="head">
+        <span class="num">32</span>
+        <h2>Skeleton</h2>
+        <span class="desc">Shimmer placeholders during load</span>
+      </div>
+      <div class="two">
+        <div class="spec">
+          <div class="stage col">
+            <div style="padding: 24px; display: flex; flex-direction: column; gap: 10px;">
+              <span class="mt-skeleton is-title" style="width: 60%;"></span>
+              <span class="mt-skeleton is-text" style="width: 92%;"></span>
+              <span class="mt-skeleton is-text" style="width: 84%;"></span>
+              <span class="mt-skeleton is-text" style="width: 50%;"></span>
+            </div>
+          </div>
+          <div class="cap"><span>Text run: title bar + paragraph lines of varying width</span><span class="right">.is-title / .is-text</span></div>
+        </div>
+        <div class="spec">
+          <div class="stage col">
+            <div style="padding: 18px 24px; display: flex; flex-direction: column; gap: 14px;">
+              <div style="display: flex; gap: 12px; align-items: center;">
+                <span class="mt-skeleton is-circle" style="width: 28px; height: 28px;"></span>
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
+                  <span class="mt-skeleton is-text" style="width: 40%;"></span>
+                  <span class="mt-skeleton is-text" style="width: 28%;"></span>
+                </div>
+                <span class="mt-skeleton is-text" style="width: 70px; height: 14px;"></span>
+              </div>
+              <div style="display: flex; gap: 12px; align-items: center;">
+                <span class="mt-skeleton is-circle" style="width: 28px; height: 28px;"></span>
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
+                  <span class="mt-skeleton is-text" style="width: 50%;"></span>
+                  <span class="mt-skeleton is-text" style="width: 32%;"></span>
+                </div>
+                <span class="mt-skeleton is-text" style="width: 70px; height: 14px;"></span>
+              </div>
+              <div style="display: flex; gap: 12px; align-items: center;">
+                <span class="mt-skeleton is-circle" style="width: 28px; height: 28px;"></span>
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
+                  <span class="mt-skeleton is-text" style="width: 36%;"></span>
+                  <span class="mt-skeleton is-text" style="width: 24%;"></span>
+                </div>
+                <span class="mt-skeleton is-text" style="width: 70px; height: 14px;"></span>
+              </div>
+            </div>
+          </div>
+          <div class="cap"><span>Table-row loading state — circle avatar + two text lines + right-aligned chip</span><span class="right">.is-circle / .is-text</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BUTTON GROUP / SPLIT -->
+    <section class="block" id="btn-group">
+      <div class="head">
+        <span class="num">33</span>
+        <h2>Button group</h2>
+        <span class="desc">Connected actions · split button</span>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>Segmented action group</h3><span class="token">.mt-btn-group</span><span class="note">Connected secondary-style buttons · 1 active at a time (optional)</span></div>
+        <div class="spec">
+          <div class="stage" style="gap: 24px;">
+            <div class="mt-btn-group">
+              <button>List</button>
+              <button class="is-active">Board</button>
+              <button>Calendar</button>
+            </div>
+            <div class="mt-btn-group">
+              <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Map</button>
+              <button class="is-active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> List</button>
+              <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> Grid</button>
+              <button disabled>Gantt</button>
+            </div>
+          </div>
+          <div class="cap"><span>Single brand-600 ring wraps the row · dividers between buttons share the ring color · active fills brand-600</span><span class="right">.mt-btn-group · .is-active</span></div>
+        </div>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>Split button</h3><span class="token">.mt-btn-split</span><span class="note">Primary action + caret menu trigger</span></div>
+        <div class="spec">
+          <div class="stage" style="gap: 16px;">
+            <div class="mt-btn-split">
+              <button class="mt-btn-split-main">Send proposal</button>
+              <button class="mt-btn-split-caret" aria-label="More send options"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></button>
+            </div>
+            <div class="mt-btn-split">
+              <button class="mt-btn-split-main"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4z"/></svg> Send + schedule follow-up</button>
+              <button class="mt-btn-split-caret" aria-label="More options"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></button>
+            </div>
+          </div>
+          <div class="cap"><span>Main action on the left, caret trigger on the right · share a single brand-600 surface · hairline divider in white / 20%</span><span class="right">.mt-btn-split-main · .mt-btn-split-caret</span></div>
+        </div>
+      </div>
+    </section>
+
+    <div style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-400); text-align: center; padding: 64px 24px 0; font-weight: 600;">End of UI Kit · Mantel Design System · v2.0</div>
+
+  </main>
+</div>
+
+<!-- ============ Live overlay demos ============ -->
+<div class="mt-backdrop" data-overlay-backdrop></div>
+
+<div class="mt-modal" id="demo-modal" role="dialog" aria-modal="true" aria-labelledby="demo-modal-t">
+  <div class="mt-overlay-head">
+    <div class="mt-overlay-title">
+      <div class="mt-overlay-eyebrow">Send proposal</div>
+      <h3 id="demo-modal-t">Confirm send to Robert &amp; Linda Tan</h3>
+      <div class="mt-overlay-sub">Once sent, the proposal becomes view-tracked. You can revoke access from the row menu.</div>
+    </div>
+    <button class="btn btn-icon" aria-label="Close" data-close style="margin: -6px -6px 0 0; flex-shrink: 0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M6 18L18 6"/></svg></button>
+  </div>
+  <div class="mt-overlay-body">
+    Recipient: <strong style="color: var(--ink-900);">robert.tan@example.com</strong><br>
+    Property: 442 Oak Ridge Dr · $1,245,000<br>
+    Channel: email + secure link
+  </div>
+  <div class="mt-overlay-foot">
+    <span class="mt-foot-aux">Esc to cancel</span>
+    <button class="btn btn-secondary" data-close>Cancel</button>
+    <button class="btn btn-primary" data-close>Send proposal</button>
+  </div>
+</div>
+
+<div class="mt-sheet-right" id="demo-sheet-right" role="dialog" aria-modal="true" aria-labelledby="demo-sheet-right-t">
+  <div class="mt-overlay-head">
+    <div class="mt-overlay-title">
+      <div class="mt-overlay-eyebrow">Seller detail</div>
+      <h3 id="demo-sheet-right-t">Robert &amp; Linda Tan</h3>
+      <div class="mt-overlay-sub">442 Oak Ridge Dr · $1,245,000</div>
+    </div>
+    <button class="btn btn-icon" aria-label="Close" data-close style="margin: -6px -6px 0 0; flex-shrink: 0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M6 18L18 6"/></svg></button>
+  </div>
+  <div class="mt-overlay-body" style="flex: 1;">
+    <div style="display: flex; gap: 8px; margin-bottom: 16px;"><span class="pill pill-viewed"><span class="dot"></span>Viewed · 3h</span><span class="badge badge-high" style="width: 28px; height: 28px; font-size: 12px;">92</span></div>
+    <p style="margin-bottom: 14px;">Opened the proposal 4 minutes ago. Still on the financing section after three sessions in two days.</p>
+    <div style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-500); font-weight: 600; margin: 18px 0 10px;">Recent activity</div>
+    <div class="activity" style="padding: 0; margin: 0 -4px;">
+      <div class="item" style="padding: 10px 4px;"><span class="bubble view" style="width: 28px; height: 28px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></span><div class="txt" style="font-size: 13px;">Opened proposal · 3rd time</div><span class="ts" style="font-size: 12px;">14:32</span></div>
+      <div class="item" style="padding: 10px 4px;"><span class="bubble send" style="width: 28px; height: 28px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4z"/></svg></span><div class="txt" style="font-size: 13px;">You sent the proposal</div><span class="ts" style="font-size: 12px;">Mon</span></div>
+    </div>
+  </div>
+  <div class="mt-overlay-foot">
+    <button class="btn btn-secondary" data-close>Mark stalled</button>
+    <button class="btn btn-primary" data-close>Reply now</button>
+  </div>
+</div>
+
+<div class="mt-sheet-bottom" id="demo-sheet-bottom" role="dialog" aria-modal="true" aria-labelledby="demo-sheet-bottom-t">
+  <div class="mt-grabber"><span></span></div>
+  <div class="mt-overlay-head">
+    <div class="mt-overlay-title">
+      <div class="mt-overlay-eyebrow">Filter</div>
+      <h3 id="demo-sheet-bottom-t">Filter proposals</h3>
+    </div>
+    <button class="btn btn-icon" aria-label="Close" data-close style="margin: -6px -6px 0 0; flex-shrink: 0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M6 18L18 6"/></svg></button>
+  </div>
+  <div class="mt-overlay-body">
+    <div style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-500); font-weight: 600; margin-bottom: 10px;">Lifecycle</div>
+    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+      <span class="pill pill-viewed"><span class="dot"></span>Viewed</span>
+      <span class="pill pill-sent"><span class="dot"></span>Sent</span>
+      <span class="pill pill-signed"><span class="dot"></span>Signed</span>
+      <span class="pill pill-neutral">Draft</span>
+    </div>
+  </div>
+  <div class="mt-overlay-foot">
+    <span class="mt-foot-aux">3 selected</span>
+    <button class="btn btn-secondary" data-close>Reset</button>
+    <button class="btn btn-primary" data-close>Apply</button>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var backdrop = document.querySelector('[data-overlay-backdrop]');
+    var openTargets = document.querySelectorAll('[data-open]');
+    var current = null;
+
+    function open(id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      current = el;
+      backdrop.classList.add('is-open');
+      el.classList.remove('is-closing');
+      // force reflow so the transform/opacity transition runs
+      void el.offsetWidth;
+      el.classList.add('is-open');
+    }
+
+    function close() {
+      if (!current) return;
+      var el = current;
+      current = null;
+      backdrop.classList.remove('is-open');
+      if (el.classList.contains('mt-sheet-bottom') || el.classList.contains('mt-sheet-right')) {
+        el.classList.add('is-closing');
+      }
+      el.classList.remove('is-open');
+    }
+
+    openTargets.forEach(function (btn) {
+      btn.addEventListener('click', function () { open(btn.getAttribute('data-open')); });
+    });
+
+    document.querySelectorAll('[data-close]').forEach(function (btn) {
+      btn.addEventListener('click', close);
+    });
+
+    backdrop.addEventListener('click', close);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') close();
+    });
+  })();
+</script>
+
+<!-- Toast viewport — fixed bottom-right -->
+<div class="mt-toast-viewport" id="mt-toast-viewport" aria-live="polite" aria-atomic="false"></div>
+
+<script>
+  (function () {
+    // Set the indeterminate checkbox state
+    var indet = document.querySelector('#mt-check-indet input');
+    if (indet) indet.indeterminate = true;
+
+    // Toast spawner
+    var viewport = document.getElementById('mt-toast-viewport');
+    var TONES = {
+      success: {
+        cls: 'is-success',
+        icon: '<svg class="mt-toast-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>',
+        title: 'Proposal sent',
+        desc: 'Robert &amp; Linda will be notified.'
+      },
+      info: {
+        cls: '',
+        icon: '<svg class="mt-toast-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>',
+        title: 'Auto-save on',
+        desc: 'Changes save to draft every 4 seconds.'
+      },
+      warning: {
+        cls: 'is-warning',
+        icon: '<svg class="mt-toast-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>',
+        title: 'Credit hold flagged',
+        desc: '2 proposals need lender review.'
+      },
+      danger: {
+        cls: 'is-danger',
+        icon: '<svg class="mt-toast-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>',
+        title: 'Lender declined',
+        desc: 'Re-route by Friday to keep the deal active.'
+      },
+      inverse: {
+        cls: 'is-inverse',
+        icon: '<svg class="mt-toast-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>',
+        title: 'Saved',
+        desc: '442 Oak Ridge · just now.'
+      },
+      'cta-success': {
+        cls: 'is-success',
+        icon: '<svg class="mt-toast-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>',
+        title: 'Proposal sent to Robert &amp; Linda',
+        desc: 'They\'ll get an email and a tracked secure link.',
+        actions: [{ label: 'View seller' }, { label: 'Undo', muted: true }]
+      },
+      'cta-danger': {
+        cls: 'is-danger',
+        icon: '<svg class="mt-toast-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>',
+        title: 'Lender declined',
+        desc: 'Re-route by Friday to keep the deal active.',
+        actions: [{ label: 'Re-route lender' }]
+      },
+      'cta-undo': {
+        cls: 'is-inverse',
+        icon: '<svg class="mt-toast-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>',
+        title: 'Saved · 442 Oak Ridge updated',
+        desc: 'Last edit 2 seconds ago.',
+        actions: [{ label: 'Undo' }]
+      }
+    };
+
+    function renderActions(actions) {
+      if (!actions || !actions.length) return '';
+      return '<div class="mt-toast-actions">' + actions.map(function (a) {
+        return '<button class="mt-toast-action' + (a.muted ? ' is-muted' : '') + '">' + a.label + '</button>';
+      }).join('') + '</div>';
+    }
+
+    function spawn(toneKey) {
+      var tone = TONES[toneKey] || TONES.info;
+      var t = document.createElement('div');
+      t.className = 'mt-toast ' + tone.cls;
+      t.innerHTML =
+        tone.icon +
+        '<div class="mt-toast-body"><div class="mt-toast-title">' + tone.title + '</div>' +
+        '<div class="mt-toast-desc">' + tone.desc + '</div>' +
+        renderActions(tone.actions) +
+        '</div>' +
+        '<button class="mt-toast-close" aria-label="Dismiss"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M6 18L18 6"/></svg></button>';
+      viewport.appendChild(t);
+
+      var dismiss = function () {
+        if (!t.parentNode) return;
+        t.classList.add('is-closing');
+        setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, 280);
+      };
+      t.querySelector('.mt-toast-close').addEventListener('click', dismiss);
+      // CTA toasts get a longer dwell so the user has time to act
+      setTimeout(dismiss, tone.actions ? 6500 : 4200);
+    }
+
+    document.querySelectorAll('[data-toast]').forEach(function (btn) {
+      btn.addEventListener('click', function () { spawn(btn.getAttribute('data-toast')); });
+    });
+  })();
+</script>
+
+</body>
+</html>
