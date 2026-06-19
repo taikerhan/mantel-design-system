@@ -1,0 +1,196 @@
+/* Mantel DS site shell — layout, sidebar nav, search, dashboard.
+   Component visuals come from kit.css; this only frames them. */
+.ds-body { margin: 0; display: flex; min-height: 100vh; background: var(--ink-50); color: var(--ink-900);
+           font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
+.ds-nav { position: sticky; top: 0; align-self: flex-start; height: 100vh; width: 252px; flex: none; box-sizing: border-box;
+          overflow-y: auto; background: #fff; border-right: 1px solid var(--ink-150); padding: 18px 12px; }
+.ds-brand { display: flex; align-items: baseline; gap: 8px; padding: 4px 8px 14px; }
+.ds-brand a { font-size: 18px; font-weight: 700; letter-spacing: -.02em; color: var(--ink-900); text-decoration: none; }
+.ds-ver { font-size: 11px; color: var(--ink-400); font-variant-numeric: tabular-nums; }
+/* Aligned to the DS search field (kit.css .search): 36px rounded-full · ink-50 fill ·
+   inset ring · brand-600 leading icon. Ring darkened to ink-300 (rest) per design review. */
+.ds-search { width: 100%; box-sizing: border-box; height: 36px; padding: 0 12px 0 34px; margin-bottom: 8px; border: 0;
+             border-radius: var(--radius-full); background-color: var(--ink-50);
+             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%230053A7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M21 21l-4.2-4.2'/%3E%3C/svg%3E");
+             background-repeat: no-repeat; background-position: 12px center; background-size: 16px;
+             box-shadow: 0 0 0 1px var(--ink-300) inset; font: inherit; font-size: 13px; color: var(--ink-900);
+             transition: box-shadow .18s var(--ease), background-color .18s var(--ease); }
+.ds-search::placeholder { color: var(--ink-500); }
+.ds-search:hover { background-color: #fff; box-shadow: 0 0 0 1px var(--ink-400) inset; }
+.ds-search:focus { outline: none; background-color: #fff; box-shadow: 0 0 0 1px var(--brand-600) inset, var(--shadow-focus); }
+.ds-search-wrap { position: relative; }
+.ds-search-pop { position: absolute; top: 40px; left: 0; right: 0; z-index: 20; padding: 6px;
+                 background: #fff; border: 1px solid var(--ink-200); border-radius: var(--radius-lg); box-shadow: var(--shadow-pop); }
+.ds-pop-head { font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-400); padding: 6px 8px 5px; }
+.ds-pop-item { display: flex; align-items: center; justify-content: space-between; padding: 7px 9px; border-radius: var(--radius-md);
+               font-size: 13px; color: var(--ink-700); text-decoration: none; }
+.ds-pop-item:hover { background: var(--ink-100); color: var(--ink-900); text-decoration: none; }
+.ds-pop-arrow { color: var(--ink-300); font-size: 12px; }
+.ds-pop-item:hover .ds-pop-arrow { color: var(--brand-600); }
+.ds-links { display: flex; flex-direction: column; }
+/* Section divider — a hairline above each group header (Design review / Foundations / Components) */
+.ds-group { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-400); padding: 14px 8px 6px; margin-top: 8px; border-top: 1px solid var(--ink-150); }
+/* Review-count badge beside the Design review nav group — items awaiting review */
+.ds-wip { display: inline-flex; align-items: center; justify-content: center; min-width: 16px; height: 16px; margin-left: 6px; padding: 0 5px; border-radius: var(--radius-full); background: var(--accent-amber); color: #fff; font-size: 10px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; vertical-align: middle; }
+/* Construction / pending warning banner on Design review pages */
+.wip-banner { display: flex; align-items: center; gap: 12px; background: var(--accent-amber-bg); border-radius: var(--radius-xl); padding: 12px 16px 12px 18px; position: relative; overflow: hidden; margin-bottom: 22px; }
+.wip-banner::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 8px; background: repeating-linear-gradient(135deg, var(--accent-amber) 0 7px, transparent 7px 14px); opacity: .85; }
+.wip-banner svg { width: 19px; height: 19px; color: var(--accent-amber); flex-shrink: 0; }
+.wip-banner .t { font-size: 13px; color: var(--ink-800); line-height: 1.45; }
+.wip-banner .t b { color: var(--accent-amber); font-weight: 600; }
+.ds-link { display: block; padding: 7px 9px; border-radius: var(--radius-md); font-size: 13px; color: var(--ink-700); text-decoration: none; }
+.ds-link:hover { background: var(--ink-100); color: var(--ink-900); }
+.ds-link.is-active { background: var(--brand-600); color: #fff; font-weight: 600; }
+.ds-hide { display: none !important; }
+.ds-main { flex: 1; min-width: 0; box-sizing: border-box; padding: 40px 48px 120px; max-width: 1120px; margin: 0; }
+/* Back link — return from a Design review detail page to the queue */
+.ds-back { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 500; color: var(--ink-500); text-decoration: none; margin-bottom: 14px; transition: color .15s var(--ease); }
+.ds-back:hover { color: var(--brand-700); text-decoration: none; }
+.ds-back svg { width: 14px; height: 14px; }
+.ds-page-head { margin-bottom: 28px; }
+.ds-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--brand-600); }
+.ds-h1 { font-size: 30px; font-weight: 700; letter-spacing: -.022em; margin: 8px 0 0; }
+.ds-lede { font-size: 14px; color: var(--ink-500); line-height: 1.6; margin: 10px 0 0; max-width: 60ch; }
+.ds-sec { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-400); margin: 28px 0 12px; }
+.ds-sec:first-of-type { margin-top: 8px; }
+.ds-dash { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+.ds-card { display: block; background: #fff; border-radius: var(--radius-2xl); border: 1px solid var(--ink-200);
+           box-shadow: 0 1px 2px rgb(15 14 13 / 0.04), 0 8px 20px -10px rgb(15 14 13 / 0.10); overflow: hidden;
+           text-decoration: none; color: inherit; transition: transform .18s var(--ease), box-shadow .18s var(--ease), border-color .18s var(--ease); }
+.ds-card:hover { transform: translateY(-3px); border-color: var(--ink-300); box-shadow: var(--shadow-hover); }
+.ds-thumb { position: relative; height: 168px; overflow: hidden; background: var(--ink-50); border-bottom: 1px solid var(--ink-150); }
+.ds-thumb iframe { position: absolute; top: 0; left: 0; width: calc(100% / 0.6); height: calc(168px / 0.6); border: 0; transform: scale(0.6); transform-origin: top left; pointer-events: none; }
+/* Full tables need a roomier viewport so columns don't collide; zoom out a touch.
+   The calc keeps the iframe mapped exactly onto the tile, so centering still holds. */
+.ds-card.thumb-wide .ds-thumb iframe { width: calc(100% / 0.38); height: calc(168px / 0.38); transform: scale(0.38); }
+.ds-card-meta { padding: 13px 15px; }
+.ds-card-title { font-size: 15px; font-weight: 600; color: var(--ink-900); }
+/* bare mode: thumbnail shows ONLY the live element of the first subsection —
+   no doc chrome (section headers, captions, rules, tokens) — so the grid is
+   fast to scan as a set of components rather than scaled-down screenshots. */
+.ds-bare { background: var(--ink-50); }
+.ds-bare .ds-nav,
+.ds-bare .ds-page-head,
+.ds-bare section.block > .head,
+.ds-bare .sub-title,
+.ds-bare .spec .cap,
+.ds-bare .rules,
+/* overlay demos (modal/sheet/toast) must never leak into a thumbnail */
+.ds-bare .mt-backdrop,
+.ds-bare .mt-modal,
+.ds-bare .mt-sheet-right,
+.ds-bare .mt-sheet-bottom,
+.ds-bare .mt-toast-viewport { display: none !important; }
+/* The iframe viewport is mapped exactly onto the 168px tile (height x scale =
+   168, width x scale = 100%), so "centered in the page" == "centered in the
+   tile" — no crop-band guesswork. 100vh here equals the iframe's own height. */
+.ds-bare .ds-main { padding: 0 28px; max-width: none; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; }
+.ds-bare section.block { margin: 0 !important; }
+.ds-bare .sub { margin: 0 !important; }
+/* keep only the first subsection so the tile reads as one clean element */
+.ds-bare .sub ~ .sub { display: none !important; }
+.ds-bare .spec { background: transparent; box-shadow: none; overflow: visible; }
+.ds-bare .spec .stage { padding: 0; justify-content: center; }
+
+/* Foundation pages have no .sub to trim, so each dumps its whole grid/table.
+   Pare every tile down to 1–2 large, centered specimens. */
+/* Typography: drop the Phase-2 banner/toggle + scale tables, keep one specimen */
+.ds-bare .type-banner,
+.ds-bare .type-toggle,
+.ds-bare #type .sub { display: none !important; }
+.ds-bare .fonts { grid-template-columns: minmax(0, 440px); justify-content: center; }
+.ds-bare .fonts .font-card:nth-child(n+2) { display: none; }
+/* Color: a single centered 8-stop row (50–700) */
+.ds-bare .ramp { grid-template-columns: repeat(8, 1fr); max-width: 600px; margin: 0 auto; }
+.ds-bare .swatch:nth-child(n+9) { display: none; }
+/* Spacing: first five steps in a centered card */
+.ds-bare .space-rows { max-width: 540px; margin: 0 auto; }
+.ds-bare .space-row:nth-child(n+6) { display: none; }
+/* Radius: two swatches */
+.ds-bare .rad-grid { grid-template-columns: repeat(2, 140px); justify-content: center; }
+.ds-bare .rad-cell:nth-child(n+3) { display: none; }
+/* Shadow: two cards */
+.ds-bare .shad-grid { grid-template-columns: repeat(2, 190px); justify-content: center; }
+.ds-bare .shad-cell:nth-child(n+3) { display: none; }
+/* Motion: one easing table */
+.ds-bare .motion-grid { grid-template-columns: minmax(0, 440px); justify-content: center; }
+.ds-bare .motion-card:nth-child(n+2) { display: none; }
+
+/* Some component pages also stack/repeat demos — pare them to one specimen. */
+/* Stat card: two equal cards, labels given room, value never wraps */
+.ds-bare .stat:nth-child(n+3) { display: none; }
+.ds-bare .stat { flex: 0 0 auto; width: 196px; }
+.ds-bare .stat .val { white-space: nowrap; }
+/* Table row: the legacy grid has no column gap, so columns touch when zoomed —
+   add one so Price / Last activity read as separate columns */
+.ds-bare #table .th-row,
+.ds-bare #table .row { gap: 16px; }
+/* Toasts: the demo pins toasts to the bottom of a tall mock screen; flatten that
+   wrapper so a single toast sits centered in the tile */
+.ds-bare #toasts .stage.col > div { position: static !important; min-height: 0 !important; padding: 0 !important; background: transparent !important; }
+.ds-bare #toasts .stage.col > div > div { position: static !important; transform: none !important; width: auto !important; }
+.ds-bare #toasts > div:not(.head):not(.spec) { display: none !important; } /* the variant-trigger button row */
+.ds-bare .mt-toast ~ .mt-toast { display: none !important; }
+.ds-bare .mt-toast { max-width: 440px; margin-inline: auto; }
+/* Dropdown menu: a single, centered menu */
+.ds-bare .mt-menu ~ .mt-menu { display: none !important; }
+/* Alerts: two full alerts beat three with the last clipped */
+.ds-bare #alerts .mt-alert ~ .mt-alert ~ .mt-alert { display: none !important; }
+/* Breadcrumbs: the demo shows two trails in a .two grid; keep one, full width */
+.ds-bare #crumbs .two { display: block; }
+.ds-bare #crumbs .spec ~ .spec { display: none !important; }
+/* Modal: the real dialog is a fixed overlay opened on click. Hide the trigger /
+   prose chrome and force the dialog open so the tile shows it floating on the
+   same --ink-50 background as every other tile (no dark backdrop). */
+/* Scope to the modal page only — #demo-modal is shared overlay markup present on
+   many pages, but section#modal exists only here. */
+.ds-bare #modal > *:not(.head) { display: none !important; }
+/* backdrop stays hidden (blanket rule above) so the tile background matches the rest */
+/* pin desktop-centered: the iframe is narrow, which would otherwise trip the
+   mobile bottom-sheet media query and fling the dialog off-screen */
+.ds-bare:has(#modal) #demo-modal { display: flex !important; opacity: 1 !important; pointer-events: none;
+  left: 50% !important; right: auto !important; top: 50% !important; bottom: auto !important;
+  width: min(460px, 86%) !important; transform: translate(-50%, -50%) scale(1) !important; }
+/* keep the kit's own body/main element rules from fighting the shell */
+main.ds-main { display: block; }
+
+/* ---- Typography: System-sans (current) vs Geist (Phase 2 proposal) toggle ---- */
+#type-preview[data-font="system"] { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+#type-preview[data-font="geist"]  { font-family: "Geist", -apple-system, BlinkMacSystemFont, sans-serif; }
+.type-banner { display: flex; gap: 12px; align-items: flex-start; margin: 18px 0 14px; padding: 13px 15px;
+               background: var(--brand-50); border: 1px solid var(--brand-100); border-radius: var(--radius-xl);
+               font-size: 13px; line-height: 1.55; color: var(--ink-700); max-width: 760px; }
+.type-banner b { color: var(--brand-800); font-weight: 600; }
+.type-banner .p2 { flex: none; font-family: var(--font-mono); font-size: 10px; font-weight: 600; letter-spacing: .08em;
+                   text-transform: uppercase; color: #fff; background: var(--brand-600); border-radius: var(--radius-full); padding: 4px 9px; margin-top: 1px; }
+.type-toggle { display: inline-flex; gap: 4px; margin: 0 0 20px; padding: 4px; background: var(--ink-100);
+               border: 1px solid var(--ink-200); border-radius: var(--radius-full); }
+.tt-opt { display: inline-flex; align-items: center; gap: 6px; border: 0; background: transparent; cursor: pointer;
+          font: inherit; font-size: 13px; font-weight: 500; color: var(--ink-600); padding: 6px 14px; border-radius: var(--radius-full);
+          transition: background .18s var(--ease), color .18s var(--ease); }
+.tt-opt small { font-size: 10px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-400); }
+.tt-opt.is-active { background: #fff; color: var(--ink-900); box-shadow: var(--shadow-card); }
+.tt-opt.is-active small { color: var(--brand-600); }
+
+/* ---- Playground placeholder appended below each component's main content ---- */
+.pg-placeholder { background: #fff; border: 1px dashed var(--ink-300); border-radius: var(--radius-2xl);
+                  padding: 38px 28px; text-align: center; }
+.pg-ph-badge { display: inline-block; font-family: var(--font-mono); font-size: 10.5px; font-weight: 600; letter-spacing: .08em;
+               text-transform: uppercase; color: var(--brand-700); background: var(--brand-50); border: 1px solid var(--brand-100);
+               border-radius: var(--radius-full); padding: 4px 10px; margin-bottom: 12px; }
+.pg-placeholder p { margin: 0 auto; max-width: 46ch; font-size: 13px; line-height: 1.6; color: var(--ink-500); }
+.ds-bare .pg-block { display: none !important; }
+
+/* Props/API table — type column wraps (long union types) instead of overflowing */
+.type-table .api-type { font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-600); white-space: normal; line-height: 1.5; letter-spacing: .005em; }
+
+/* Device preview frame — phone-width viewport for mobile demos inside a spec */
+.device { width: 360px; flex: none; border: 1px solid var(--ink-200); border-radius: 22px; background: #fff; box-shadow: var(--shadow-card); overflow: hidden; }
+.device-notch { position: relative; height: 26px; background: var(--ink-50); border-bottom: 1px solid var(--ink-150); }
+.device-notch::after { content: ""; position: absolute; top: 9px; left: 50%; transform: translateX(-50%); width: 44px; height: 5px; border-radius: 3px; background: var(--ink-300); }
+/* Horizontally-scrollable tab bar (mobile overflow) — hide the scrollbar */
+.mt-tabbar.is-scroll { overflow-x: auto; scrollbar-width: none; }
+.mt-tabbar.is-scroll::-webkit-scrollbar { display: none; }
+.mt-tabbar.is-scroll .mt-tab { white-space: nowrap; }
+
+@media (max-width: 760px) { .ds-nav { display: none; } .ds-main { padding: 24px 18px 80px; } }

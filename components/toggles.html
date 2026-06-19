@@ -1,0 +1,212 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Switch / checkbox / radio · Mantel</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="../assets/kit.css"><link rel="stylesheet" href="../assets/shell.css"></head><body class="ds-body"><aside class="ds-nav"><div class="ds-brand"><a href="../index.html">Mantel</a><span class="ds-ver">UI Kit · v2.1</span></div><input class="ds-search" type="search" placeholder="Search…" aria-label="Search components"><nav class="ds-links"><a class="ds-link" href="../index.html" data-name="home dashboard">Home</a><a class="ds-link" href="../changelog.html" data-name="changelog releases versions history">Changelog</a><div class="ds-group">Design review <span class="ds-wip" title="Items awaiting review">1</span></div><a class="ds-link" href="../review.html" data-name="review queue">Review queue</a><div class="ds-group">Foundations</div><a class="ds-link" href="../components/type.html" data-name="typography">Typography</a><a class="ds-link" href="../components/color.html" data-name="color">Color</a><a class="ds-link" href="../components/spacing.html" data-name="spacing">Spacing</a><a class="ds-link" href="../components/radius.html" data-name="radius">Radius</a><a class="ds-link" href="../components/shadow.html" data-name="shadow">Shadow</a><a class="ds-link" href="../components/motion.html" data-name="motion">Motion</a><div class="ds-group">Components</div><a class="ds-link" href="../components/buttons.html" data-name="buttons">Buttons</a><a class="ds-link" href="../components/pills.html" data-name="status pills">Status pills</a><a class="ds-link" href="../components/badges.html" data-name="strength badges">Strength badges</a><a class="ds-link" href="../components/avatars.html" data-name="avatars">Avatars</a><a class="ds-link" href="../components/segmented.html" data-name="segmented control">Segmented control</a><a class="ds-link" href="../components/tabs.html" data-name="tabs">Tabs</a><a class="ds-link" href="../components/inputs.html" data-name="search &amp; pickers">Search &amp; pickers</a><a class="ds-link" href="../components/stats.html" data-name="stat card">Stat card</a><a class="ds-link" href="../components/focus.html" data-name="focus card">Focus card</a><a class="ds-link" href="../components/table.html" data-name="table row">Table row</a><a class="ds-link" href="../components/activity.html" data-name="activity feed">Activity feed</a><a class="ds-link" href="../components/live.html" data-name="live indicator">Live indicator</a><a class="ds-link" href="../components/modal.html" data-name="modal">Modal</a><a class="ds-link" href="../components/sheet.html" data-name="sheet / drawer">Sheet / drawer</a><a class="ds-link" href="../components/form-inputs.html" data-name="form inputs">Form inputs</a><a class="ds-link is-active" href="../components/toggles.html" data-name="switch / checkbox / radio">Switch / checkbox / radio</a><a class="ds-link" href="../components/alerts.html" data-name="alerts">Alerts</a><a class="ds-link" href="../components/toasts.html" data-name="toasts">Toasts</a><a class="ds-link" href="../components/tooltips.html" data-name="tooltips">Tooltips</a><a class="ds-link" href="../components/menu.html" data-name="dropdown menu">Dropdown menu</a><a class="ds-link" href="../components/crumbs.html" data-name="breadcrumbs">Breadcrumbs</a><a class="ds-link" href="../components/pager.html" data-name="pagination">Pagination</a><a class="ds-link" href="../components/empty.html" data-name="empty state">Empty state</a><a class="ds-link" href="../components/skeleton.html" data-name="skeleton">Skeleton</a><a class="ds-link" href="../components/btn-group.html" data-name="button group">Button group</a><a class="ds-link" href="../components/data-table.html" data-name="data table">Data table</a><a class="ds-link" href="../components/category.html" data-name="category pills">Category pills</a></nav></aside><main class="ds-main"><div class="ds-page-head"><div class="ds-eyebrow">Components</div><h1 class="ds-h1">Switch / checkbox / radio</h1></div><section class="block" id="toggles">
+      <div class="head">
+        <span class="num">22</span>
+        <h2>Switch · checkbox · radio</h2>
+        <span class="desc">Single-axis toggles · all use brand-600 when on</span>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>Switch</h3><span class="token">.mt-switch</span><span class="note">Track 36×20 · thumb 16</span></div>
+        <div class="spec">
+          <div class="stage" style="gap: 24px;">
+            <label class="mt-switch">
+              <input type="checkbox" checked="">
+              <span class="mt-switch-track"></span>
+              <span class="mt-switch-label">Notify me on every view</span>
+            </label>
+            <label class="mt-switch">
+              <input type="checkbox">
+              <span class="mt-switch-track"></span>
+              <span class="mt-switch-label">Auto-send nudge after 48h</span>
+            </label>
+            <label class="mt-switch">
+              <input type="checkbox" disabled="">
+              <span class="mt-switch-track"></span>
+              <span class="mt-switch-label" style="color: var(--ink-400);">SMS notifications</span>
+            </label>
+          </div>
+          <div class="cap"><span>Off ink-300 with ink-400 border · on brand-600 · thumb slides 16px with snap easing</span><span class="right">220ms · ease-snap</span></div>
+        </div>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>Visibility variants</h3><span class="note">Pick one — try them side-by-side</span></div>
+        <div class="spec">
+          <div class="stage col">
+            <table style="width: 100%; border-collapse: collapse;">
+              <thead>
+                <tr>
+                  <th style="text-align: left; padding: 14px 24px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-500); font-weight: 600; border-bottom: 1px solid var(--ink-150); width: 28%;">Variant</th>
+                  <th style="text-align: left; padding: 14px 16px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-500); font-weight: 600; border-bottom: 1px solid var(--ink-150); width: 24%;">Off</th>
+                  <th style="text-align: left; padding: 14px 16px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-500); font-weight: 600; border-bottom: 1px solid var(--ink-150); width: 24%;">On</th>
+                  <th style="text-align: left; padding: 14px 24px 14px 16px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-500); font-weight: 600; border-bottom: 1px solid var(--ink-150);">Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="padding: 16px 24px; font-size: 14px; color: var(--ink-900); font-weight: 600; vertical-align: middle;">Default<div style="font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-500); font-weight: 400; margin-top: 2px;">.mt-switch</div></td>
+                  <td style="padding: 16px; vertical-align: middle;"><label class="mt-switch"><input type="checkbox"><span class="mt-switch-track"></span></label></td>
+                  <td style="padding: 16px; vertical-align: middle;"><label class="mt-switch"><input type="checkbox" checked=""><span class="mt-switch-track"></span></label></td>
+                  <td style="padding: 16px 24px 16px 16px; font-size: 13px; color: var(--ink-600); line-height: 1.55;">Where we landed last round. ink-300 track + ink-400 border. Clean, restrained, matches our checkbox/radio family.</td>
+                </tr>
+                <tr style="border-top: 1px solid var(--ink-150);">
+                  <td style="padding: 16px 24px; font-size: 14px; color: var(--ink-900); font-weight: 600; vertical-align: middle;">High-contrast<div style="font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-500); font-weight: 400; margin-top: 2px;">.mt-switch.is-strong</div></td>
+                  <td style="padding: 16px; vertical-align: middle;"><label class="mt-switch is-strong"><input type="checkbox"><span class="mt-switch-track"></span></label></td>
+                  <td style="padding: 16px; vertical-align: middle;"><label class="mt-switch is-strong"><input type="checkbox" checked=""><span class="mt-switch-track"></span></label></td>
+                  <td style="padding: 16px 24px 16px 16px; font-size: 13px; color: var(--ink-600); line-height: 1.55;">ink-400 track + ink-500 border. ~4.5:1 contrast against white — passes WCAG AA for non-text UI. Best for settings pages where users scan many toggles.</td>
+                </tr>
+                <tr style="border-top: 1px solid var(--ink-150);">
+                  <td style="padding: 16px 24px; font-size: 14px; color: var(--ink-900); font-weight: 600; vertical-align: middle;">Labeled<div style="font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-500); font-weight: 400; margin-top: 2px;">.mt-switch.is-labeled</div></td>
+                  <td style="padding: 16px; vertical-align: middle;"><label class="mt-switch is-labeled"><input type="checkbox"><span class="mt-switch-track"></span></label></td>
+                  <td style="padding: 16px; vertical-align: middle;"><label class="mt-switch is-labeled"><input type="checkbox" checked=""><span class="mt-switch-track"></span></label></td>
+                  <td style="padding: 16px 24px 16px 16px; font-size: 13px; color: var(--ink-600); line-height: 1.55;">OFF/ON text in mono inside the track. Wider (52px) — uses real estate but state is unmistakable. iOS uses this on accessibility-larger sizes.</td>
+                </tr>
+                <tr style="border-top: 1px solid var(--ink-150);">
+                  <td style="padding: 16px 24px; font-size: 14px; color: var(--ink-900); font-weight: 600; vertical-align: middle;">Iconized — track<div style="font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-500); font-weight: 400; margin-top: 2px;">.mt-switch.is-iconized</div></td>
+                  <td style="padding: 16px; vertical-align: middle;"><label class="mt-switch is-iconized"><input type="checkbox"><span class="mt-switch-track"></span></label></td>
+                  <td style="padding: 16px; vertical-align: middle;"><label class="mt-switch is-iconized"><input type="checkbox" checked=""><span class="mt-switch-track"></span></label></td>
+                  <td style="padding: 16px 24px 16px 16px; font-size: 13px; color: var(--ink-600); line-height: 1.55;">Cross/check sit in the track, opposite the thumb. Icon shows current state but lives separately from the moving piece. 44px wide.</td>
+                </tr>
+                <tr style="border-top: 1px solid var(--ink-150);">
+                  <td style="padding: 16px 24px; font-size: 14px; color: var(--ink-900); font-weight: 600; vertical-align: middle;">Iconized — thumb<div style="font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-500); font-weight: 400; margin-top: 2px;">.mt-switch.is-iconized-thumb</div></td>
+                  <td style="padding: 16px; vertical-align: middle;"><label class="mt-switch is-iconized-thumb"><input type="checkbox"><span class="mt-switch-track"></span></label></td>
+                  <td style="padding: 16px; vertical-align: middle;"><label class="mt-switch is-iconized-thumb"><input type="checkbox" checked=""><span class="mt-switch-track"></span></label></td>
+                  <td style="padding: 16px 24px 16px 16px; font-size: 13px; color: var(--ink-600); line-height: 1.55;">Icon rides <em>inside</em> the thumb circle. Off: grey cross on white. On: brand check on white over brand track. State + thumb are one element — Material 3 / Stripe pattern.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="cap"><span>My recommendation: <b>High-contrast</b>. Best visibility without breaking the restrained Mantel aesthetic or our checkbox/radio family.</span><span class="right">.is-strong · .is-labeled · .is-iconized</span></div>
+        </div>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>Checkbox</h3><span class="token">.mt-check</span><span class="note">16px · 4px radius · indeterminate via .indeterminate JS prop</span></div>
+        <div class="spec">
+          <div class="stage" style="gap: 18px;">
+            <label class="mt-check">
+              <input type="checkbox" checked="">
+              <span class="mt-check-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"></path></svg>
+              </span>
+              <span class="mt-check-label">Include warranty</span>
+            </label>
+            <label class="mt-check">
+              <input type="checkbox">
+              <span class="mt-check-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"></path></svg>
+              </span>
+              <span class="mt-check-label">Require co-signer</span>
+            </label>
+            <label class="mt-check" id="mt-check-indet">
+              <input type="checkbox">
+              <span class="mt-check-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 12h12"></path></svg>
+              </span>
+              <span class="mt-check-label">Select all (some)</span>
+            </label>
+            <label class="mt-check">
+              <input type="checkbox" disabled="">
+              <span class="mt-check-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"></path></svg>
+              </span>
+              <span class="mt-check-label" style="color: var(--ink-400);">Disabled</span>
+            </label>
+          </div>
+          <div class="cap"><span>Off white + ink-300 ring · on brand-600 fill + white tick · indeterminate uses the dash glyph</span><span class="right">.mt-check / -box / -label</span></div>
+        </div>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>Radio</h3><span class="token">.mt-radio</span><span class="note">16px circle · inner 6px dot scales in</span></div>
+        <div class="spec">
+          <div class="stage" style="gap: 18px;">
+            <label class="mt-radio"><input type="radio" name="channel" checked=""><span class="mt-radio-dot"></span><span class="mt-radio-label">Email + secure link</span></label>
+            <label class="mt-radio"><input type="radio" name="channel"><span class="mt-radio-dot"></span><span class="mt-radio-label">Email only</span></label>
+            <label class="mt-radio"><input type="radio" name="channel"><span class="mt-radio-dot"></span><span class="mt-radio-label">SMS</span></label>
+            <label class="mt-radio"><input type="radio" name="channel" disabled=""><span class="mt-radio-dot"></span><span class="mt-radio-label" style="color: var(--ink-400);">Paper (coming soon)</span></label>
+          </div>
+          <div class="cap"><span>Inner dot scales 0 → 1 with snap easing · ring goes brand-600 on check</span><span class="right">.mt-radio / -dot / -label</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ALERTS --><section class="block pg-block" id="playground"><div class="head"><span class="num">PG</span><h2>Playground</h2><span class="desc">Interactive props · placeholder for front-end adoption</span></div><div class="pg-placeholder"><div class="pg-ph-badge">Coming soon</div><p>Live, editable component props (variant · size · state) will render here, adopted from the front-end UI Kit. Placed below the spec above by design.</p></div></section></main></div>
+
+<!-- ============ Live overlay demos ============ -->
+<div class="mt-backdrop" data-overlay-backdrop=""></div>
+
+<div class="mt-modal" id="demo-modal" role="dialog" aria-modal="true" aria-labelledby="demo-modal-t">
+  <div class="mt-overlay-head">
+    <div class="mt-overlay-title">
+      <div class="mt-overlay-eyebrow">Send proposal</div>
+      <h3 id="demo-modal-t">Confirm send to Robert &amp; Linda Tan</h3>
+      <div class="mt-overlay-sub">Once sent, the proposal becomes view-tracked. You can revoke access from the row menu.</div>
+    </div>
+    <button class="btn btn-icon" aria-label="Close" data-close="" style="margin: -6px -6px 0 0; flex-shrink: 0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M6 18L18 6"></path></svg></button>
+  </div>
+  <div class="mt-overlay-body">
+    Recipient: <strong style="color: var(--ink-900);">robert.tan@example.com</strong><br>
+    Property: 442 Oak Ridge Dr · $1,245,000<br>
+    Channel: email + secure link
+  </div>
+  <div class="mt-overlay-foot">
+    
+    <button class="btn btn-secondary" data-close="">Cancel</button>
+    <button class="btn btn-default" data-close="">Send proposal</button>
+  </div>
+</div>
+
+<div class="mt-sheet-right" id="demo-sheet-right" role="dialog" aria-modal="true" aria-labelledby="demo-sheet-right-t">
+  <div class="mt-overlay-head">
+    <div class="mt-overlay-title">
+      <div class="mt-overlay-eyebrow">Seller detail</div>
+      <h3 id="demo-sheet-right-t">Robert &amp; Linda Tan</h3>
+      <div class="mt-overlay-sub">442 Oak Ridge Dr · $1,245,000</div>
+    </div>
+    <button class="btn btn-icon" aria-label="Close" data-close="" style="margin: -6px -6px 0 0; flex-shrink: 0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M6 18L18 6"></path></svg></button>
+  </div>
+  <div class="mt-overlay-body" style="flex: 1;">
+    <div style="display: flex; gap: 8px; margin-bottom: 16px;"><span class="pill pill-viewed"><span class="dot"></span>Viewed · 3h</span><span class="badge badge-high" style="width: 28px; height: 28px; font-size: 12px;">92</span></div>
+    <p style="margin-bottom: 14px;">Opened the proposal 4 minutes ago. Still on the financing section after three sessions in two days.</p>
+    <div style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-500); font-weight: 600; margin: 18px 0 10px;">Recent activity</div>
+    <div class="activity" style="padding: 0; margin: 0 -4px;">
+      <div class="item" style="padding: 10px 4px;"><span class="bubble view" style="width: 28px; height: 28px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"></path><circle cx="12" cy="12" r="3"></circle></svg></span><div class="txt" style="font-size: 13px;">Opened proposal · 3rd time</div><span class="ts" style="font-size: 12px;">14:32</span></div>
+      <div class="item" style="padding: 10px 4px;"><span class="bubble send" style="width: 28px; height: 28px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"></path><path d="M22 2L15 22l-4-9-9-4z"></path></svg></span><div class="txt" style="font-size: 13px;">You sent the proposal</div><span class="ts" style="font-size: 12px;">Mon</span></div>
+    </div>
+  </div>
+  <div class="mt-overlay-foot">
+    <button class="btn btn-secondary" data-close="">Mark stalled</button>
+    <button class="btn btn-default" data-close="">Reply now</button>
+  </div>
+</div>
+
+<div class="mt-sheet-bottom" id="demo-sheet-bottom" role="dialog" aria-modal="true" aria-labelledby="demo-sheet-bottom-t">
+  <div class="mt-grabber"><span></span></div>
+  <div class="mt-overlay-head">
+    <div class="mt-overlay-title">
+      <div class="mt-overlay-eyebrow">Filter</div>
+      <h3 id="demo-sheet-bottom-t">Filter proposals</h3>
+    </div>
+    <button class="btn btn-icon" aria-label="Close" data-close="" style="margin: -6px -6px 0 0; flex-shrink: 0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M6 18L18 6"></path></svg></button>
+  </div>
+  <div class="mt-overlay-body">
+    <div style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-500); font-weight: 600; margin-bottom: 10px;">Lifecycle</div>
+    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+      <span class="pill pill-viewed"><span class="dot"></span>Viewed</span>
+      <span class="pill pill-sent"><span class="dot"></span>Sent</span>
+      <span class="pill pill-signed"><span class="dot"></span>Signed</span>
+      <span class="pill pill-neutral">Draft</span>
+    </div>
+  </div>
+  <div class="mt-overlay-foot">
+    <span class="mt-foot-aux">3 selected</span>
+    <button class="btn btn-secondary" data-close="">Reset</button>
+    <button class="btn btn-default" data-close="">Apply</button>
+  </div>
+</div>
+
+
+
+<!-- Toast viewport — fixed bottom-center -->
+<div class="mt-toast-viewport" id="mt-toast-viewport" aria-live="polite" aria-atomic="false"></div><script src="../assets/kit.js"></script><script src="../assets/shell.js"></script></body></html>

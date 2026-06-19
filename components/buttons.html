@@ -1,0 +1,232 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Buttons · Mantel</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="../assets/kit.css"><link rel="stylesheet" href="../assets/shell.css"></head><body class="ds-body"><aside class="ds-nav"><div class="ds-brand"><a href="../index.html">Mantel</a><span class="ds-ver">UI Kit · v2.1</span></div><input class="ds-search" type="search" placeholder="Search…" aria-label="Search components"><nav class="ds-links"><a class="ds-link" href="../index.html" data-name="home dashboard">Home</a><a class="ds-link" href="../changelog.html" data-name="changelog releases versions history">Changelog</a><div class="ds-group">Design review <span class="ds-wip" title="Items awaiting review">1</span></div><a class="ds-link" href="../review.html" data-name="review queue">Review queue</a><div class="ds-group">Foundations</div><a class="ds-link" href="../components/type.html" data-name="typography">Typography</a><a class="ds-link" href="../components/color.html" data-name="color">Color</a><a class="ds-link" href="../components/spacing.html" data-name="spacing">Spacing</a><a class="ds-link" href="../components/radius.html" data-name="radius">Radius</a><a class="ds-link" href="../components/shadow.html" data-name="shadow">Shadow</a><a class="ds-link" href="../components/motion.html" data-name="motion">Motion</a><div class="ds-group">Components</div><a class="ds-link is-active" href="../components/buttons.html" data-name="buttons">Buttons</a><a class="ds-link" href="../components/pills.html" data-name="status pills">Status pills</a><a class="ds-link" href="../components/badges.html" data-name="strength badges">Strength badges</a><a class="ds-link" href="../components/avatars.html" data-name="avatars">Avatars</a><a class="ds-link" href="../components/segmented.html" data-name="segmented control">Segmented control</a><a class="ds-link" href="../components/tabs.html" data-name="tabs">Tabs</a><a class="ds-link" href="../components/inputs.html" data-name="search &amp; pickers">Search &amp; pickers</a><a class="ds-link" href="../components/stats.html" data-name="stat card">Stat card</a><a class="ds-link" href="../components/focus.html" data-name="focus card">Focus card</a><a class="ds-link" href="../components/table.html" data-name="table row">Table row</a><a class="ds-link" href="../components/activity.html" data-name="activity feed">Activity feed</a><a class="ds-link" href="../components/live.html" data-name="live indicator">Live indicator</a><a class="ds-link" href="../components/modal.html" data-name="modal">Modal</a><a class="ds-link" href="../components/sheet.html" data-name="sheet / drawer">Sheet / drawer</a><a class="ds-link" href="../components/form-inputs.html" data-name="form inputs">Form inputs</a><a class="ds-link" href="../components/toggles.html" data-name="switch / checkbox / radio">Switch / checkbox / radio</a><a class="ds-link" href="../components/alerts.html" data-name="alerts">Alerts</a><a class="ds-link" href="../components/toasts.html" data-name="toasts">Toasts</a><a class="ds-link" href="../components/tooltips.html" data-name="tooltips">Tooltips</a><a class="ds-link" href="../components/menu.html" data-name="dropdown menu">Dropdown menu</a><a class="ds-link" href="../components/crumbs.html" data-name="breadcrumbs">Breadcrumbs</a><a class="ds-link" href="../components/pager.html" data-name="pagination">Pagination</a><a class="ds-link" href="../components/empty.html" data-name="empty state">Empty state</a><a class="ds-link" href="../components/skeleton.html" data-name="skeleton">Skeleton</a><a class="ds-link" href="../components/btn-group.html" data-name="button group">Button group</a><a class="ds-link" href="../components/data-table.html" data-name="data table">Data table</a><a class="ds-link" href="../components/category.html" data-name="category pills">Category pills</a></nav></aside><main class="ds-main"><div class="ds-page-head"><div class="ds-eyebrow">Components</div><h1 class="ds-h1">Buttons</h1></div><section class="block" id="buttons">
+      <div class="head">
+        <span class="num">07</span>
+        <h2>Buttons</h2>
+        <span class="desc">8px rounded · default + destructive carry elevation · ≤1 primary per surface · 7 variants · 5 sizes</span>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>Default</h3><span class="token">.btn .btn-default</span><span class="note">36px · the single focal action · variant="default"</span></div>
+        <div class="spec">
+          <div class="stage">
+            <button class="btn btn-default">Reply now</button>
+            <button class="btn btn-default"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>Add discount</button>
+            <button class="btn btn-default" disabled="">Disabled</button>
+          </div>
+          <div class="cap"><span>Vertical brand gradient (<b>brand-500 → 600</b>) + layered elevation (<b>--shadow-button</b>); hover deepens, active presses inward. Text white · 14px / 500. Front-end size <b>default = 36px</b>.</span><span class="right">height 36 · radius 8</span></div>
+        </div>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>Secondary &amp; outline</h3><span class="token">.btn .btn-secondary · .btn .btn-outline</span><span class="note">Standard CTA · outline is a kept-for-compat alias</span></div>
+        <div class="spec">
+          <div class="stage">
+            <button class="btn btn-secondary">View details <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M13 5l7 7-7 7"></path></svg></button>
+            <button class="btn btn-secondary">Send nudge</button>
+            <button class="btn btn-outline">Outline alias</button>
+          </div>
+          <div class="cap"><span><b>1px solid brand-600</b> border · <b>text brand-600</b> (matches the border) · bg white · hover fills brand-50 and deepens to brand-700. <b>.btn-outline</b> is an alias of secondary — prefer secondary in new code.</span><span class="right">height 36 · radius 8</span></div>
+        </div>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>Neutral &amp; ghost</h3><span class="token">.btn .btn-neutral · .btn .btn-ghost</span><span class="note">Low-emphasis — must not compete with the primary</span></div>
+        <div class="spec">
+          <div class="stage">
+            <button class="btn btn-neutral">Cancel</button>
+            <button class="btn btn-ghost">Dismiss</button>
+            <button class="btn btn-ghost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>Add row</button>
+          </div>
+          <div class="cap"><span><b>.btn-neutral</b> — flat white + gray border, for Cancel / Close. <b>.btn-ghost</b> — no border or fill until hover (ink-100 fill), for dense toolbars, row affordances, and icon-adjacent text.</span><span class="right">flat · chromeless</span></div>
+        </div>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>Destructive</h3><span class="token">.btn .btn-destructive</span><span class="note">Irreversible focal action inside a confirm</span></div>
+        <div class="spec">
+          <div class="stage">
+            <button class="btn btn-destructive">Deactivate</button>
+            <button class="btn btn-destructive" disabled="">Disabled</button>
+          </div>
+          <div class="cap"><span>Elevated red gradient — the same elevation language as default — reserved for the focal action in a destructive confirm (Deactivate, Delete). Pairs with a flat <b>.btn-neutral</b> Cancel.</span><span class="right">elevated</span></div>
+        </div>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>Link</h3><span class="token">.btn .btn-link</span><span class="note">Inline navigational text — reads as a link, not a button</span></div>
+        <div class="spec">
+          <div class="stage">
+            <button class="btn btn-link">Learn more</button>
+            <button class="btn btn-link">View all activity <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M13 5l7 7-7 7"></path></svg></button>
+          </div>
+          <div class="cap"><span>No background, border, or padding — brand-700 text, underline on hover. Use for inline navigation (e.g. “Learn more”), never as a primary action.</span><span class="right">text-only</span></div>
+        </div>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>Icon button</h3><span class="token">.btn .btn-icon</span><span class="note">36² · brand-bordered standalone control</span></div>
+        <div class="spec">
+          <div class="stage">
+            <button class="btn btn-icon" aria-label="Close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M6 18L18 6"></path></svg></button>
+            <button class="btn btn-icon" aria-label="More"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="6" r="1"></circle><circle cx="12" cy="18" r="1"></circle></svg></button>
+            <button class="btn btn-icon" aria-label="Bell"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 16v-5a6 6 0 1 0-12 0v5l-2 3h16l-2-3z"></path><path d="M10 21a2 2 0 0 0 4 0"></path></svg></button>
+          </div>
+          <div class="cap"><span>White fill + <b>1px brand-600</b> border at rest — obviously tappable · text brand-700 · hover <b>brand-50</b> fill + brand-700 border. <b>Note:</b> overlay close buttons and the table <b>.mt-row-action</b> stay neutral gray on purpose.</span><span class="right">36 × 36 · radius 8</span></div>
+        </div>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>Leading &amp; trailing icons</h3><span class="token">.btn svg</span><span class="note">Order the icon before or after the label — the flex gap spaces it</span></div>
+        <div class="spec">
+          <div class="stage">
+            <button class="btn btn-default"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>Add discount</button>
+            <button class="btn btn-secondary">View details <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M13 5l7 7-7 7"></path></svg></button>
+            <button class="btn btn-secondary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="M7 10l5 5 5-5"></path><path d="M12 15V3"></path></svg>Export <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg></button>
+          </div>
+          <div class="cap"><span>Icons are <b>16×16</b>, inherit <b>currentColor</b>, and never shrink (<b>flex-shrink: 0</b>); an <b>8px</b> gap separates them. Leading icon goes before the label, trailing after — just order them in the DOM.</span><span class="right">.btn svg · gap 8</span></div>
+        </div>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>Sizes</h3><span class="token">.btn-sm · .btn-compact · .btn-lg · .btn-icon</span><span class="note">28 · 34 · 36 · 40 · 36²</span></div>
+        <div class="spec">
+          <div class="stage">
+            <button class="btn btn-default btn-sm">Small</button>
+            <button class="btn btn-default btn-compact">Compact</button>
+            <button class="btn btn-default">Default</button>
+            <button class="btn btn-default btn-lg">Large</button>
+            <button class="btn btn-icon" aria-label="More"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="6" r="1"></circle><circle cx="12" cy="18" r="1"></circle></svg></button>
+          </div>
+          <div class="cap"><span><b>sm</b> 28px (tight rows) · <b>compact</b> 34px (toolbars beside a 36px search field) · <b>default</b> 36px · <b>lg</b> 40px (marketing / empty-state CTAs) · <b>icon</b> 36². Front-end <b>size</b> prop.</span><span class="right">28 · 34 · 36 · 40</span></div>
+        </div>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>States</h3><span class="token">.is-loading · .btn-spinner · :disabled</span><span class="note">loading + done mirror the front-end props</span></div>
+        <div class="spec">
+          <div class="stage">
+            <button class="btn btn-default is-loading"><span class="btn-spinner"></span>Sending…</button>
+            <button class="btn btn-default"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>Sent</button>
+            <button class="btn btn-default" disabled="">Disabled</button>
+          </div>
+          <div class="cap"><span><b>loading</b> shows a spinner + optional <b>loadingText</b> and blocks pointer events; <b>done</b> swaps in a check for a completed action; <b>disabled</b> drops to 50% opacity.</span><span class="right">is-loading · is-done</span></div>
+        </div>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>When to use each variant</h3><span class="note">one primary per surface</span></div>
+        <table class="type-table">
+          <thead><tr><th>Variant</th><th>When</th></tr></thead>
+          <tbody>
+            <tr><td class="tok">default</td><td class="sample">The single primary action on a surface — Save, Send, Add. Max one per view; it carries the brand gradient + elevation.</td></tr>
+            <tr><td class="tok">secondary</td><td class="sample">The standard CTA when there is no single dominant action, or alongside a primary (e.g. “View details”). White with a brand border.</td></tr>
+            <tr><td class="tok">neutral</td><td class="sample">Low-stakes / dismissive actions — Cancel, Close — that must not compete with the primary. Flat white, gray border.</td></tr>
+            <tr><td class="tok">outline</td><td class="sample">Alias of secondary, kept for existing consumers. Prefer secondary in new code.</td></tr>
+            <tr><td class="tok">ghost</td><td class="sample">In-dense-UI actions with no chrome — toolbar / row affordances, icon-adjacent text. No border or fill until hover.</td></tr>
+            <tr><td class="tok">destructive</td><td class="sample">Irreversible / data-losing confirms — Deactivate, Delete. Reserve for the focal action inside a confirm dialog.</td></tr>
+            <tr><td class="tok">link</td><td class="sample">Inline navigational text that reads as a link, not a button (e.g. “Learn more”).</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>Props</h3><span class="token">Button · $lib/ds</span><span class="note">front-end API</span></div>
+        <table class="type-table">
+          <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td class="tok">variant</td><td class="api-type">'default' | 'secondary' | 'outline' | 'neutral' | 'ghost' | 'destructive' | 'link'</td><td class="specs">'default'</td><td class="sample">Visual style. default + destructive carry elevation; ≤1 primary per surface.</td></tr>
+            <tr><td class="tok">size</td><td class="api-type">'default' | 'sm' | 'compact' | 'lg' | 'icon'</td><td class="specs">'default'</td><td class="sample">36px default · 28 sm · 34 compact · 40 lg · 36² icon.</td></tr>
+            <tr><td class="tok">loading</td><td class="api-type">boolean</td><td class="specs">false</td><td class="sample">Shows a spinner and disables the button.</td></tr>
+            <tr><td class="tok">loadingText</td><td class="api-type">string</td><td class="specs">—</td><td class="sample">Optional label shown next to the spinner while loading.</td></tr>
+            <tr><td class="tok">done</td><td class="api-type">boolean</td><td class="specs">false</td><td class="sample">Shows a check icon for a completed action.</td></tr>
+            <tr><td class="tok">disabled</td><td class="api-type">boolean</td><td class="specs">false</td><td class="sample">50% opacity, no pointer events.</td></tr>
+            <tr><td class="tok">class</td><td class="api-type">string</td><td class="specs">—</td><td class="sample">Extra classes merged onto the button.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="rules">
+        <div class="rule"><div class="h do">Do</div><p>One primary (default) per surface. Pair default + secondary side-by-side; icon buttons trail. Reach for ghost / link for low-emphasis inline actions.</p></div>
+        <div class="rule"><div class="h dnt">Don't</div><p>Stack two defaults. Don't elevate secondary / neutral / ghost — elevation is reserved for the default and destructive focal actions.</p></div>
+      </div>
+    </section>
+
+    <!-- STATUS PILLS --><section class="block pg-block" id="playground"><div class="head"><span class="num">PG</span><h2>Playground</h2><span class="desc">Interactive props · placeholder for front-end adoption</span></div><div class="pg-placeholder"><div class="pg-ph-badge">Coming soon</div><p>Live, editable component props (variant · size · state) will render here, adopted from the front-end UI Kit. Placed below the spec above by design.</p></div></section></main></div>
+
+<!-- ============ Live overlay demos ============ -->
+<div class="mt-backdrop" data-overlay-backdrop=""></div>
+
+<div class="mt-modal" id="demo-modal" role="dialog" aria-modal="true" aria-labelledby="demo-modal-t">
+  <div class="mt-overlay-head">
+    <div class="mt-overlay-title">
+      <div class="mt-overlay-eyebrow">Send proposal</div>
+      <h3 id="demo-modal-t">Confirm send to Robert &amp; Linda Tan</h3>
+      <div class="mt-overlay-sub">Once sent, the proposal becomes view-tracked. You can revoke access from the row menu.</div>
+    </div>
+    <button class="btn btn-icon" aria-label="Close" data-close="" style="margin: -6px -6px 0 0; flex-shrink: 0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M6 18L18 6"></path></svg></button>
+  </div>
+  <div class="mt-overlay-body">
+    Recipient: <strong style="color: var(--ink-900);">robert.tan@example.com</strong><br>
+    Property: 442 Oak Ridge Dr · $1,245,000<br>
+    Channel: email + secure link
+  </div>
+  <div class="mt-overlay-foot">
+    
+    <button class="btn btn-secondary" data-close="">Cancel</button>
+    <button class="btn btn-default" data-close="">Send proposal</button>
+  </div>
+</div>
+
+<div class="mt-sheet-right" id="demo-sheet-right" role="dialog" aria-modal="true" aria-labelledby="demo-sheet-right-t">
+  <div class="mt-overlay-head">
+    <div class="mt-overlay-title">
+      <div class="mt-overlay-eyebrow">Seller detail</div>
+      <h3 id="demo-sheet-right-t">Robert &amp; Linda Tan</h3>
+      <div class="mt-overlay-sub">442 Oak Ridge Dr · $1,245,000</div>
+    </div>
+    <button class="btn btn-icon" aria-label="Close" data-close="" style="margin: -6px -6px 0 0; flex-shrink: 0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M6 18L18 6"></path></svg></button>
+  </div>
+  <div class="mt-overlay-body" style="flex: 1;">
+    <div style="display: flex; gap: 8px; margin-bottom: 16px;"><span class="pill pill-viewed"><span class="dot"></span>Viewed · 3h</span><span class="badge badge-high" style="width: 28px; height: 28px; font-size: 12px;">92</span></div>
+    <p style="margin-bottom: 14px;">Opened the proposal 4 minutes ago. Still on the financing section after three sessions in two days.</p>
+    <div style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-500); font-weight: 600; margin: 18px 0 10px;">Recent activity</div>
+    <div class="activity" style="padding: 0; margin: 0 -4px;">
+      <div class="item" style="padding: 10px 4px;"><span class="bubble view" style="width: 28px; height: 28px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"></path><circle cx="12" cy="12" r="3"></circle></svg></span><div class="txt" style="font-size: 13px;">Opened proposal · 3rd time</div><span class="ts" style="font-size: 12px;">14:32</span></div>
+      <div class="item" style="padding: 10px 4px;"><span class="bubble send" style="width: 28px; height: 28px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"></path><path d="M22 2L15 22l-4-9-9-4z"></path></svg></span><div class="txt" style="font-size: 13px;">You sent the proposal</div><span class="ts" style="font-size: 12px;">Mon</span></div>
+    </div>
+  </div>
+  <div class="mt-overlay-foot">
+    <button class="btn btn-secondary" data-close="">Mark stalled</button>
+    <button class="btn btn-default" data-close="">Reply now</button>
+  </div>
+</div>
+
+<div class="mt-sheet-bottom" id="demo-sheet-bottom" role="dialog" aria-modal="true" aria-labelledby="demo-sheet-bottom-t">
+  <div class="mt-grabber"><span></span></div>
+  <div class="mt-overlay-head">
+    <div class="mt-overlay-title">
+      <div class="mt-overlay-eyebrow">Filter</div>
+      <h3 id="demo-sheet-bottom-t">Filter proposals</h3>
+    </div>
+    <button class="btn btn-icon" aria-label="Close" data-close="" style="margin: -6px -6px 0 0; flex-shrink: 0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M6 18L18 6"></path></svg></button>
+  </div>
+  <div class="mt-overlay-body">
+    <div style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-500); font-weight: 600; margin-bottom: 10px;">Lifecycle</div>
+    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+      <span class="pill pill-viewed"><span class="dot"></span>Viewed</span>
+      <span class="pill pill-sent"><span class="dot"></span>Sent</span>
+      <span class="pill pill-signed"><span class="dot"></span>Signed</span>
+      <span class="pill pill-neutral">Draft</span>
+    </div>
+  </div>
+  <div class="mt-overlay-foot">
+    <span class="mt-foot-aux">3 selected</span>
+    <button class="btn btn-secondary" data-close="">Reset</button>
+    <button class="btn btn-default" data-close="">Apply</button>
+  </div>
+</div>
+
+
+
+<!-- Toast viewport — fixed bottom-center -->
+<div class="mt-toast-viewport" id="mt-toast-viewport" aria-live="polite" aria-atomic="false"></div><script src="../assets/kit.js"></script><script src="../assets/shell.js"></script></body></html>

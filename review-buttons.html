@@ -1,0 +1,96 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Button elevation · Design review · Mantel</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="assets/kit.css"><link rel="stylesheet" href="assets/shell.css">
+<style>
+  /* ---------------------------------------------------------------------------
+     SCOPED EXPLORATION CSS — review only, NOT promoted into tokens yet.
+     Zac's ask: drop the shadow, less 3D — but not totally flat. Two candidates:
+     A · Soft lift (gradient + light drop) and B · Light shadow (flat fill + soft drop).
+     Each overrides only background + box-shadow on .btn-default; the rest of the
+     geometry (white text / 40px / radius) is inherited. Page <style> loads after
+     kit.css so equal-specificity overrides win.
+     --------------------------------------------------------------------------- */
+
+  /* — A · Soft lift — gradient kept, single soft drop, no inset bevel — */
+  .btn-exA          { background: linear-gradient(180deg, var(--brand-500), var(--brand-600)); box-shadow: 0 1px 2px rgba(3,18,38,.16), 0 2px 6px -1px rgba(3,18,38,.12); }
+  .btn-exA:hover    { background: linear-gradient(180deg, var(--brand-500), var(--brand-700)); box-shadow: 0 2px 5px rgba(3,18,38,.18), 0 5px 12px -2px rgba(3,18,38,.16); }
+  .btn-exA:active   { background: linear-gradient(180deg, var(--brand-600), var(--brand-700)); box-shadow: inset 0 1px 3px rgba(3,18,38,.22); }
+
+  /* — B · Light shadow — flat solid fill + a soft drop (no gradient, no bevel) — */
+  .btn-exB          { background: var(--brand-600); box-shadow: 0 1px 2px rgba(3,18,38,.18), 0 3px 8px -2px rgba(3,18,38,.16); }
+  .btn-exB:hover    { background: var(--brand-700); box-shadow: 0 2px 4px rgba(3,18,38,.20), 0 5px 12px -2px rgba(3,18,38,.18); }
+  .btn-exB:active   { background: var(--brand-700); box-shadow: inset 0 1px 2px rgba(3,18,38,.20); }
+
+  .rev-meta { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 10px; }
+  .rev-chip { display: inline-flex; align-items: center; gap: 6px; padding: 2px 10px; border-radius: var(--radius-full); font-size: 12px; font-weight: 600; background: var(--accent-amber-bg); color: var(--accent-amber); }
+  .rev-chip .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+
+  /* My recommendation note (replaces the do/don't rules) */
+  .sugg { display: flex; gap: 14px; align-items: flex-start; background: var(--brand-50); border-radius: var(--radius-xl); padding: 16px 18px; margin-top: 16px; }
+  .sugg svg { width: 20px; height: 20px; color: var(--brand-600); flex-shrink: 0; margin-top: 1px; }
+  .sugg .h { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--brand-600); }
+  .sugg p { font-size: 13.5px; color: var(--ink-800); line-height: 1.55; margin-top: 5px; }
+  .sugg p b { color: var(--ink-900); font-weight: 600; }
+</style></head><body class="ds-body"><aside class="ds-nav"><div class="ds-brand"><a href="index.html">Mantel</a><span class="ds-ver">UI Kit · v2.1</span></div><input class="ds-search" type="search" placeholder="Search…" aria-label="Search components"><nav class="ds-links"><a class="ds-link" href="index.html" data-name="home dashboard">Home</a><a class="ds-link" href="changelog.html" data-name="changelog releases versions history">Changelog</a><div class="ds-group">Design review <span class="ds-wip" title="Items awaiting review">1</span></div><a class="ds-link is-active" href="review.html" data-name="review queue">Review queue</a><div class="ds-group">Foundations</div><a class="ds-link" href="components/type.html" data-name="typography">Typography</a><a class="ds-link" href="components/color.html" data-name="color">Color</a><a class="ds-link" href="components/spacing.html" data-name="spacing">Spacing</a><a class="ds-link" href="components/radius.html" data-name="radius">Radius</a><a class="ds-link" href="components/shadow.html" data-name="shadow">Shadow</a><a class="ds-link" href="components/motion.html" data-name="motion">Motion</a><div class="ds-group">Components</div><a class="ds-link" href="components/buttons.html" data-name="buttons">Buttons</a><a class="ds-link" href="components/pills.html" data-name="status pills">Status pills</a><a class="ds-link" href="components/badges.html" data-name="strength badges">Strength badges</a><a class="ds-link" href="components/avatars.html" data-name="avatars">Avatars</a><a class="ds-link" href="components/segmented.html" data-name="segmented control">Segmented control</a><a class="ds-link" href="components/tabs.html" data-name="tabs">Tabs</a><a class="ds-link" href="components/inputs.html" data-name="search &amp; pickers">Search &amp; pickers</a><a class="ds-link" href="components/stats.html" data-name="stat card">Stat card</a><a class="ds-link" href="components/focus.html" data-name="focus card">Focus card</a><a class="ds-link" href="components/table.html" data-name="table row">Table row</a><a class="ds-link" href="components/activity.html" data-name="activity feed">Activity feed</a><a class="ds-link" href="components/live.html" data-name="live indicator">Live indicator</a><a class="ds-link" href="components/modal.html" data-name="modal">Modal</a><a class="ds-link" href="components/sheet.html" data-name="sheet / drawer">Sheet / drawer</a><a class="ds-link" href="components/form-inputs.html" data-name="form inputs">Form inputs</a><a class="ds-link" href="components/toggles.html" data-name="switch / checkbox / radio">Switch / checkbox / radio</a><a class="ds-link" href="components/alerts.html" data-name="alerts">Alerts</a><a class="ds-link" href="components/toasts.html" data-name="toasts">Toasts</a><a class="ds-link" href="components/tooltips.html" data-name="tooltips">Tooltips</a><a class="ds-link" href="components/menu.html" data-name="dropdown menu">Dropdown menu</a><a class="ds-link" href="components/crumbs.html" data-name="breadcrumbs">Breadcrumbs</a><a class="ds-link" href="components/pager.html" data-name="pagination">Pagination</a><a class="ds-link" href="components/empty.html" data-name="empty state">Empty state</a><a class="ds-link" href="components/skeleton.html" data-name="skeleton">Skeleton</a><a class="ds-link" href="components/btn-group.html" data-name="button group">Button group</a><a class="ds-link" href="components/data-table.html" data-name="data table">Data table</a><a class="ds-link" href="components/category.html" data-name="category pills">Category pills</a></nav></aside><main class="ds-main">
+
+<div class="wip-banner">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="8" rx="1"></rect><path d="M17 14v7"></path><path d="M7 14v7"></path><path d="M17 3v3"></path><path d="M7 3v3"></path><path d="M10 14 2.3 6.3"></path><path d="m14 6 7.7 7.7"></path><path d="m8 6 8 8"></path></svg>
+  <div class="t"><b>Pending review</b> — work in progress. These button options are explorations, not in the canonical kit yet.</div>
+</div>
+
+<div class="ds-page-head">
+  <a class="ds-back" href="review.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"></path><path d="M12 19l-7-7 7-7"></path></svg>Review queue</a>
+  <div class="ds-eyebrow">Design review · Buttons</div>
+  <h1 class="ds-h1">Button elevation</h1>
+  <div class="rev-meta">
+    <span class="rev-chip"><span class="dot"></span>Needs Zac</span>
+    <span style="font-size:12.5px;color:var(--ink-500)">Owner: you · Opened Jun 19</span>
+  </div>
+</div>
+
+<section class="block">
+  <div class="head"><span class="num">01</span><h2>Options, in detail</h2></div>
+
+  <div class="sub">
+    <div class="sub-title"><h3>A · Soft lift</h3><span class="token">.btn-exA</span></div>
+    <div class="spec">
+      <div class="stage">
+        <button class="btn btn-default btn-exA">Reply now</button>
+      </div>
+      <div class="cap"><span><b>Brand gradient</b> kept, but the layered emboss drops to a <b>single light shadow</b> — calmer than today, still clearly raised.</span></div>
+    </div>
+  </div>
+
+  <div class="sub">
+    <div class="sub-title"><h3>B · Light shadow</h3><span class="token">.btn-exB</span></div>
+    <div class="spec">
+      <div class="stage">
+        <button class="btn btn-default btn-exB">Reply now</button>
+      </div>
+      <div class="cap"><span><b>Flat brand-600 fill</b> on a <b>single soft drop shadow</b> — the flattest take that still floats off the surface.</span></div>
+    </div>
+  </div>
+
+</section>
+
+<section class="block">
+  <div class="head"><span class="num">02</span><h2>In a real pairing</h2></div>
+  <div class="sub">
+    <div class="spec">
+      <div class="stage col">
+        <div style="display:flex;gap:14px;align-items:center;padding:18px 24px;border-bottom:1px solid var(--ink-150)"><span class="lab" style="width:96px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-400)">Current</span><button class="btn btn-secondary">Cancel</button><button class="btn btn-default">Send proposal</button></div>
+        <div style="display:flex;gap:14px;align-items:center;padding:18px 24px;border-bottom:1px solid var(--ink-150)"><span class="lab" style="width:96px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-400)">A · Soft</span><button class="btn btn-secondary">Cancel</button><button class="btn btn-default btn-exA">Send proposal</button></div>
+        <div style="display:flex;gap:14px;align-items:center;padding:18px 24px"><span class="lab" style="width:96px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-400)">B · Light</span><button class="btn btn-secondary">Cancel</button><button class="btn btn-default btn-exB">Send proposal</button></div>
+      </div>
+      <div class="cap"><span>Each <b>Send proposal</b> still out-ranks the blue-outline Cancel through fill and weight alone — no heavy shadow needed. <b>Current</b> sits on top for reference.</span></div>
+    </div>
+  </div>
+
+  <div class="sugg">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"></path><path d="M9 18h6"></path><path d="M10 22h4"></path></svg>
+    <div>
+      <div class="h">My suggestion</div>
+      <p>Go with <b>B · Light shadow.</b> Zac asked for <i>less 3D, not flat</i> — and A keeps the gradient, which is itself a 3D cue, so it still carries two (gradient + shadow). B drops the gradient for a flat fill and leans on a single soft drop to stay lifted: one cue, the most literal read of the ask. Pick A only if you want a little more brand depth from the gradient.</p>
+    </div>
+  </div>
+</section>
+
+</main><script src="assets/kit.js"></script><script src="assets/shell.js"></script></body></html>
