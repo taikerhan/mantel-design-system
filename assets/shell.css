@@ -7,17 +7,17 @@
 .ds-brand { display: flex; align-items: baseline; gap: 8px; padding: 4px 8px 14px; }
 .ds-brand a { font-size: 18px; font-weight: 700; letter-spacing: -.02em; color: var(--ink-900); text-decoration: none; }
 .ds-ver { font-size: 11px; color: var(--ink-400); font-variant-numeric: tabular-nums; }
-/* Aligned to the DS search field (kit.css .search): 36px rounded-full · ink-50 fill ·
-   inset ring · brand-600 leading icon. Ring darkened to ink-300 (rest) per design review. */
-.ds-search { width: 100%; box-sizing: border-box; height: 36px; padding: 0 12px 0 34px; margin-bottom: 8px; border: 0;
-             border-radius: var(--radius-full); background-color: var(--ink-50);
-             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%230053A7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M21 21l-4.2-4.2'/%3E%3C/svg%3E");
+/* Aligned to the DS input field (kit.css .mt-input): 36px · 8px radius · white fill ·
+   solid ink-400 border · ink-500 leading icon. Hover ink-500, focus brand-600 + shadow-focus. */
+.ds-search { width: 100%; box-sizing: border-box; height: 36px; padding: 0 12px 0 34px; margin-bottom: 8px;
+             border: 1px solid var(--ink-400); border-radius: var(--radius-md); background-color: #fff;
+             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236A6E75' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M21 21l-4.2-4.2'/%3E%3C/svg%3E");
              background-repeat: no-repeat; background-position: 12px center; background-size: 16px;
-             box-shadow: 0 0 0 1px var(--ink-300) inset; font: inherit; font-size: 13px; color: var(--ink-900);
-             transition: box-shadow .18s var(--ease), background-color .18s var(--ease); }
-.ds-search::placeholder { color: var(--ink-500); }
-.ds-search:hover { background-color: #fff; box-shadow: 0 0 0 1px var(--ink-400) inset; }
-.ds-search:focus { outline: none; background-color: #fff; box-shadow: 0 0 0 1px var(--brand-600) inset, var(--shadow-focus); }
+             font: inherit; font-size: 14px; color: var(--ink-900);
+             transition: border-color .18s var(--ease), box-shadow .18s var(--ease); }
+.ds-search::placeholder { color: var(--ink-400); }
+.ds-search:hover { border-color: var(--ink-500); }
+.ds-search:focus { outline: none; border-color: var(--brand-600); box-shadow: var(--shadow-focus); }
 .ds-search-wrap { position: relative; }
 .ds-search-pop { position: absolute; top: 40px; left: 0; right: 0; z-index: 20; padding: 6px;
                  background: #fff; border: 1px solid var(--ink-200); border-radius: var(--radius-lg); box-shadow: var(--shadow-pop); }
@@ -29,18 +29,21 @@
 .ds-pop-item:hover .ds-pop-arrow { color: var(--brand-600); }
 .ds-links { display: flex; flex-direction: column; }
 /* Section divider — a hairline above each group header (Design review / Foundations / Components) */
-.ds-group { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-400); padding: 14px 8px 6px; margin-top: 8px; border-top: 1px solid var(--ink-150); }
+.ds-group { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-900); padding: 14px 8px 6px; margin-top: 8px; border-top: 1px solid var(--ink-150); }
 /* Review-count badge beside the Design review nav group — items awaiting review */
 .ds-wip { display: inline-flex; align-items: center; justify-content: center; min-width: 16px; height: 16px; margin-left: 6px; padding: 0 5px; border-radius: var(--radius-full); background: var(--accent-amber); color: #fff; font-size: 10px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; vertical-align: middle; }
+/* Front-end divergence marker — this component differs from / is pending on the front-end UI Kit */
+.ds-fe { display: inline-flex; align-items: center; margin-left: 6px; padding: 1px 5px; border-radius: var(--radius-full); background: var(--ink-100); color: var(--ink-600); font-size: 9px; font-weight: 700; letter-spacing: .04em; line-height: 1.5; vertical-align: middle; }
 /* Construction / pending warning banner on Design review pages */
 .wip-banner { display: flex; align-items: center; gap: 12px; background: var(--accent-amber-bg); border-radius: var(--radius-xl); padding: 12px 16px 12px 18px; position: relative; overflow: hidden; margin-bottom: 22px; }
 .wip-banner::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 8px; background: repeating-linear-gradient(135deg, var(--accent-amber) 0 7px, transparent 7px 14px); opacity: .85; }
 .wip-banner svg { width: 19px; height: 19px; color: var(--accent-amber); flex-shrink: 0; }
 .wip-banner .t { font-size: 13px; color: var(--ink-800); line-height: 1.45; }
 .wip-banner .t b { color: var(--accent-amber); font-weight: 600; }
-.ds-link { display: block; padding: 7px 9px; border-radius: var(--radius-md); font-size: 13px; color: var(--ink-700); text-decoration: none; }
+.ds-link { display: block; padding: 7px 12px; border-radius: var(--radius-full); font-size: 14px; color: var(--ink-700); text-decoration: none; }
 .ds-link:hover { background: var(--ink-100); color: var(--ink-900); }
-.ds-link.is-active { background: var(--brand-600); color: #fff; font-weight: 600; }
+/* MD3-style active: soft tonal "pill" (secondary-container tint + on-container text), not a saturated fill */
+.ds-link.is-active { background: var(--brand-50); color: var(--brand-700); font-weight: 600; }
 .ds-hide { display: none !important; }
 .ds-main { flex: 1; min-width: 0; box-sizing: border-box; padding: 40px 48px 120px; max-width: 1120px; margin: 0; }
 /* Back link — return from a Design review detail page to the queue */
@@ -139,6 +142,8 @@
 /* Breadcrumbs: the demo shows two trails in a .two grid; keep one, full width */
 .ds-bare #crumbs .two { display: block; }
 .ds-bare #crumbs .spec ~ .spec { display: none !important; }
+/* Page header (combo): stacked full-width variants; keep the first in the tile */
+.ds-bare #page-header .spec ~ .spec { display: none !important; }
 /* Modal: the real dialog is a fixed overlay opened on click. Hide the trigger /
    prose chrome and force the dialog open so the tile shows it floating on the
    same --ink-50 background as every other tile (no dark backdrop). */
@@ -184,13 +189,51 @@ main.ds-main { display: block; }
 /* Props/API table — type column wraps (long union types) instead of overflowing */
 .type-table .api-type { font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-600); white-space: normal; line-height: 1.5; letter-spacing: .005em; }
 
-/* Device preview frame — phone-width viewport for mobile demos inside a spec */
-.device { width: 360px; flex: none; border: 1px solid var(--ink-200); border-radius: 22px; background: #fff; box-shadow: var(--shadow-card); overflow: hidden; }
-.device-notch { position: relative; height: 26px; background: var(--ink-50); border-bottom: 1px solid var(--ink-150); }
-.device-notch::after { content: ""; position: absolute; top: 9px; left: 50%; transform: translateX(-50%); width: 44px; height: 5px; border-radius: 3px; background: var(--ink-300); }
-/* Horizontally-scrollable tab bar (mobile overflow) — hide the scrollbar */
-.mt-tabbar.is-scroll { overflow-x: auto; scrollbar-width: none; }
+/* Device preview frame — 390px = iPhone 14/15/16 logical width (the 2026 baseline;
+   360px is now the conservative floor, not the common case). */
+.device { width: 390px; flex: none; display: flex; flex-direction: column; min-height: 420px; border: 1px solid var(--ink-200); border-radius: 30px; background: #fff; box-shadow: var(--shadow-card); overflow: hidden; }
+/* iOS-style status bar — time + Dynamic Island + signal/wifi/battery; reads as a phone, not a sheet */
+.device-bar { position: relative; flex: none; display: flex; align-items: center; justify-content: space-between; height: 38px; padding: 0 22px; }
+.device-bar .time { font-size: 12.5px; font-weight: 600; color: var(--ink-900); font-variant-numeric: tabular-nums; letter-spacing: .02em; }
+.device-bar .island { position: absolute; top: 9px; left: 50%; transform: translateX(-50%); width: 84px; height: 20px; border-radius: 11px; background: var(--ink-900); }
+.device-bar .status { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-900); }
+.device-bar .status svg { display: block; }
+.device-screen { flex: 1; display: flex; flex-direction: column; }
+/* Home indicator at the bottom — the iOS gesture bar (anchors "phone", distinct from a top grabber) */
+.device-home { flex: none; height: 22px; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 8px; }
+.device-home::after { content: ""; width: 130px; height: 5px; border-radius: 3px; background: var(--ink-900); opacity: .85; }
+/* Horizontally-scrollable tab bar (mobile overflow) — compact sizing + hidden scrollbar */
+.mt-tabbar.is-scroll { overflow-x: auto; scrollbar-width: none; height: 42px; }
 .mt-tabbar.is-scroll::-webkit-scrollbar { display: none; }
-.mt-tabbar.is-scroll .mt-tab { white-space: nowrap; }
+.mt-tabbar.is-scroll .mt-tab { white-space: nowrap; font-size: 14px; padding: 0 14px; }
+.mt-tabbar.is-scroll .mt-tab-count { min-width: 20px; height: 18px; padding: 0 6px; font-size: 12px; }
+/* Right-edge fade — signals there's more to scroll to. Wraps the scroll container
+   so it stays pinned to the frame's right edge instead of scrolling with content. */
+.mt-scroll-fade { position: relative; }
+.mt-scroll-fade::after { content: ""; position: absolute; top: 0; bottom: 1px; right: 0; width: 44px; pointer-events: none; background: linear-gradient(90deg, rgba(255,255,255,0), #fff 78%); }
+
+/* ---- Interactive playground (live props) — mirrors the front-end UI Kit ---- */
+.pg { background: #fff; border: 1px solid var(--ink-200); border-radius: var(--radius-2xl); overflow: hidden; box-shadow: var(--shadow-card); }
+.pg-preview { display: flex; align-items: center; justify-content: center; gap: 14px; min-height: 132px; padding: 30px 24px; flex-wrap: wrap; }
+.pg-controls { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 14px 22px; padding: 15px 20px 17px; background: var(--ink-50); border-top: 1px solid var(--ink-150); }
+.pg-ctrl { display: flex; flex-direction: column; gap: 6px; }
+.pg-ctrl > span { font-family: var(--font-mono); font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-500); }
+.pg-ctrl select, .pg-ctrl input[type="text"] { height: 34px; min-width: 132px; box-sizing: border-box; padding: 0 11px; border: 1px solid var(--ink-200); border-radius: var(--radius-md); background: #fff; font: inherit; font-size: 13px; color: var(--ink-900); cursor: pointer; }
+/* custom chevron (native arrow ignores padding-right) so it sits a comfortable 12px off the edge */
+.pg-ctrl select { appearance: none; -webkit-appearance: none; padding-right: 34px;
+                  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236A6E75' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+                  background-repeat: no-repeat; background-position: right 12px center; }
+.pg-ctrl input[type="text"] { cursor: text; }
+.pg-ctrl select:focus, .pg-ctrl input[type="text"]:focus { outline: none; border-color: var(--brand-600); box-shadow: var(--shadow-focus); }
+.pg-ctrl-toggle { justify-content: flex-end; }
+.pg-switch { width: 38px; height: 22px; padding: 0; border: 0; border-radius: var(--radius-full); background: var(--ink-300); position: relative; cursor: pointer; transition: background .18s var(--ease); }
+.pg-switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(16,24,40,.22); transition: transform .18s var(--ease); }
+.pg-switch[aria-pressed="true"] { background: var(--brand-600); }
+.pg-switch[aria-pressed="true"]::after { transform: translateX(16px); }
+
+/* Featured playground — pinned to the top of a component page, framed apart from the spec
+   sections below: a brand-tinted hero panel holding the white .pg card (trial: crumbs only). */
+.pg-lead { margin-top: 28px; padding: 20px 22px 24px; background: var(--brand-50); border: 1px solid var(--brand-100); border-radius: 20px; }
+.pg-lead > .head { margin-bottom: 16px; padding-bottom: 14px; border-bottom-color: var(--brand-100); }
 
 @media (max-width: 760px) { .ds-nav { display: none; } .ds-main { padding: 24px 18px 80px; } }

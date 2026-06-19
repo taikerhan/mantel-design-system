@@ -139,17 +139,13 @@
 
   --shadow-focus: 0 0 0 3px rgba(0, 83, 167, 0.24);
 
-  /* Raised control — the elevated primary / destructive button (§1). */
+  /* Soft lift — the primary button rests on a gentle drop shadow, no 3D bevel (§1). */
   --shadow-button:
-    0 1px 2px rgba(3, 18, 38, 0.30),
-    0 4px 12px rgba(3, 18, 38, 0.24),
-    inset 0 1px 0 rgba(255, 255, 255, 0.24),
-    inset 0 -1px 0 rgba(3, 18, 38, 0.30);
+    0 1px 2px rgba(3, 18, 38, 0.16),
+    0 4px 10px rgba(3, 18, 38, 0.14);
   --shadow-button-hover:
-    0 2px 4px rgba(3, 18, 38, 0.32),
-    0 7px 18px rgba(3, 18, 38, 0.28),
-    inset 0 1px 0 rgba(255, 255, 255, 0.28),
-    inset 0 -1px 0 rgba(3, 18, 38, 0.32);
+    0 2px 5px rgba(3, 18, 38, 0.18),
+    0 8px 18px rgba(3, 18, 38, 0.16);
   /* Deeper popover — dropdowns floating over dense data (vs --shadow-pop). */
   --shadow-menu:
     0 6px 16px rgba(15, 14, 13, 0.16),
@@ -262,7 +258,9 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
 /* ---------- Modal — centered dialog ---------- */
 .mt-modal {
   position: fixed; left: 50%; top: 50%;
-  transform: translate(-50%, -50%) scale(0.96);
+  /* enter on one clean axis — rise up + fade. Single vertical axis, no scale, so there is
+     no diagonal drift; the 80px offset makes the bottom-to-top motion clearly read. */
+  transform: translate(-50%, calc(-50% + 80px));
   width: min(520px, calc(100vw - 32px));
   max-height: calc(100vh - 64px);
   background: #fff;
@@ -270,7 +268,7 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
   box-shadow: var(--shadow-pop);
   opacity: 0;
   pointer-events: none;
-  transition: opacity var(--dur) var(--ease), transform var(--dur-card) var(--ease-snap);
+  transition: opacity var(--dur) var(--ease), transform var(--dur-card) cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 60;
   overflow: hidden;
   display: flex;
@@ -278,18 +276,43 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
 }
 
 /* width + height tiers (promoted from modal-system exploration) */
-.mt-modal.is-small { width: min(420px, calc(100vw - 32px)); }
 .mt-modal.is-wide  { width: min(720px, calc(100vw - 32px)); }
 .mt-modal.is-large { width: min(1040px, 90vw); max-height: 90vh; }
-.mt-modal.is-full  { left: 0; top: 0; width: 100vw; height: 100vh; max-width: 100vw; max-height: 100vh; transform: none; border-radius: 0; }
-.mt-modal.is-full.is-open { transform: none; }
+/* Full-screen stays centered (left/top 50% from the base) so it inherits the same clean vertical
+   rise + fade. The old top-left diagonal came from left/top:0 fighting the centered translate. */
+.mt-modal.is-full  { width: 100vw; height: 100vh; max-width: 100vw; max-height: 100vh; border-radius: 0; }
 @media (max-width: 640px) {
   .mt-modal:not(.is-full) { left: 0; right: 0; top: auto; bottom: 0; width: 100%; max-width: 100%; max-height: 92vh; transform: translateY(100%); border-radius: var(--radius-2xl) var(--radius-2xl) 0 0; }
   .mt-modal.is-open:not(.is-full) { transform: translateY(0); }
   .mt-modal.is-half:not(.is-full) { height: 55vh; }
   .mt-modal.is-tall:not(.is-full) { height: 90vh; }
 }
-.mt-modal.is-open { transform: translate(-50%, -50%) scale(1); opacity: 1; pointer-events: auto; }
+.mt-modal.is-open { transform: translate(-50%, -50%); opacity: 1; pointer-events: auto; }
+
+/* Doc-only — render a modal in-flow (the size gallery) instead of fixed-overlay. Neutralises
+   the centering transform so the real shell shows on the page; width still comes from .is-*. */
+.mt-modal.is-static {
+  position: relative; left: auto; top: auto; right: auto; bottom: auto;
+  transform: none; opacity: 1; pointer-events: auto;
+  margin: 0; max-height: none; flex: none;
+  z-index: auto; /* stay in normal flow so the overlay backdrop covers them, not under them */
+}
+.mt-modal.is-static.is-full { width: 100%; height: 360px; max-width: 100%; border-radius: 0; box-shadow: none; }
+/* Large's true 1040 exceeds the doc column — fill the frame (capped at 1040) so it shows whole, no clip */
+.mt-modal.is-static.is-large { width: 100%; max-width: 1040px; }
+/* Tinted backdrop frame */
+.modal-size-stage { background: var(--ink-100); padding: 28px; overflow-x: auto; }
+.modal-size-stage.is-flush { padding: 0; }
+.modal-size-label { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-500); font-weight: 600; padding: 16px 20px 8px; }
+.modal-size-label:not(:first-child) { border-top: 1px solid var(--ink-150); }
+
+/* Scroll-edge shadows — head/foot lift only while the body still has content to
+   reveal (promoted from the modal-system exploration). The body is the lone scroll
+   region; head + foot stay pinned. JS toggles .is-scrolled / .is-scrollable / .is-end. */
+.mt-modal .mt-overlay-head,
+.mt-modal .mt-overlay-foot { position: relative; z-index: 1; transition: box-shadow var(--dur) var(--ease); }
+.mt-modal.is-scrolled .mt-overlay-head { box-shadow: 0 1px 0 var(--ink-150), 0 10px 14px -12px rgba(16, 24, 40, 0.30); }
+.mt-modal.is-scrollable:not(.is-end) .mt-overlay-foot { box-shadow: 0 -1px 0 var(--ink-150), 0 -10px 14px -12px rgba(16, 24, 40, 0.26); }
 
 /* Confirm variant — a compact, icon-led "are you sure?" that layers onto the
    existing .mt-modal shell (no new dialog). Pairs .btn-destructive + .btn-neutral.
@@ -380,20 +403,20 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
   font-size: 14px;
   line-height: 1.55;
   overflow-y: auto;
+  /* fill the free space so the footer pins to the bottom on tall modals (full-screen / fixed
+     height); content-height modals have no free space, so this is a no-op for them. */
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 .mt-overlay-foot {
   padding: 14px 20px 16px;
   display: flex;
+  align-items: center;
   justify-content: flex-end;
   gap: 10px;
   border-top: 1px solid var(--ink-150);
   border-radius: 0 0 var(--radius-2xl) var(--radius-2xl);
-}
-  align-items: center;
-  gap: 8px;
-  border-top: 1px solid var(--ink-150);
-  background: var(--ink-50);
 }
 .mt-overlay-foot .mt-foot-aux {
   margin-right: auto;
@@ -1138,13 +1161,20 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
    ========================================================================= */
 
 .mt-crumbs {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
   font-size: 13px;
   color: var(--ink-500);
   font-family: var(--font-sans);
 }
+.mt-crumbs .mt-crumb-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.mt-crumbs .mt-crumb-item { display: inline-flex; align-items: center; }
 .mt-crumbs a,
 .mt-crumbs .mt-crumb {
   color: var(--ink-500);
@@ -1163,6 +1193,7 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
 .mt-crumbs .mt-crumb-sep {
   color: var(--ink-300);
   display: inline-flex;
+  align-items: center;
 }
 .mt-crumbs .mt-crumb-sep svg { width: 14px; height: 14px; }
 .mt-crumbs .mt-crumb-ellipsis {
@@ -1172,12 +1203,70 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
   color: var(--ink-500);
   padding: 2px 6px;
   border-radius: 4px;
-  font-family: var(--font-mono);
+  font-family: inherit;
   font-size: 13px;
   line-height: 1;
   letter-spacing: 0.05em;
+  transition: color var(--dur) var(--ease), background-color var(--dur) var(--ease);
 }
 .mt-crumbs .mt-crumb-ellipsis:hover { background: var(--ink-100); color: var(--ink-800); }
+
+/* =========================================================================
+   Page header (combo) — breadcrumb + title + description + actions.
+   Composes .mt-crumbs with a title block; the canonical top-of-page chrome.
+   ========================================================================= */
+
+.mt-page-header {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-family: var(--font-sans);
+}
+/* title row — text block left, actions parked top-right and top-aligned */
+.mt-page-header-main {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.mt-page-header-text { min-width: 0; }
+/* title + an optional inline meta (status pill / count) on one baseline */
+.mt-page-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.mt-page-title {
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.25;
+  letter-spacing: -0.019em;
+  font-weight: var(--fw-bold);
+  color: var(--ink-900);
+}
+.mt-page-desc {
+  margin: 6px 0 0;
+  max-width: 64ch;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--ink-500);
+}
+.mt-page-header-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+/* optional hairline that seats the header against the content below */
+.mt-page-header.has-rule {
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--ink-150);
+}
+@media (max-width: 560px) {
+  .mt-page-header-actions { width: 100%; }
+}
 
 /* =========================================================================
    Pagination
@@ -1301,6 +1390,30 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
 .mt-skeleton.is-circle { border-radius: 50%; }
 .mt-skeleton.is-card { height: 80px; border-radius: var(--radius-lg); }
 
+/* Rotating-message loader — for long async loads; cycles short status lines so the
+   wait reads as intentional. CSS-only carousel: each line is staggered by 1/N of the
+   cycle and crossfades + slides via the same keyframe. Spinner reuses @keyframes btn-spin. */
+.mt-loader { display: inline-flex; align-items: center; gap: 12px; }
+.mt-spinner { width: 18px; height: 18px; flex-shrink: 0; border: 2px solid var(--brand-100); border-top-color: var(--brand-600); border-radius: 50%; animation: btn-spin .7s linear infinite; }
+.mt-loader-msg { position: relative; height: 22px; min-width: 280px; }
+.mt-loader-msg > span { position: absolute; inset: 0; display: flex; align-items: center; font-size: 14px; color: var(--ink-600); white-space: nowrap; opacity: 0; animation: mt-msg-rotate 10s var(--ease) infinite; }
+.mt-loader-msg > span:nth-child(1) { animation-delay: 0s; }
+.mt-loader-msg > span:nth-child(2) { animation-delay: 2.5s; }
+.mt-loader-msg > span:nth-child(3) { animation-delay: 5s; }
+.mt-loader-msg > span:nth-child(4) { animation-delay: 7.5s; }
+@keyframes mt-msg-rotate {
+  0%   { opacity: 0; transform: translateY(7px); }
+  3%   { opacity: 1; transform: translateY(0); }
+  22%  { opacity: 1; transform: translateY(0); }
+  27%  { opacity: 0; transform: translateY(-7px); }
+  100% { opacity: 0; transform: translateY(-7px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mt-spinner { animation: none; }
+  .mt-loader-msg > span { animation: none; }
+  .mt-loader-msg > span:nth-child(1) { opacity: 1; transform: none; }
+}
+
 /* =========================================================================
    Button group — connected buttons (secondary look) + split button
    ========================================================================= */
@@ -1353,7 +1466,7 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
 }
 .mt-btn-split:active {
   background: linear-gradient(180deg, var(--brand-600) 0%, var(--brand-700) 100%);
-  box-shadow: 0 1px 2px rgba(3,18,38,.28), inset 0 2px 5px rgba(3,18,38,.36);
+  box-shadow: 0 1px 2px rgba(3,18,38,.18), inset 0 1px 2px rgba(3,18,38,.18);
 }
 .mt-btn-split > button {
   font-family: var(--font-sans);
@@ -1543,17 +1656,14 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
 .mt-segmented.is-brand .mt-segmented-thumb {
   border-radius: 6px;
   background: linear-gradient(180deg, var(--brand-500) 0%, var(--brand-600) 100%);
-  box-shadow:
-    0 1px 2px rgba(3, 18, 38, 0.30),
-    0 3px 9px rgba(3, 18, 38, 0.24),
-    inset 0 1px 0 rgba(255, 255, 255, 0.24),
-    inset 0 -1px 0 rgba(3, 18, 38, 0.30);
+  box-shadow: var(--shadow-button); /* aligned to the updated default-button elevation (flat soft drop, no inset bevel) */
 }
 .mt-segmented.is-brand .mt-segmented-option {
   height: 40px;
   padding: 0 26px;
   border-radius: 6px;
   font-size: 15px;
+  font-weight: var(--fw-semibold);  /* heavier label — reads as prominent as the primary button it matches */
   letter-spacing: -0.005em;
   color: var(--ink-600);
 }
@@ -1578,31 +1688,6 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
   background: rgba(255, 255, 255, 0.22);
   color: #fff;
 }
-
-/* Outline variant — legacy outlined button-group; larger touch targets and an
-   outlined active segment (brand-50 fill + brand border) instead of a solid thumb.
-   Border drawn as inset box-shadow so the JS-measured thumb width stays exact. */
-.mt-segmented.is-outline {
-  background: #fff;
-  border: 1px solid var(--ink-300);
-  border-radius: var(--radius-md);
-  padding: 4px;
-}
-.mt-segmented.is-outline .mt-segmented-thumb {
-  top: 4px;
-  bottom: 4px;
-  border-radius: 6px;
-  background: var(--brand-50);
-  box-shadow: inset 0 0 0 1px var(--brand-600);
-}
-.mt-segmented.is-outline .mt-segmented-option {
-  height: 36px;
-  padding: 0 18px;
-  border-radius: 6px;
-  color: var(--ink-700);
-}
-.mt-segmented.is-outline .mt-segmented-option:hover { color: var(--ink-900); }
-.mt-segmented.is-outline .mt-segmented-option.is-active { color: var(--brand-700); }
 
 /* Stretch — fill the container width, distributing options evenly (flex-1) */
 .mt-segmented.is-stretch { display: flex; width: 100%; }
@@ -1701,6 +1786,11 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
 }
 .mt-tab.is-active .mt-tab-count { background: var(--brand-600); color: #fff; }
 
+/* Small — denser desktop tabs for card headers / tight toolbars (same underline mechanics) */
+.mt-tabbar.is-sm { height: 38px; }
+.mt-tabbar.is-sm .mt-tab { padding: 0 14px; font-size: 14px; }
+.mt-tabbar.is-sm .mt-tab-count { min-width: 20px; height: 18px; padding: 0 6px; font-size: 11px; }
+
 /* Vertical variant — sidebar list. No sliding underline (the active item carries
    a left accent bar); CSS-only, so omit data-mt-tabs and the .mt-tab-underline span. */
 .mt-tabs.is-vertical { flex-direction: column; align-items: stretch; gap: 2px; margin-bottom: 0; min-width: 180px; }
@@ -1709,6 +1799,10 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
 .mt-tabs.is-vertical .mt-tab.is-active { background: var(--brand-50); }
 .mt-tabs.is-vertical .mt-tab.is-active::before { content: ""; position: absolute; left: 0; top: 8px; bottom: 8px; width: 3px; border-radius: 0 3px 3px 0; background: var(--brand-600); }
 .mt-tabs.is-vertical .mt-tab-count { margin-left: auto; }
+.mt-tabs.is-vertical .mt-tab-underline { display: none; }
+/* Playground wraps tabs in a tabbar for the baseline rule; when the live control flips
+   to vertical, drop the bar chrome so the sidebar list isn't squeezed into the 46px bar. */
+.mt-tabbar:has(.mt-tabs.is-vertical) { display: block; height: auto; padding: 0; border-bottom: 0; }
 
 /* =========================================================================
    Category pill — non-status categorization tag
@@ -2038,7 +2132,7 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
   /* DEFAULT — vertical brand gradient + layered elevation; the focal action (≤1 per surface). 36px (front-end canonical) */
   .btn-default { color: #fff; background: linear-gradient(180deg, var(--brand-500) 0%, var(--brand-600) 100%); box-shadow: var(--shadow-button); }
   .btn-default:hover { background: linear-gradient(180deg, var(--brand-500) 0%, var(--brand-700) 100%); box-shadow: var(--shadow-button-hover); }
-  .btn-default:active { background: linear-gradient(180deg, var(--brand-600) 0%, var(--brand-700) 100%); box-shadow: 0 1px 2px rgba(3,18,38,.28), inset 0 2px 5px rgba(3,18,38,.36); }
+  .btn-default:active { background: linear-gradient(180deg, var(--brand-600) 0%, var(--brand-700) 100%); box-shadow: 0 1px 2px rgba(3,18,38,.18), inset 0 1px 2px rgba(3,18,38,.18); }
   /* SECONDARY — thin brand border · the standard CTA */
   .btn-secondary { background: #fff; color: var(--brand-600); border: 1px solid var(--brand-600); }
   .btn-secondary:hover { background: var(--brand-50); border-color: var(--brand-700); color: var(--brand-700); }
@@ -2061,6 +2155,9 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
   /* ICON — 36² standalone control · brand-bordered (overlay close buttons stay neutral via .mt-overlay-head override) */
   .btn-icon { width: 36px; height: 36px; padding: 0; justify-content: center; background: #fff; color: var(--brand-700); border: 1px solid var(--brand-600); border-radius: var(--radius-md); box-shadow: 0 1px 1px rgba(16,24,40,0.04); }
   .btn-icon:hover { background: var(--brand-50); border-color: var(--brand-700); color: var(--brand-700); box-shadow: 0 1px 3px rgba(0,83,167,0.16); }
+  /* ICON · GHOST — square dismiss/close that recedes into a tinted surface; no chrome until hover */
+  .btn-icon.btn-ghost { background: transparent; border-color: transparent; color: var(--ink-500); box-shadow: none; }
+  .btn-icon.btn-ghost:hover { background: var(--ink-100); border-color: transparent; color: var(--ink-700); box-shadow: none; }
   /* Sizes — sm 28 · compact 34 · default 36 · lg 40 · icon 36² */
   .btn-sm { height: 28px; padding: 0 12px; font-size: 13px; }
   .btn-compact { height: 34px; padding: 0 16px; }
@@ -2169,13 +2266,16 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
   .tabs.is-ready .tab-indicator { opacity: 1; }
 
   /* Search + picker */
-  .search { display: inline-flex; align-items: center; gap: 10px; height: 36px; width: 280px; padding: 0 16px; border-radius: 9999px; background: var(--ink-50); box-shadow: 0 0 0 1px var(--ink-200) inset; transition: all 200ms; }
-  .search:hover { background: #fff; box-shadow: 0 0 0 1px var(--ink-300) inset; }
-  .search input { all: unset; flex: 1; font-size: 13px; color: var(--ink-800); font-family: var(--font-sans); }
-  .search input::placeholder { color: var(--ink-500); }
-  .search .icn { color: var(--brand-600); }
-  .picker { display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 14px; border-radius: 9999px; background: #fff; box-shadow: 0 0 0 1px var(--ink-200) inset; font-size: 13px; color: var(--ink-700); cursor: pointer; font-family: var(--font-sans); border: 0; }
-  .picker:hover { box-shadow: 0 0 0 1px var(--ink-300) inset; }
+  /* Search — input-field chrome (.mt-input): solid ink-400 ring, 8px radius, focus → brand-600 + shadow-focus */
+  .search { display: inline-flex; align-items: center; gap: 10px; height: 36px; width: 280px; padding: 0 12px; border: 1px solid var(--ink-400); border-radius: var(--radius-md); background: #fff; transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease); }
+  .search:hover { border-color: var(--ink-500); }
+  .search:focus-within { border-color: var(--brand-600); box-shadow: var(--shadow-focus); }
+  .search input { all: unset; flex: 1; font-size: 14px; color: var(--ink-900); font-family: var(--font-sans); }
+  .search input::placeholder { color: var(--ink-400); }
+  .search .icn { color: var(--ink-500); }
+  /* Picker — neutral button chrome (.btn + .btn-neutral): 8px radius, ink-300 border, 14px/500 */
+  .picker { display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 16px; border-radius: var(--radius-md); background: #fff; font-size: 14px; font-weight: 500; color: var(--ink-800); cursor: pointer; font-family: var(--font-sans); border: 1px solid var(--ink-300); transition: all 220ms var(--ease); }
+  .picker:hover { background: var(--ink-50); border-color: var(--ink-400); color: var(--ink-900); }
 
   /* Stats */
   .stat { background: #fff; box-shadow: var(--shadow-card); border-radius: var(--radius-2xl); padding: 20px 24px; }

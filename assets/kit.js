@@ -3,6 +3,17 @@
     var backdrop = document.querySelector('[data-overlay-backdrop]');
     var openTargets = document.querySelectorAll('[data-open]');
     var current = null;
+    var scrollEl = null, scrollHandler = null;
+
+    // Toggle the scroll-edge shadows: header drops a shadow once scrolled away from
+    // the top; footer lifts one while there is still body content below it.
+    function syncScroll() {
+      if (!current || !scrollEl) return;
+      var scrollable = scrollEl.scrollHeight - scrollEl.clientHeight > 1;
+      current.classList.toggle('is-scrollable', scrollable);
+      current.classList.toggle('is-scrolled', scrollEl.scrollTop > 2);
+      current.classList.toggle('is-end', scrollEl.scrollTop + scrollEl.clientHeight >= scrollEl.scrollHeight - 1);
+    }
 
     function open(id, size) {
       var el = document.getElementById(id);
@@ -15,12 +26,25 @@
       // force reflow so the transform/opacity transition runs
       void el.offsetWidth;
       el.classList.add('is-open');
+      // wire up scroll-edge shadows against the body (the lone scroll region)
+      if (scrollEl && scrollHandler) scrollEl.removeEventListener('scroll', scrollHandler);
+      el.classList.remove('is-scrollable','is-scrolled','is-end');
+      scrollEl = el.querySelector('.mt-overlay-body');
+      if (scrollEl) {
+        scrollEl.scrollTop = 0;
+        scrollHandler = syncScroll;
+        scrollEl.addEventListener('scroll', scrollHandler);
+        requestAnimationFrame(syncScroll);
+      }
     }
 
     function close() {
       if (!current) return;
       var el = current;
       current = null;
+      if (scrollEl && scrollHandler) { scrollEl.removeEventListener('scroll', scrollHandler); }
+      scrollEl = null;
+      el.classList.remove('is-scrollable','is-scrolled','is-end');
       backdrop.classList.remove('is-open');
       if (el.classList.contains('mt-sheet-bottom') || el.classList.contains('mt-sheet-right')) {
         el.classList.add('is-closing');
@@ -40,6 +64,7 @@
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') close();
     });
+    window.addEventListener('resize', function () { if (current) syncScroll(); });
   })();
 
 ;

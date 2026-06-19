@@ -1,0 +1,83 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Page header · Mantel</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="../assets/kit.css"><link rel="stylesheet" href="../assets/shell.css"></head><body class="ds-body"><aside class="ds-nav"><div class="ds-brand"><a href="../index.html">Mantel</a><span class="ds-ver">UI Kit · v2.1</span></div><input class="ds-search" type="search" placeholder="Search…" aria-label="Search components"><nav class="ds-links"><a class="ds-link" href="../index.html" data-name="home dashboard">Home</a><a class="ds-link" href="../changelog.html" data-name="changelog releases versions history">Changelog</a><div class="ds-group">Design review <span class="ds-wip" title="Items awaiting review">1</span></div><a class="ds-link" href="../review.html" data-name="review queue">Review queue</a><div class="ds-group">Foundations</div><a class="ds-link" href="../components/type.html" data-name="typography">Typography</a><a class="ds-link" href="../components/color.html" data-name="color">Color</a><a class="ds-link" href="../components/spacing.html" data-name="spacing">Spacing</a><a class="ds-link" href="../components/radius.html" data-name="radius">Radius</a><a class="ds-link" href="../components/shadow.html" data-name="shadow">Shadow</a><a class="ds-link" href="../components/motion.html" data-name="motion">Motion</a><div class="ds-group">Components</div><a class="ds-link" href="../components/buttons.html" data-name="buttons">Buttons</a><a class="ds-link" href="../components/form-inputs.html" data-name="form inputs">Form inputs</a><a class="ds-link" href="../components/inputs.html" data-name="search &amp; pickers">Search &amp; pickers</a><a class="ds-link" href="../components/data-table.html" data-name="table">Table <span class="ds-fe" title="Front-end UI Kit ships Table row as a separate component; our DS folds it into Data table">FE</span></a><a class="ds-link" href="../components/modal.html" data-name="modal">Modal</a><a class="ds-link" href="../components/menu.html" data-name="dropdown menu">Dropdown menu</a><a class="ds-link" href="../components/tabs.html" data-name="tabs">Tabs</a><a class="ds-link" href="../components/segmented.html" data-name="segmented control">Segmented control</a><a class="ds-link" href="../components/btn-group.html" data-name="button group">Button group</a><a class="ds-link" href="../components/toasts.html" data-name="toasts">Toasts</a><a class="ds-link" href="../components/alerts.html" data-name="alerts">Alerts</a><a class="ds-link" href="../components/stats.html" data-name="stat card">Stat card</a><a class="ds-link" href="../components/pills.html" data-name="status pills">Status pills</a><a class="ds-link" href="../components/badges.html" data-name="strength badges">Strength badges</a><a class="ds-link" href="../components/avatars.html" data-name="avatars">Avatars</a><a class="ds-link" href="../components/tooltips.html" data-name="tooltips">Tooltips</a><a class="ds-link" href="../components/toggles.html" data-name="switch / checkbox / radio">Switch / checkbox / radio</a><a class="ds-link" href="../components/crumbs.html" data-name="breadcrumbs">Breadcrumbs</a><a class="ds-link" href="../components/pager.html" data-name="pagination">Pagination</a><a class="ds-link" href="../components/activity.html" data-name="activity feed">Activity feed</a><a class="ds-link" href="../components/sheet.html" data-name="sheet / drawer">Sheet / drawer</a><a class="ds-link" href="../components/empty.html" data-name="empty state">Empty state</a><a class="ds-link" href="../components/focus.html" data-name="focus card">Focus card</a><a class="ds-link" href="../components/live.html" data-name="live indicator">Live indicator</a><a class="ds-link" href="../components/skeleton.html" data-name="skeleton">Skeleton</a><a class="ds-link" href="../components/category.html" data-name="category pills">Category pills</a><div class="ds-group">Combos</div><a class="ds-link is-active" href="../components/header.html" data-name="page header combo title description breadcrumb">Page header</a></nav></aside><main class="ds-main"><div class="ds-page-head"><div class="ds-eyebrow">Combos</div><h1 class="ds-h1">Page header</h1><p class="ds-lede">A composed top-of-page block — breadcrumb, title, description, and an actions slot. Reuses <code>.mt-crumbs</code>; nothing here is a new primitive.</p></div>
+    <section class="block" id="page-header">
+      <div class="head">
+        <h2>Page header</h2>
+        <span class="desc">Breadcrumb + title + description + actions · the canonical top-of-page chrome</span>
+      </div>
+
+      <!-- Variant 1 — full: breadcrumb, title, description, right-aligned actions -->
+      <div class="spec" style="margin-bottom: 16px;">
+        <div class="stage" style="display: block; padding: 28px 24px;">
+          <header class="mt-page-header has-rule">
+            <nav class="mt-crumbs" aria-label="Breadcrumb">
+              <ol class="mt-crumb-list">
+                <li class="mt-crumb-item"><a href="#">Proposals</a></li>
+                <li class="mt-crumb-sep" role="presentation" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></li>
+                <li class="mt-crumb-item"><a href="#">Active</a></li>
+                <li class="mt-crumb-sep" role="presentation" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></li>
+                <li class="mt-crumb-item"><span class="mt-crumb-current" aria-current="page">Robert &amp; Linda Tan</span></li>
+              </ol>
+            </nav>
+            <div class="mt-page-header-main">
+              <div class="mt-page-header-text">
+                <h1 class="mt-page-title">Robert &amp; Linda Tan</h1>
+                <p class="mt-page-desc">442 Oak Ridge Dr · listed $1,245,000. Three proposals in flight; the financing section is drawing the most repeat views.</p>
+              </div>
+              <div class="mt-page-header-actions">
+                <button class="btn btn-secondary btn-compact">Export</button>
+                <button class="btn btn-default btn-compact">New proposal</button>
+              </div>
+            </div>
+          </header>
+        </div>
+        <div class="cap"><span>Full · breadcrumb, title, description, actions parked top-right. <b>.has-rule</b> seats it against the content below.</span><span class="right">.mt-page-header</span></div>
+      </div>
+
+      <!-- Variant 2 — top-level page: title + description, no breadcrumb -->
+      <div class="spec" style="margin-bottom: 16px;">
+        <div class="stage" style="display: block; padding: 28px 24px;">
+          <header class="mt-page-header">
+            <div class="mt-page-header-main">
+              <div class="mt-page-header-text">
+                <h1 class="mt-page-title">Proposals</h1>
+                <p class="mt-page-desc">Every proposal you've sent, grouped by lifecycle. Filter to the ones cooling off.</p>
+              </div>
+              <div class="mt-page-header-actions">
+                <button class="btn btn-default btn-compact">New proposal</button>
+              </div>
+            </div>
+          </header>
+        </div>
+        <div class="cap"><span>Top-level · the breadcrumb drops at the first level of the hierarchy.</span><span class="right">.mt-page-header-main</span></div>
+      </div>
+
+      <!-- Variant 3 — detail page: title with inline status pill, no actions -->
+      <div class="spec">
+        <div class="stage" style="display: block; padding: 28px 24px;">
+          <header class="mt-page-header">
+            <nav class="mt-crumbs" aria-label="Breadcrumb">
+              <ol class="mt-crumb-list">
+                <li class="mt-crumb-item"><a href="#">Sellers</a></li>
+                <li class="mt-crumb-sep" role="presentation" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></li>
+                <li class="mt-crumb-item"><a href="#">Robert &amp; Linda Tan</a></li>
+                <li class="mt-crumb-sep" role="presentation" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></li>
+                <li class="mt-crumb-item"><span class="mt-crumb-current" aria-current="page">Financing</span></li>
+              </ol>
+            </nav>
+            <div class="mt-page-header-main">
+              <div class="mt-page-header-text">
+                <div class="mt-page-title-row">
+                  <h1 class="mt-page-title">Financing proposal</h1>
+                  <span class="pill pill-viewed"><span class="dot"></span>Viewed · 3h</span>
+                </div>
+                <p class="mt-page-desc">Sent Dec 11 · opened four times. Recipient is still on the financing section after three sessions in two days.</p>
+              </div>
+            </div>
+          </header>
+        </div>
+        <div class="cap"><span>Detail · a status pill rides inline beside the title via <b>.mt-page-title-row</b>.</span><span class="right">.mt-page-title-row</span></div>
+      </div>
+    </section></main></div>
+
+<!-- Toast viewport — fixed bottom-center -->
+<div class="mt-toast-viewport" id="mt-toast-viewport" aria-live="polite" aria-atomic="false"></div><script src="../assets/kit.js"></script><script src="../assets/shell.js"></script></body></html>

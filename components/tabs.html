@@ -1,6 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Tabs · Mantel</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="../assets/kit.css"><link rel="stylesheet" href="../assets/shell.css"></head><body class="ds-body"><aside class="ds-nav"><div class="ds-brand"><a href="../index.html">Mantel</a><span class="ds-ver">UI Kit · v2.1</span></div><input class="ds-search" type="search" placeholder="Search…" aria-label="Search components"><nav class="ds-links"><a class="ds-link" href="../index.html" data-name="home dashboard">Home</a><a class="ds-link" href="../changelog.html" data-name="changelog releases versions history">Changelog</a><div class="ds-group">Design review <span class="ds-wip" title="Items awaiting review">1</span></div><a class="ds-link" href="../review.html" data-name="review queue">Review queue</a><div class="ds-group">Foundations</div><a class="ds-link" href="../components/type.html" data-name="typography">Typography</a><a class="ds-link" href="../components/color.html" data-name="color">Color</a><a class="ds-link" href="../components/spacing.html" data-name="spacing">Spacing</a><a class="ds-link" href="../components/radius.html" data-name="radius">Radius</a><a class="ds-link" href="../components/shadow.html" data-name="shadow">Shadow</a><a class="ds-link" href="../components/motion.html" data-name="motion">Motion</a><div class="ds-group">Components</div><a class="ds-link" href="../components/buttons.html" data-name="buttons">Buttons</a><a class="ds-link" href="../components/pills.html" data-name="status pills">Status pills</a><a class="ds-link" href="../components/badges.html" data-name="strength badges">Strength badges</a><a class="ds-link" href="../components/avatars.html" data-name="avatars">Avatars</a><a class="ds-link" href="../components/segmented.html" data-name="segmented control">Segmented control</a><a class="ds-link is-active" href="../components/tabs.html" data-name="tabs">Tabs</a><a class="ds-link" href="../components/inputs.html" data-name="search &amp; pickers">Search &amp; pickers</a><a class="ds-link" href="../components/stats.html" data-name="stat card">Stat card</a><a class="ds-link" href="../components/focus.html" data-name="focus card">Focus card</a><a class="ds-link" href="../components/table.html" data-name="table row">Table row</a><a class="ds-link" href="../components/activity.html" data-name="activity feed">Activity feed</a><a class="ds-link" href="../components/live.html" data-name="live indicator">Live indicator</a><a class="ds-link" href="../components/modal.html" data-name="modal">Modal</a><a class="ds-link" href="../components/sheet.html" data-name="sheet / drawer">Sheet / drawer</a><a class="ds-link" href="../components/form-inputs.html" data-name="form inputs">Form inputs</a><a class="ds-link" href="../components/toggles.html" data-name="switch / checkbox / radio">Switch / checkbox / radio</a><a class="ds-link" href="../components/alerts.html" data-name="alerts">Alerts</a><a class="ds-link" href="../components/toasts.html" data-name="toasts">Toasts</a><a class="ds-link" href="../components/tooltips.html" data-name="tooltips">Tooltips</a><a class="ds-link" href="../components/menu.html" data-name="dropdown menu">Dropdown menu</a><a class="ds-link" href="../components/crumbs.html" data-name="breadcrumbs">Breadcrumbs</a><a class="ds-link" href="../components/pager.html" data-name="pagination">Pagination</a><a class="ds-link" href="../components/empty.html" data-name="empty state">Empty state</a><a class="ds-link" href="../components/skeleton.html" data-name="skeleton">Skeleton</a><a class="ds-link" href="../components/btn-group.html" data-name="button group">Button group</a><a class="ds-link" href="../components/data-table.html" data-name="data table">Data table</a><a class="ds-link" href="../components/category.html" data-name="category pills">Category pills</a></nav></aside><main class="ds-main"><div class="ds-page-head"><div class="ds-eyebrow">Components</div><h1 class="ds-h1">Tabs</h1></div><section class="block" id="tabs">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Tabs · Mantel</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="../assets/kit.css"><link rel="stylesheet" href="../assets/shell.css"></head><body class="ds-body"><aside class="ds-nav"><div class="ds-brand"><a href="../index.html">Mantel</a><span class="ds-ver">UI Kit · v2.1</span></div><input class="ds-search" type="search" placeholder="Search…" aria-label="Search components"><nav class="ds-links"><a class="ds-link" href="../index.html" data-name="home dashboard">Home</a><a class="ds-link" href="../changelog.html" data-name="changelog releases versions history">Changelog</a><div class="ds-group">Design review <span class="ds-wip" title="Items awaiting review">1</span></div><a class="ds-link" href="../review.html" data-name="review queue">Review queue</a><div class="ds-group">Foundations</div><a class="ds-link" href="../components/type.html" data-name="typography">Typography</a><a class="ds-link" href="../components/color.html" data-name="color">Color</a><a class="ds-link" href="../components/spacing.html" data-name="spacing">Spacing</a><a class="ds-link" href="../components/radius.html" data-name="radius">Radius</a><a class="ds-link" href="../components/shadow.html" data-name="shadow">Shadow</a><a class="ds-link" href="../components/motion.html" data-name="motion">Motion</a><div class="ds-group">Components</div><a class="ds-link" href="../components/buttons.html" data-name="buttons">Buttons</a><a class="ds-link" href="../components/form-inputs.html" data-name="form inputs">Form inputs</a><a class="ds-link" href="../components/inputs.html" data-name="search &amp; pickers">Search &amp; pickers</a><a class="ds-link" href="../components/data-table.html" data-name="table">Table <span class="ds-fe" title="Front-end UI Kit ships Table row as a separate component; our DS folds it into Data table">FE</span></a><a class="ds-link" href="../components/modal.html" data-name="modal">Modal</a><a class="ds-link" href="../components/menu.html" data-name="dropdown menu">Dropdown menu</a><a class="ds-link is-active" href="../components/tabs.html" data-name="tabs">Tabs</a><a class="ds-link" href="../components/segmented.html" data-name="segmented control">Segmented control</a><a class="ds-link" href="../components/btn-group.html" data-name="button group">Button group</a><a class="ds-link" href="../components/toasts.html" data-name="toasts">Toasts</a><a class="ds-link" href="../components/alerts.html" data-name="alerts">Alerts</a><a class="ds-link" href="../components/stats.html" data-name="stat card">Stat card</a><a class="ds-link" href="../components/pills.html" data-name="status pills">Status pills</a><a class="ds-link" href="../components/badges.html" data-name="strength badges">Strength badges</a><a class="ds-link" href="../components/avatars.html" data-name="avatars">Avatars</a><a class="ds-link" href="../components/tooltips.html" data-name="tooltips">Tooltips</a><a class="ds-link" href="../components/toggles.html" data-name="switch / checkbox / radio">Switch / checkbox / radio</a><a class="ds-link" href="../components/crumbs.html" data-name="breadcrumbs">Breadcrumbs</a><a class="ds-link" href="../components/pager.html" data-name="pagination">Pagination</a><a class="ds-link" href="../components/activity.html" data-name="activity feed">Activity feed</a><a class="ds-link" href="../components/sheet.html" data-name="sheet / drawer">Sheet / drawer</a><a class="ds-link" href="../components/empty.html" data-name="empty state">Empty state</a><a class="ds-link" href="../components/focus.html" data-name="focus card">Focus card</a><a class="ds-link" href="../components/live.html" data-name="live indicator">Live indicator</a><a class="ds-link" href="../components/skeleton.html" data-name="skeleton">Skeleton</a><a class="ds-link" href="../components/category.html" data-name="category pills">Category pills</a><div class="ds-group">Combos</div><a class="ds-link" href="../components/header.html" data-name="page header combo title description breadcrumb">Page header</a></nav></aside><main class="ds-main"><div class="ds-page-head"><div class="ds-eyebrow">Components</div><h1 class="ds-h1">Tabs</h1></div><section class="block" id="tabs">
       <div class="head">
-        <span class="num">12</span>
         <h2>Tabs</h2>
         <span class="desc">Sliding underline · soft brand active fill · count chips · 280ms spring</span>
       </div>
@@ -40,6 +39,23 @@
       </div>
 
       <div class="sub">
+        <div class="sub-title"><h3>Small</h3><span class="token">.mt-tabbar.is-sm</span><span class="note">Denser 38px bar · 14px tabs — card headers &amp; tight toolbars</span></div>
+        <div class="spec">
+          <div class="stage col" style="padding: 24px 0 0;">
+            <div class="mt-tabbar is-sm">
+              <div class="mt-tabs" data-mt-tabs="">
+                <button class="mt-tab is-active">Active <span class="mt-tab-count">11</span></button>
+                <button class="mt-tab">Drafts <span class="mt-tab-count">4</span></button>
+                <button class="mt-tab">Signed <span class="mt-tab-count">28</span></button>
+                <span class="mt-tab-underline" aria-hidden="true"></span>
+              </div>
+            </div>
+          </div>
+          <div class="cap"><span>Same sliding-underline mechanics at a denser scale: <b>38px</b> bar, <b>14px</b> tabs, tighter count chips. Reach for it inside a card header or toolbar where the default 46px bar is too tall.</span><span class="right">.is-sm</span></div>
+        </div>
+      </div>
+
+      <div class="sub">
         <div class="sub-title"><h3>Vertical</h3><span class="token">.mt-tabs.is-vertical</span><span class="note">Sidebar list · left accent bar (CSS-only)</span></div>
         <div class="spec">
           <div class="stage" style="align-items: flex-start;">
@@ -59,21 +75,34 @@
         <div class="spec">
           <div class="stage" style="align-items: flex-start;">
             <div class="device">
-              <div class="device-notch"></div>
-              <div class="mt-tabbar is-scroll">
-                <div class="mt-tabs" data-mt-tabs="">
-                  <button class="mt-tab is-active">Active <span class="mt-tab-count">11</span></button>
-                  <button class="mt-tab">Drafts <span class="mt-tab-count">4</span></button>
-                  <button class="mt-tab">Credit hold <span class="mt-tab-count">2</span></button>
-                  <button class="mt-tab">Signed <span class="mt-tab-count">28</span></button>
-                  <button class="mt-tab">Lost <span class="mt-tab-count">3</span></button>
-                  <span class="mt-tab-underline" aria-hidden="true"></span>
-                </div>
+              <div class="device-bar">
+                <span class="time">9:41</span>
+                <span class="island"></span>
+                <span class="status">
+                  <svg width="18" height="11" viewBox="0 0 18 11" fill="currentColor" aria-hidden="true"><rect x="0" y="7" width="3" height="4" rx="1"></rect><rect x="5" y="5" width="3" height="6" rx="1"></rect><rect x="10" y="2.5" width="3" height="8.5" rx="1"></rect><rect x="15" y="0" width="3" height="11" rx="1"></rect></svg>
+                  <svg width="16" height="12" viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M2 6.5a15 15 0 0 1 20 0"></path><path d="M6 11a9 9 0 0 1 12 0"></path><path d="M12 15.4h.01"></path></svg>
+                  <svg width="24" height="12" viewBox="0 0 24 12" fill="none" aria-hidden="true"><rect x="0.5" y="0.5" width="20" height="11" rx="3" stroke="currentColor"></rect><rect x="2" y="2" width="15" height="8" rx="1.5" fill="currentColor"></rect><rect x="22" y="4" width="1.6" height="4" rx="0.8" fill="currentColor"></rect></svg>
+                </span>
               </div>
-              <div style="padding: 18px 16px; font-size: 13px; color: var(--ink-500);">Swipe the tab bar sideways — the underline keeps tracking the active tab.</div>
+              <div class="device-screen">
+                <div class="mt-scroll-fade">
+                  <div class="mt-tabbar is-scroll">
+                    <div class="mt-tabs" data-mt-tabs="">
+                      <button class="mt-tab is-active">Active <span class="mt-tab-count">11</span></button>
+                      <button class="mt-tab">Drafts <span class="mt-tab-count">4</span></button>
+                      <button class="mt-tab">Credit hold <span class="mt-tab-count">2</span></button>
+                      <button class="mt-tab">Signed <span class="mt-tab-count">28</span></button>
+                      <button class="mt-tab">Lost <span class="mt-tab-count">3</span></button>
+                      <span class="mt-tab-underline" aria-hidden="true"></span>
+                    </div>
+                  </div>
+                </div>
+                <div style="padding: 18px 16px; font-size: 13px; color: var(--ink-500);">Swipe the tab bar sideways — the underline keeps tracking the active tab.</div>
+              </div>
+              <div class="device-home"></div>
             </div>
           </div>
-          <div class="cap"><span>At phone width the underline bar scrolls horizontally (<b>overflow-x: auto</b>, scrollbar hidden); the JS keeps the underline measured to the active tab. A vertical Tabs list simply fills the column. Frame is 360px — the smallest target width.</span><span class="right">.is-scroll · 360px</span></div>
+          <div class="cap"><span>At phone width the bar scrolls horizontally with <b>compact 14px tabs</b> (<b>overflow-x: auto</b>, scrollbar hidden); the JS keeps the underline measured to the active tab. A right-edge <b>fade</b> signals there's more to scroll. Frame is <b>390px</b> (iPhone 14/15/16); 360px is the conservative floor.</span><span class="right">.is-scroll · .mt-scroll-fade · 390px</span></div>
         </div>
       </div>
 
@@ -83,6 +112,7 @@
           <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
           <tbody>
             <tr><td class="tok">Root · variant</td><td class="api-type">'underline' | 'pill' | 'vertical'</td><td class="specs">'pill'</td><td class="sample">Tab bar style. underline slides a 3px brand indicator; pill is a segmented control; vertical is a sidebar list.</td></tr>
+            <tr><td class="tok">Root · size</td><td class="api-type">'sm' | 'md'</td><td class="specs">'md'</td><td class="sample">Desktop scale. sm = 38px bar / 14px tabs for card headers &amp; toolbars; md is the default 46px bar.</td></tr>
             <tr><td class="tok">Root · ref</td><td class="api-type">HTMLElement | null</td><td class="specs">null</td><td class="sample">Bindable element ref; the underline indicator measures it on resize.</td></tr>
             <tr><td class="tok">Item · active</td><td class="api-type">boolean</td><td class="specs">false</td><td class="sample">Marks the selected tab; reports its element to the Root for the indicator.</td></tr>
             <tr><td class="tok">Item · variant</td><td class="api-type">'underline' | 'pill' | 'vertical'</td><td class="specs">(inherits Root)</td><td class="sample">Overrides the variant inherited from Root context.</td></tr>
@@ -97,7 +127,22 @@
       </div>
     </section>
 
-    <!-- INPUTS --><section class="block pg-block" id="playground"><div class="head"><span class="num">PG</span><h2>Playground</h2><span class="desc">Interactive props · placeholder for front-end adoption</span></div><div class="pg-placeholder"><div class="pg-ph-badge">Coming soon</div><p>Live, editable component props (variant · size · state) will render here, adopted from the front-end UI Kit. Placed below the spec above by design.</p></div></section></main></div>
+    <!-- INPUTS --><section class="block pg-block" id="playground"><div class="head"><span class="num">PG</span><h2>Playground</h2><span class="desc">Live props — underline ↔ vertical</span></div>
+      <div class="pg" data-pg="tabs">
+        <div class="pg-preview" style="display: block; padding: 24px;">
+          <div class="mt-tabbar">
+            <div class="mt-tabs" data-pg-el="" data-mt-tabs="" role="tablist" aria-label="View">
+              <button class="mt-tab is-active" role="tab">Active <span class="mt-tab-count">11</span></button>
+              <button class="mt-tab" role="tab">Drafts <span class="mt-tab-count">4</span></button>
+              <button class="mt-tab" role="tab">Signed <span class="mt-tab-count">28</span></button>
+              <span class="mt-tab-underline" aria-hidden="true"></span>
+            </div>
+          </div>
+        </div>
+        <div class="pg-controls">
+          <label class="pg-ctrl"><span>Variant</span><select data-pg-prop="variant"><option value="underline" selected="">underline</option><option value="vertical">vertical</option></select></label>
+        </div>
+      </div></section></main></div>
 
 <!-- ============ Live overlay demos ============ -->
 <div class="mt-backdrop" data-overlay-backdrop=""></div>
