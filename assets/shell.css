@@ -61,6 +61,10 @@
 .ds-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--brand-600); }
 .ds-h1 { font-size: 30px; font-weight: 700; letter-spacing: -.022em; margin: 8px 0 0; }
 .ds-lede { font-size: 14px; color: var(--ink-500); line-height: 1.6; margin: 10px 0 0; max-width: 60ch; }
+/* Front-end handoff pointer — direct link to the machine-readable token file */
+.ds-tokens { display: inline-flex; align-items: center; gap: 7px; margin-top: 16px; font-size: 13px; font-weight: 600; color: var(--brand-600); text-decoration: none; transition: color .15s var(--ease); }
+.ds-tokens:hover { color: var(--brand-700); text-decoration: none; }
+.ds-tokens svg { width: 15px; height: 15px; }
 .ds-sec { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-400); margin: 28px 0 12px; }
 .ds-sec:first-of-type { margin-top: 8px; }
 .ds-dash { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
