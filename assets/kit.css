@@ -78,15 +78,15 @@
   --ink-900: #0E1014;  /* strongest text, tooltip bg */
 
   /* Color — Accent (status semantics only — never decorative) */
-  --accent-green:    #0E8559;   --accent-green-bg:  #E6F4EE;
-  --accent-amber:    #B25E09;   --accent-amber-bg:  #FCEFD9;
-  --accent-red:      #B42318;   --accent-red-bg:    #FDECEA;
+  --accent-green:    #0E8559;   --accent-green-bg:  #D3EBDF;
+  --accent-amber:    #B25E09;   --accent-amber-bg:  #F8E1BC;
+  --accent-red:      #B42318;   --accent-red-bg:    #FBD9D4;
   --accent-violet:   #5D3FD3;   --accent-violet-bg: #EEE9FA;
 
   /* Color — Proposal lifecycle */
   --life-draft-bg:   var(--ink-100);  --life-draft-fg: var(--ink-700);  --life-draft-ring: var(--ink-200);
-  --life-sent-bg:    #ECFEFF;         --life-sent-fg:  #0E7490;         --life-sent-ring: rgba(8,145,178,0.20);
-  --life-viewed-bg:  var(--brand-50); --life-viewed-fg: var(--brand-700); --life-viewed-ring: rgba(0,83,167,0.15);
+  --life-sent-bg:    #D6F4F7;         --life-sent-fg:  #0E7490;         --life-sent-ring: rgba(8,145,178,0.20);
+  --life-viewed-bg:  #DEE9FA;         --life-viewed-fg: var(--brand-700); --life-viewed-ring: rgba(0,83,167,0.15);
   --life-signed-bg:  var(--accent-green-bg); --life-signed-fg: var(--accent-green); --life-signed-ring: #A7E0C2;
   --life-lost-bg:    var(--accent-red-bg);   --life-lost-fg:   var(--accent-red);   --life-lost-ring: rgba(180,35,24,0.15);
 
