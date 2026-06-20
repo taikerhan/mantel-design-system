@@ -126,9 +126,9 @@
      Elevation — hairline ring + tight drop
      ----------------------------------------------------------------------- */
   --shadow-card:
-    0 0 0 1px rgb(15 14 13 / 0.05),
-    0 1px 2px rgb(15 14 13 / 0.04),
-    0 2px 6px -2px rgb(15 14 13 / 0.04);
+    0 0 0 1px rgb(15 14 13 / 0.09),
+    0 1px 2px rgb(15 14 13 / 0.05),
+    0 2px 6px -2px rgb(15 14 13 / 0.05);
 
   /* Data table — same hairline ring as cards, but a deeper, directional drop so
      the table reads as the surface in focus (vs the tight, flat --shadow-card). */
