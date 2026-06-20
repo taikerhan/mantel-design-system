@@ -1640,7 +1640,7 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
   display: inline-flex;
   align-items: center;
   padding: 5px;                          /* equal inset; matched by the thumb */
-  background: var(--ink-200);
+  background: var(--ink-150);
   border-radius: var(--radius-full);
   font-family: var(--font-sans);
 }
@@ -2297,7 +2297,7 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
     align-items: center;
     font-size: 16px;
     font-weight: 500;
-    color: var(--ink-500);
+    color: var(--ink-600);
     white-space: nowrap;
     flex-shrink: 0;
     transition: color 200ms var(--ease);
