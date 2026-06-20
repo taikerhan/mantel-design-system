@@ -2,6 +2,31 @@
   // bare mode for dashboard thumbnails
   if (new URLSearchParams(location.search).has('bare')) document.documentElement.classList.add('ds-bare');
 
+  // Mobile nav drawer — inject a hamburger toggle + dismiss backdrop (CSS turns the
+  // sidebar into an off-canvas drawer under 760px). Skip thumbnails, which hide the nav.
+  (function () {
+    if (document.documentElement.classList.contains('ds-bare')) return;
+    var nav = document.querySelector('.ds-nav');
+    if (!nav) return;
+    var body = document.body;
+    var btn = document.createElement('button');
+    btn.className = 'ds-navbtn'; btn.type = 'button';
+    btn.setAttribute('aria-label', 'Menu'); btn.setAttribute('aria-expanded', 'false');
+    btn.innerHTML =
+      '<svg class="ic-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>'
+      + '<svg class="ic-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M6 18 18 6"/></svg>';
+    var backdrop = document.createElement('div');
+    backdrop.className = 'ds-nav-backdrop';
+    function setOpen(open) { body.classList.toggle('nav-open', open); btn.setAttribute('aria-expanded', String(open)); }
+    btn.addEventListener('click', function () { setOpen(!body.classList.contains('nav-open')); });
+    backdrop.addEventListener('click', function () { setOpen(false); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setOpen(false); });
+    // picking a destination (or the logo) dismisses the drawer
+    nav.addEventListener('click', function (e) { if (e.target.closest('.ds-link, .ds-pop-item, .ds-logo')) setOpen(false); });
+    body.appendChild(backdrop);
+    body.appendChild(btn);
+  })();
+
   // Interactive component playground (live props) — type-dispatched.
   // <div class="pg" data-pg="<type>"> with a [data-pg-el] preview + [data-pg-prop] controls.
   var X_SVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M6 18L18 6"></path></svg>';
@@ -38,15 +63,55 @@
         + (s.closable ? '<button class="mt-alert-close" aria-label="Dismiss">' + X_SVG + '</button>' : '');
     },
     toggle: function (el, s) {
-      el.className = 'mt-switch' + (s.variant ? ' ' + s.variant : '');
-      el.innerHTML = '<input type="checkbox"' + (s.checked ? ' checked' : '') + (s.disabled ? ' disabled' : '') + '><span class="mt-switch-track"></span><span class="mt-switch-label">' + esc(s.label || '') + '</span>';
+      var kind = s.kind || 'switch';
+      var attrs = (s.checked ? ' checked' : '') + (s.disabled ? ' disabled' : '');
+      var lg = s.size === 'is-lg' ? ' is-lg' : '';
+      var label = '<span class="' + (kind === 'switch' ? 'mt-switch' : 'mt-' + (kind === 'checkbox' ? 'check' : 'radio')) + '-label">' + esc(s.label || '') + '</span>';
+      // Show only the controls that apply to the chosen component.
+      var pg = el.closest('.pg');
+      if (pg) {
+        var v = pg.querySelector('[data-pg-prop="variant"]'), z = pg.querySelector('[data-pg-prop="size"]');
+        if (v) v.closest('.pg-ctrl').style.display = kind === 'switch' ? '' : 'none';
+        if (z) z.closest('.pg-ctrl').style.display = kind === 'switch' ? 'none' : '';
+      }
+      if (kind === 'checkbox') {
+        el.className = 'mt-check' + lg;
+        el.innerHTML = '<input type="checkbox"' + attrs + '><span class="mt-check-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"></path></svg></span>' + label;
+      } else if (kind === 'radio') {
+        el.className = 'mt-radio' + lg;
+        el.innerHTML = '<input type="radio" name="pg-radio"' + attrs + '><span class="mt-radio-dot"></span>' + label;
+      } else {
+        el.className = 'mt-switch' + (s.variant ? ' ' + s.variant : '');
+        el.innerHTML = '<input type="checkbox"' + attrs + '><span class="mt-switch-track"></span>' + label;
+      }
     },
     field: function (el, s) {
       el.className = 'mt-input' + (s.size ? ' ' + s.size : '') + (s.invalid ? ' is-error' : '');
       el.type = s.type || 'text'; el.placeholder = s.placeholder || ''; el.disabled = !!s.disabled;
     },
     stat: function (el, s) {
-      el.innerHTML = '<div class="label">' + esc(s.label || '') + '</div><div class="val">' + esc(s.value || '') + '</div>' + (s.delta ? '<div class="delta ' + (s.trend || 'flat') + '">' + esc(s.delta) + '</div>' : '');
+      var trend = s.trend || 'up';
+      var ARROWS = { up: '<path d="M7 17 17 7M8 7h9v9"/>', down: '<path d="M7 7l10 10M17 8v9H8"/>', flat: '' };
+      var arrow = ARROWS[trend] || '';
+      var pill = s.delta
+        ? '<span class="delta-pill ' + trend + '">' + (arrow ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' + arrow + '</svg>' : '') + esc(s.delta) + '</span>'
+        : '';
+      var foot = pill ? '<div class="foot">' + pill + '</div>' : '';
+      var label = '<div class="label">' + esc(s.label || '') + '</div>';
+      var val = '<div class="val">' + esc(s.value || '') + '</div>';
+      var style = s.style || 'plain';
+      if (style === 'line') {
+        el.className = 'stat has-spark';
+        el.innerHTML = label + '<div class="stat-row"><div class="stat-main">' + val + foot + '</div>'
+          + '<div class="spark-slot"><svg class="spark ' + trend + '" viewBox="0 0 84 52" preserveAspectRatio="none" data-spark data-points="9,11,8,13,12,16,15,19,18,22,26" data-area="1"></svg></div></div>';
+      } else if (style === 'bar') {
+        el.className = 'stat';
+        el.innerHTML = label + val + '<div class="bar-slot"><div class="bar" data-bar data-points="5,7,6,9,8,11,10,13,12,15,14,18"></div></div>' + foot;
+      } else {
+        el.className = 'stat';
+        el.innerHTML = label + val + foot;
+      }
+      if (window.MantelStatGraphics) window.MantelStatGraphics(el);
     },
     live: function (el, s) {
       el.style.cssText = s.variant === 'plain'

@@ -1,53 +1,13 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Table · Mantel</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="../assets/kit.css"><link rel="stylesheet" href="../assets/shell.css"></head><body class="ds-body"><aside class="ds-nav"><div class="ds-brand"><a href="../index.html">Mantel</a><span class="ds-ver">UI Kit · v2.1</span></div><input class="ds-search" type="search" placeholder="Search…" aria-label="Search components"><nav class="ds-links"><a class="ds-link" href="../index.html" data-name="home dashboard">Home</a><a class="ds-link" href="../changelog.html" data-name="changelog releases versions history">Changelog</a><div class="ds-group">Design review <span class="ds-wip" title="Items awaiting review">1</span></div><a class="ds-link" href="../review.html" data-name="review queue">Review queue</a><div class="ds-group">Foundations</div><a class="ds-link" href="../components/type.html" data-name="typography">Typography</a><a class="ds-link" href="../components/color.html" data-name="color">Color</a><a class="ds-link" href="../components/spacing.html" data-name="spacing">Spacing</a><a class="ds-link" href="../components/radius.html" data-name="radius">Radius</a><a class="ds-link" href="../components/shadow.html" data-name="shadow">Shadow</a><a class="ds-link" href="../components/motion.html" data-name="motion">Motion</a><div class="ds-group">Components</div><a class="ds-link" href="../components/buttons.html" data-name="buttons">Buttons</a><a class="ds-link" href="../components/form-inputs.html" data-name="form inputs">Form inputs</a><a class="ds-link" href="../components/inputs.html" data-name="search &amp; pickers">Search &amp; pickers</a><a class="ds-link is-active" href="../components/data-table.html" data-name="table">Table <span class="ds-fe" title="Front-end UI Kit ships Table row as a separate component; our DS folds it into Data table">FE</span></a><a class="ds-link" href="../components/modal.html" data-name="modal">Modal</a><a class="ds-link" href="../components/menu.html" data-name="dropdown menu">Dropdown menu</a><a class="ds-link" href="../components/tabs.html" data-name="tabs">Tabs</a><a class="ds-link" href="../components/segmented.html" data-name="segmented control">Segmented control</a><a class="ds-link" href="../components/btn-group.html" data-name="button group">Button group</a><a class="ds-link" href="../components/toasts.html" data-name="toasts">Toasts</a><a class="ds-link" href="../components/alerts.html" data-name="alerts">Alerts</a><a class="ds-link" href="../components/stats.html" data-name="stat card">Stat card</a><a class="ds-link" href="../components/pills.html" data-name="status pills">Status pills</a><a class="ds-link" href="../components/badges.html" data-name="strength badges">Strength badges</a><a class="ds-link" href="../components/avatars.html" data-name="avatars">Avatars</a><a class="ds-link" href="../components/tooltips.html" data-name="tooltips">Tooltips</a><a class="ds-link" href="../components/toggles.html" data-name="switch / checkbox / radio">Switch / checkbox / radio</a><a class="ds-link" href="../components/crumbs.html" data-name="breadcrumbs">Breadcrumbs</a><a class="ds-link" href="../components/pager.html" data-name="pagination">Pagination</a><a class="ds-link" href="../components/activity.html" data-name="activity feed">Activity feed</a><a class="ds-link" href="../components/sheet.html" data-name="sheet / drawer">Sheet / drawer</a><a class="ds-link" href="../components/empty.html" data-name="empty state">Empty state</a><a class="ds-link" href="../components/focus.html" data-name="focus card">Focus card</a><a class="ds-link" href="../components/live.html" data-name="live indicator">Live indicator</a><a class="ds-link" href="../components/skeleton.html" data-name="skeleton">Skeleton</a><a class="ds-link" href="../components/category.html" data-name="category pills">Category pills</a><div class="ds-group">Combos</div><a class="ds-link" href="../components/header.html" data-name="page header combo title description breadcrumb">Page header</a></nav></aside><main class="ds-main"><div class="ds-page-head"><div class="ds-eyebrow">Components</div><h1 class="ds-h1">Table</h1></div><section class="block" id="data-table">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Table · Mantel</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="../assets/kit.css"><link rel="stylesheet" href="../assets/shell.css"></head><body class="ds-body"><aside class="ds-nav"><div class="ds-brand"><a class="ds-logo" href="../index.html" aria-label="Mantel — UI Kit home"><img src="../assets/mantel-logo.svg" alt="Mantel"></a><span class="ds-ver">UI Kit · v2.2</span></div><input class="ds-search" type="search" placeholder="Search…" aria-label="Search components"><nav class="ds-links"><a class="ds-link" href="../index.html" data-name="home dashboard overview">Overview</a><a class="ds-link" href="../changelog.html" data-name="changelog releases versions history">Changelog</a><div class="ds-group">Design review</div><a class="ds-link" href="../review.html" data-name="review queue">Review queue<span class="ds-wip" title="Items awaiting review">2</span></a><div class="ds-group">Foundations</div><a class="ds-link" href="../components/type.html" data-name="typography">Typography</a><a class="ds-link" href="../components/color.html" data-name="color">Color</a><a class="ds-link" href="../components/spacing.html" data-name="spacing">Spacing</a><a class="ds-link" href="../components/radius.html" data-name="radius">Radius</a><a class="ds-link" href="../components/shadow.html" data-name="shadow">Shadow</a><a class="ds-link" href="../components/motion.html" data-name="motion">Motion</a><div class="ds-group">Components</div><a class="ds-link" href="../components/buttons.html" data-name="buttons">Buttons</a><a class="ds-link" href="../components/form-inputs.html" data-name="form inputs">Form inputs</a><a class="ds-link" href="../components/inputs.html" data-name="search &amp; pickers">Search &amp; pickers</a><a class="ds-link is-active" href="../components/data-table.html" data-name="table">Table <span class="ds-fe" title="Front-end UI Kit ships Table row as a separate component; our DS folds it into Data table">FE</span></a><a class="ds-link" href="../components/modal.html" data-name="modal">Modal</a><a class="ds-link" href="../components/menu.html" data-name="dropdown menu">Dropdown menu</a><a class="ds-link" href="../components/tabs.html" data-name="tabs">Tabs</a><a class="ds-link" href="../components/segmented.html" data-name="segmented control">Segmented control</a><a class="ds-link" href="../components/btn-group.html" data-name="button group">Button group</a><a class="ds-link" href="../components/toasts.html" data-name="toasts">Toasts</a><a class="ds-link" href="../components/alerts.html" data-name="alerts">Alerts</a><a class="ds-link" href="../components/stats.html" data-name="stat card">Stat card</a><a class="ds-link" href="../components/pills.html" data-name="status pills">Status pills</a><a class="ds-link" href="../components/badges.html" data-name="strength badges">Strength badges</a><a class="ds-link" href="../components/avatars.html" data-name="avatars">Avatars</a><a class="ds-link" href="../components/tooltips.html" data-name="tooltips">Tooltips</a><a class="ds-link" href="../components/toggles.html" data-name="switch / checkbox / radio">Switch / checkbox / radio</a><a class="ds-link" href="../components/crumbs.html" data-name="breadcrumbs">Breadcrumbs</a><a class="ds-link" href="../components/pager.html" data-name="pagination">Pagination</a><a class="ds-link" href="../components/activity.html" data-name="activity feed">Activity feed</a><a class="ds-link" href="../components/sheet.html" data-name="sheet / drawer">Sheet / drawer</a><a class="ds-link" href="../components/empty.html" data-name="empty state">Empty state</a><a class="ds-link" href="../components/focus.html" data-name="focus card">Focus card</a><a class="ds-link" href="../components/live.html" data-name="live indicator">Live indicator</a><a class="ds-link" href="../components/skeleton.html" data-name="skeleton">Skeleton</a><a class="ds-link" href="../components/category.html" data-name="category pills">Category pills</a><div class="ds-group">Combos</div><a class="ds-link" href="../components/header.html" data-name="page header combo title description breadcrumb">Page header</a></nav></aside><main class="ds-main"><div class="ds-page-head"><div class="ds-eyebrow">Components</div><h1 class="ds-h1">Table</h1></div><section class="block" id="data-table">
       <div class="head">
         <h2>Table</h2>
-        <span class="desc">Row anatomy + CSS-grid table · shared column track · sortable headers · row menu</span>
+        <span class="desc">CSS-grid table · shared column track · sortable headers · row menu</span>
       </div>
 
       <div class="sub" style="margin-top: 0;">
-        <div class="sub-title"><h3>Row anatomy</h3><span class="token">.th-row · .row · .cell-{primary,num,center}</span><span class="note">Numbers right · pills + text left · badges center</span></div>
-        <div class="spec">
-          <div class="stage col">
-            <div class="th-row">
-              <div class="th">Seller</div>
-              <div class="th">Stage</div>
-              <div class="th right">Price</div>
-              <div class="th">Last activity</div>
-              <div class="th center">Strength</div>
-              <div></div>
-            </div>
-            <div class="row">
-              <div class="row-flex"><span class="av" style="background: var(--av-2-bg); color: var(--av-2-fg);">RT</span><div class="cell-primary">Robert &amp; Linda Tan<div class="sub-t">442 Oak Ridge Dr</div></div></div>
-              <div><span class="pill pill-viewed"><span class="dot"></span>Viewed · 3h</span></div>
-              <div class="cell-num">$1,245,000</div>
-              <div class="cell-num" style="text-align: left;">14:32 today</div>
-              <div class="cell-center"><span class="badge badge-high">92</span></div>
-              <div style="text-align: right;"><button class="btn btn-icon" aria-label="More"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="6" r="1"></circle><circle cx="12" cy="18" r="1"></circle></svg></button></div>
-            </div>
-            <div class="row">
-              <div class="row-flex"><span class="av" style="background: var(--av-4-bg); color: var(--av-4-fg);">AB</span><div class="cell-primary">Alicia Brown<div class="sub-t">5 Birchwood Ave</div></div></div>
-              <div><span class="pill pill-sent"><span class="dot"></span>Sent · 4d</span></div>
-              <div class="cell-num">$2,100,000</div>
-              <div class="cell-num" style="text-align: left;">11:42 today</div>
-              <div class="cell-center"><span class="badge badge-high">88</span></div>
-              <div style="text-align: right;"><button class="btn btn-icon" aria-label="More"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="6" r="1"></circle><circle cx="12" cy="18" r="1"></circle></svg></button></div>
-            </div>
-            <div class="row">
-              <div class="row-flex"><span class="av" style="background: var(--av-1-bg); color: var(--av-1-fg);">MJ</span><div class="cell-primary">Marcus Jensen<div class="sub-t">902 Sycamore Pl</div></div></div>
-              <div><span class="pill pill-neutral">No response</span></div>
-              <div class="cell-num">$675,000</div>
-              <div class="cell-num" style="text-align: left;">9 days ago</div>
-              <div class="cell-center"><span class="badge badge-low">42</span></div>
-              <div style="text-align: right;"><button class="btn btn-icon" aria-label="More"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="6" r="1"></circle><circle cx="12" cy="18" r="1"></circle></svg></button></div>
-            </div>
-          </div>
-          <div class="cap"><span>The cell-role primitives a data-table row is built from: header text aligns with its column · numbers right · pills + text left · badges center · row hover bg ink-50. <b>Note:</b> the front-end ships this as a separate <b>Table row</b> component — our DS folds it into Data table.</span><span class="right">.th-row · .row · .cell-{primary,num,center}</span></div>
-        </div>
-      </div>
-      <div class="sub">
         <div class="sub-title"><h3>Full table</h3><span class="token">.mt-table · --mt-cols</span><span class="note">Header + every row share one grid-template-columns via --mt-cols</span></div>
         <div class="spec">
-          <div class="stage col" style="background: var(--ink-50);">
+          <div class="stage col" style="background: var(--ink-50); padding: 40px;">
             <div class="mt-table" data-sort-table="" style="--mt-cols: 160px minmax(0,1fr) 108px 96px 130px 52px;">
               <div class="mt-table-head">
                 <div class="mt-th">
@@ -62,12 +22,12 @@
                   </button>
                 </div>
                 <div class="mt-th is-num">
-                  <button class="mt-th-sort" data-sort-col="amount">Amount
+                  <button class="mt-th-sort" data-sort-col="amount" data-sort-type="num">Amount
                     <svg class="mt-sort-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 15l5 5 5-5M7 9l5-5 5 5"></path></svg>
                   </button>
                 </div>
                 <div class="mt-th">
-                  <button class="mt-th-sort" data-sort-col="expiry">Expiry
+                  <button class="mt-th-sort" data-sort-col="expiry" data-sort-type="date">Expiry
                     <svg class="mt-sort-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 15l5 5 5-5M7 9l5-5 5 5"></path></svg>
                   </button>
                 </div>
@@ -127,7 +87,7 @@
               </div>
             </div>
           </div>
-          <div class="cap"><span>Header is <b>14px / 600 uppercase ink-700</b> on white with an ink-200 rule · <b>Amount</b> right-aligns with tabular-nums and ~20px breathing room beside <b>Expiry</b> · Description truncates via an inner <code style="font-family: var(--font-mono); font-size: 11.5px;">.mt-td-truncate</code> span · 14px cells · row hover ink-50</span><span class="right">.mt-th-sort · .mt-td.is-num · .mt-row-action</span></div>
+          <div class="cap"><span>Header is <b>14px / 600 uppercase ink-700</b> on white with an ink-200 rule · <b>Amount</b> right-aligns with tabular-nums and ~20px breathing room beside <b>Expiry</b> · Description truncates via an inner <code style="font-family: var(--font-mono); font-size: 12px;">.mt-td-truncate</code> span · 14px cells · row hover ink-50</span><span class="right">.mt-th-sort · .mt-td.is-num · .mt-row-action</span></div>
         </div>
       </div>
 
@@ -175,6 +135,122 @@
       </div>
 
       <div class="sub">
+        <div class="sub-title"><h3>Mobile</h3><span class="token">Stacked list · or scroll</span><span class="note">Default: rows collapse to a list. Wide tables: keep horizontal scroll with a frozen column</span></div>
+        <div class="spec">
+          <div class="stage" style="align-items: flex-start; gap: 28px; flex-wrap: wrap;">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+            <div class="device">
+              <div class="device-bar">
+                <span class="time">9:41</span>
+                <span class="island"></span>
+                <span class="status">
+                  <svg width="18" height="11" viewBox="0 0 18 11" fill="currentColor" aria-hidden="true"><rect x="0" y="7" width="3" height="4" rx="1"></rect><rect x="5" y="5" width="3" height="6" rx="1"></rect><rect x="10" y="2.5" width="3" height="8.5" rx="1"></rect><rect x="15" y="0" width="3" height="11" rx="1"></rect></svg>
+                  <svg width="16" height="12" viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M2 6.5a15 15 0 0 1 20 0"></path><path d="M6 11a9 9 0 0 1 12 0"></path><path d="M12 15.4h.01"></path></svg>
+                  <svg width="24" height="12" viewBox="0 0 24 12" fill="none" aria-hidden="true"><rect x="0.5" y="0.5" width="20" height="11" rx="3" stroke="currentColor"></rect><rect x="2" y="2" width="15" height="8" rx="1.5" fill="currentColor"></rect><rect x="22" y="4" width="1.6" height="4" rx="0.8" fill="currentColor"></rect></svg>
+                </span>
+              </div>
+              <div class="device-screen">
+                <div style="padding: 18px 18px 12px;">
+                  <div style="font-size: 19px; font-weight: 600; letter-spacing: -0.015em; color: var(--ink-900);">Discounts</div>
+                  <div style="font-size: 14px; color: var(--ink-500); margin-top: 2px; font-variant-numeric: tabular-nums;">3 active</div>
+                </div>
+                <div role="list">
+                  <div role="listitem" style="display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-top: 1px solid var(--ink-150);">
+                    <span class="mt-status-dot is-active"></span>
+                    <span style="flex: 1; min-width: 0;">
+                      <span style="display: block; font-size: 15px; font-weight: 600; color: var(--ink-900);">Sunrise 10%</span>
+                      <span style="display: block; font-size: 14px; color: var(--ink-500); margin-top: 3px;">Option · Expires Dec 31, 2027</span>
+                    </span>
+                    <span style="font-size: 15px; font-weight: 600; color: var(--ink-900); font-variant-numeric: tabular-nums;">10%</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--ink-300); flex-shrink: 0;"><path d="M9 18l6-6-6-6"></path></svg>
+                  </div>
+                  <div role="listitem" style="display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-top: 1px solid var(--ink-150);">
+                    <span class="mt-status-dot is-inactive"></span>
+                    <span style="flex: 1; min-width: 0;">
+                      <span style="display: block; font-size: 15px; font-weight: 600; color: var(--ink-900);">Holiday 2024</span>
+                      <span style="display: block; font-size: 14px; color: var(--ink-500); margin-top: 3px;">Option · <span style="color: var(--accent-red);">Expired Dec 31</span></span>
+                    </span>
+                    <span style="font-size: 15px; font-weight: 600; color: var(--ink-900); font-variant-numeric: tabular-nums;">15%</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--ink-300); flex-shrink: 0;"><path d="M9 18l6-6-6-6"></path></svg>
+                  </div>
+                  <div role="listitem" style="display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-top: 1px solid var(--ink-150); border-bottom: 1px solid var(--ink-150);">
+                    <span class="mt-status-dot is-active"></span>
+                    <span style="flex: 1; min-width: 0;">
+                      <span style="display: block; font-size: 15px; font-weight: 600; color: var(--ink-900);">Partner Bundle</span>
+                      <span style="display: block; font-size: 14px; color: var(--ink-500); margin-top: 3px;">Package · Expires Aug 15, 2027</span>
+                    </span>
+                    <span style="font-size: 15px; font-weight: 600; color: var(--ink-900); font-variant-numeric: tabular-nums;">20%</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--ink-300); flex-shrink: 0;"><path d="M9 18l6-6-6-6"></path></svg>
+                  </div>
+                </div>
+              </div>
+              <div class="device-home"></div>
+            </div>
+            <div style="font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-500); font-weight: 600;">Stacked list · default</div>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+            <div class="device">
+              <div class="device-bar">
+                <span class="time">9:41</span>
+                <span class="island"></span>
+                <span class="status">
+                  <svg width="18" height="11" viewBox="0 0 18 11" fill="currentColor" aria-hidden="true"><rect x="0" y="7" width="3" height="4" rx="1"></rect><rect x="5" y="5" width="3" height="6" rx="1"></rect><rect x="10" y="2.5" width="3" height="8.5" rx="1"></rect><rect x="15" y="0" width="3" height="11" rx="1"></rect></svg>
+                  <svg width="16" height="12" viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M2 6.5a15 15 0 0 1 20 0"></path><path d="M6 11a9 9 0 0 1 12 0"></path><path d="M12 15.4h.01"></path></svg>
+                  <svg width="24" height="12" viewBox="0 0 24 12" fill="none" aria-hidden="true"><rect x="0.5" y="0.5" width="20" height="11" rx="3" stroke="currentColor"></rect><rect x="2" y="2" width="15" height="8" rx="1.5" fill="currentColor"></rect><rect x="22" y="4" width="1.6" height="4" rx="0.8" fill="currentColor"></rect></svg>
+                </span>
+              </div>
+              <div class="device-screen">
+                <div style="padding: 18px 18px 12px;">
+                  <div style="font-size: 19px; font-weight: 600; letter-spacing: -0.015em; color: var(--ink-900);">Discounts</div>
+                  <div style="font-size: 14px; color: var(--ink-500); margin-top: 2px; font-variant-numeric: tabular-nums;">3 active · 6 columns</div>
+                </div>
+                <div class="mt-table is-responsive is-compact" data-mt-table-responsive="" style="--mt-cols: 132px 100px 64px 112px 112px 104px; border-radius: 0; box-shadow: none; border-bottom: 1px solid var(--ink-200);">
+                    <div class="mt-table-head">
+                      <div class="mt-th is-sticky">Name</div>
+                      <div class="mt-th">Type</div>
+                      <div class="mt-th is-num">Amount</div>
+                      <div class="mt-th">Expires</div>
+                      <div class="mt-th">Created</div>
+                      <div class="mt-th">Owner</div>
+                    </div>
+                    <div class="mt-table-body">
+                      <div class="mt-table-row">
+                        <div class="mt-td is-sticky is-strong" style="gap: 8px;"><span class="mt-status-dot is-active"></span>Sunrise 10%</div>
+                        <div class="mt-td"><span class="mt-category is-primary">Option</span></div>
+                        <div class="mt-td is-num">10%</div>
+                        <div class="mt-td">Dec 31, 2027</div>
+                        <div class="mt-td">Jan 12, 2026</div>
+                        <div class="mt-td">Amir Cho</div>
+                      </div>
+                      <div class="mt-table-row">
+                        <div class="mt-td is-sticky is-strong" style="gap: 8px;"><span class="mt-status-dot is-inactive"></span>Holiday 2024</div>
+                        <div class="mt-td"><span class="mt-category is-primary">Option</span></div>
+                        <div class="mt-td is-num">15%</div>
+                        <div class="mt-td"><span class="mt-td-expired">Expired Dec 31</span></div>
+                        <div class="mt-td">Nov 02, 2024</div>
+                        <div class="mt-td">Mara Diaz</div>
+                      </div>
+                      <div class="mt-table-row">
+                        <div class="mt-td is-sticky is-strong" style="gap: 8px;"><span class="mt-status-dot is-active"></span>Partner Bundle</div>
+                        <div class="mt-td"><span class="mt-category is-secondary">Package</span></div>
+                        <div class="mt-td is-num">20%</div>
+                        <div class="mt-td">Aug 15, 2027</div>
+                        <div class="mt-td">Mar 20, 2026</div>
+                        <div class="mt-td">Amir Cho</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <div class="device-home"></div>
+            </div>
+            <div style="font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-500); font-weight: 600;">Horizontal scroll · wide tables</div>
+            </div>
+          </div>
+          <div class="cap"><span>Two mobile options: the <b>stacked list</b> (default — each row becomes a list item, no scroll) and the <b>horizontal-scroll</b> table with a frozen first column for genuinely wide / dense tables. The right-edge fade signals there's more to scroll under the frozen Name.</span><span class="right">list · .is-responsive</span></div>
+        </div>
+      </div>
+
+      <div class="sub">
         <div class="sub-title"><h3>Row actions menu</h3><span class="token">.mt-row-action → .mt-menu</span><span class="note">The ··· opens the standard dropdown · Delete is the danger item</span></div>
         <div class="spec">
           <div class="stage" style="padding: 32px 24px; align-items: flex-start;">
@@ -198,7 +274,7 @@
               </button>
             </div>
           </div>
-          <div class="cap"><span>Edit / Duplicate / Activate-Deactivate / <b>Delete</b> (danger). Same <code style="font-family: var(--font-mono); font-size: 11.5px;">.mt-menu</code> used everywhere — open it anchored to the row's ··· button.</span><span class="right">.mt-menu-item.is-danger</span></div>
+          <div class="cap"><span>Edit / Duplicate / Activate-Deactivate / <b>Delete</b> (danger). Same <code style="font-family: var(--font-mono); font-size: 12px;">.mt-menu</code> used everywhere — open it anchored to the row's ··· button.</span><span class="right">.mt-menu-item.is-danger</span></div>
         </div>
       </div>
 
@@ -246,7 +322,7 @@
   <div class="mt-overlay-body" style="flex: 1;">
     <div style="display: flex; gap: 8px; margin-bottom: 16px;"><span class="pill pill-viewed"><span class="dot"></span>Viewed · 3h</span><span class="badge badge-high" style="width: 28px; height: 28px; font-size: 12px;">92</span></div>
     <p style="margin-bottom: 14px;">Opened the proposal 4 minutes ago. Still on the financing section after three sessions in two days.</p>
-    <div style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-500); font-weight: 600; margin: 18px 0 10px;">Recent activity</div>
+    <div style="font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-500); font-weight: 600; margin: 18px 0 10px;">Recent activity</div>
     <div class="activity" style="padding: 0; margin: 0 -4px;">
       <div class="item" style="padding: 10px 4px;"><span class="bubble view" style="width: 28px; height: 28px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"></path><circle cx="12" cy="12" r="3"></circle></svg></span><div class="txt" style="font-size: 13px;">Opened proposal · 3rd time</div><span class="ts" style="font-size: 12px;">14:32</span></div>
       <div class="item" style="padding: 10px 4px;"><span class="bubble send" style="width: 28px; height: 28px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"></path><path d="M22 2L15 22l-4-9-9-4z"></path></svg></span><div class="txt" style="font-size: 13px;">You sent the proposal</div><span class="ts" style="font-size: 12px;">Mon</span></div>
@@ -268,7 +344,7 @@
     <button class="btn btn-icon" aria-label="Close" data-close="" style="margin: -6px -6px 0 0; flex-shrink: 0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M6 18L18 6"></path></svg></button>
   </div>
   <div class="mt-overlay-body">
-    <div style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-500); font-weight: 600; margin-bottom: 10px;">Lifecycle</div>
+    <div style="font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-500); font-weight: 600; margin-bottom: 10px;">Lifecycle</div>
     <div style="display: flex; flex-wrap: wrap; gap: 8px;">
       <span class="pill pill-viewed"><span class="dot"></span>Viewed</span>
       <span class="pill pill-sent"><span class="dot"></span>Sent</span>

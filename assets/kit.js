@@ -1,6 +1,8 @@
 
   (function () {
     var backdrop = document.querySelector('[data-overlay-backdrop]');
+    // Pages without overlay demos (e.g. Page header) have no backdrop — skip wiring.
+    if (!backdrop) return;
     var openTargets = document.querySelectorAll('[data-open]');
     var current = null;
     var scrollEl = null, scrollHandler = null;
@@ -79,51 +81,56 @@
     var TONES = {
       success: {
         cls: 'is-success',
-        icon: '<svg class="mt-toast-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>',
+        icon: '<svg class="mt-toast-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>',
         title: 'Proposal sent',
         desc: 'Robert &amp; Linda will be notified.'
       },
       info: {
         cls: '',
-        icon: '<svg class="mt-toast-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>',
+        icon: '<svg class="mt-toast-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>',
         title: 'Auto-save on',
         desc: 'Changes save to draft every 4 seconds.'
       },
+      text: {
+        cls: '',
+        bare: true,
+        msg: 'Link copied to clipboard'
+      },
       warning: {
         cls: 'is-warning',
-        icon: '<svg class="mt-toast-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>',
+        icon: '<svg class="mt-toast-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>',
         title: 'Credit hold flagged',
         desc: '2 proposals need lender review.'
       },
       danger: {
         cls: 'is-danger',
-        icon: '<svg class="mt-toast-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>',
+        icon: '<svg class="mt-toast-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>',
         title: 'Lender declined',
         desc: 'Re-route by Friday to keep the deal active.'
       },
       inverse: {
         cls: 'is-inverse',
-        icon: '<svg class="mt-toast-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>',
+        icon: '<svg class="mt-toast-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>',
         title: 'Saved',
         desc: '442 Oak Ridge · just now.'
       },
       'cta-success': {
         cls: 'is-success',
-        icon: '<svg class="mt-toast-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>',
+        icon: '<svg class="mt-toast-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>',
         title: 'Proposal sent to Robert &amp; Linda',
         desc: 'They\'ll get an email and a tracked secure link.',
         actions: [{ label: 'View seller' }, { label: 'Undo', muted: true }]
       },
       'cta-danger': {
         cls: 'is-danger',
-        icon: '<svg class="mt-toast-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>',
+        icon: '<svg class="mt-toast-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>',
         title: 'Lender declined',
         desc: 'Re-route by Friday to keep the deal active.',
         actions: [{ label: 'Re-route lender' }]
       },
       'cta-undo': {
         cls: 'is-inverse',
-        icon: '<svg class="mt-toast-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>',
+        icon: '<svg class="mt-toast-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>',
         title: 'Saved · 442 Oak Ridge updated',
         desc: 'Last edit 2 seconds ago.',
         actions: [{ label: 'Undo' }]
@@ -140,14 +147,20 @@
     function spawn(toneKey) {
       var tone = TONES[toneKey] || TONES.info;
       var t = document.createElement('div');
-      t.className = 'mt-toast ' + tone.cls;
-      t.innerHTML =
-        tone.icon +
-        '<div class="mt-toast-body"><div class="mt-toast-title">' + tone.title + '</div>' +
-        '<div class="mt-toast-desc">' + tone.desc + '</div>' +
-        renderActions(tone.actions) +
-        '</div>' +
-        '<button class="mt-toast-close" aria-label="Dismiss"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M6 18L18 6"/></svg></button>';
+      var closeBtn = '<button class="mt-toast-close" aria-label="Dismiss"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M6 18L18 6"/></svg></button>';
+      if (tone.bare) {
+        t.className = 'mt-toast is-bare ' + tone.cls;
+        t.innerHTML = '<div class="mt-toast-msg">' + tone.msg + '</div>' + closeBtn;
+      } else {
+        t.className = 'mt-toast ' + tone.cls;
+        t.innerHTML =
+          tone.icon +
+          '<div class="mt-toast-body"><div class="mt-toast-title">' + tone.title + '</div>' +
+          '<div class="mt-toast-desc">' + tone.desc + '</div>' +
+          renderActions(tone.actions) +
+          '</div>' +
+          closeBtn;
+      }
       viewport.appendChild(t);
 
       var dismiss = function () {
@@ -363,15 +376,57 @@
     function makeSvg(key) {
       return '<svg class="mt-sort-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + ICONS[key] + '</svg>';
     }
+    // Column index of a sort button = position of its .mt-th in the head row,
+    // so the same .mt-td index lines up in every body row.
+    function colIndexOf(table, btn) {
+      var th = btn.closest('.mt-th');
+      var ths = table.querySelector('.mt-table-head').children;
+      return Array.prototype.indexOf.call(ths, th);
+    }
+    // Pull a comparable value out of a cell. Type is declared on the header via
+    // data-sort-type (num / date); anything else sorts as lowercased text.
+    function rowSortValue(row, index, type) {
+      var cell = row.children[index];
+      var text = cell ? (cell.textContent || '').trim() : '';
+      if (type === 'num') {
+        var n = parseFloat(text.replace(/[^0-9.\-]/g, ''));
+        return isNaN(n) ? -Infinity : n;
+      }
+      if (type === 'date') {
+        if (!text || /no expiry|never/i.test(text)) return Infinity; // open-ended sorts last
+        var s = /\d{4}/.test(text) ? text : text + ', ' + new Date().getFullYear();
+        var d = Date.parse(s);
+        return isNaN(d) ? Infinity : d;
+      }
+      return text.toLowerCase();
+    }
     function initSortTable(table) {
       var state = { col: null, dir: 'asc' };
+      var body = table.querySelector('.mt-table-body');
       var btns = table.querySelectorAll('.mt-th-sort[data-sort-col]');
+      var meta = {};                                                  // sortCol -> { index, type }
+      var original = body ? Array.prototype.slice.call(body.children) : [];
       btns.forEach(function (btn) {
+        meta[btn.dataset.sortCol] = { index: colIndexOf(table, btn), type: btn.dataset.sortType || 'text' };
         var svg = btn.querySelector('.mt-sort-glyph');
         var key = btn.classList.contains('is-active') ? 'asc' : 'unsorted';
         if (svg) svg.outerHTML = makeSvg(key);
         if (btn.classList.contains('is-active')) state.col = btn.dataset.sortCol;
       });
+      function apply() {
+        if (!body) return;
+        if (state.col === null) {                                     // unsorted — restore source order
+          original.forEach(function (r) { body.appendChild(r); });
+          return;
+        }
+        var info = meta[state.col];
+        Array.prototype.slice.call(body.children).sort(function (a, b) {
+          var av = rowSortValue(a, info.index, info.type);
+          var bv = rowSortValue(b, info.index, info.type);
+          var cmp = av < bv ? -1 : av > bv ? 1 : 0;
+          return state.dir === 'asc' ? cmp : -cmp;
+        }).forEach(function (r) { body.appendChild(r); });
+      }
       btns.forEach(function (btn) {
         btn.addEventListener('click', function () {
           var col = btn.dataset.sortCol;
@@ -385,8 +440,57 @@
             var svg = b.querySelector('.mt-sort-glyph');
             if (svg) svg.outerHTML = makeSvg(isActive ? state.dir : 'unsorted');
           });
+          apply();
         });
       });
+      apply();                                                        // honour the initial active column
     }
     document.querySelectorAll('[data-sort-table]').forEach(initSortTable);
+  })();
+
+  /* Stat card — sparkline + bar renderer (no external deps) */
+  (function () {
+    var NS = 'http://www.w3.org/2000/svg';
+    function spark(svg) {
+      var pts = svg.dataset.points.split(',').map(Number);
+      var vb = svg.viewBox.baseVal, W = vb.width, H = vb.height;
+      var flush = svg.dataset.flush === '1';
+      var padX = flush ? 0 : 4, padT = 6, padB = flush ? 0 : 8;
+      var min = Math.min.apply(null, pts), max = Math.max.apply(null, pts), range = (max - min) || 1;
+      var step = (W - padX * 2) / (pts.length - 1);
+      var xy = pts.map(function (p, i) { return [padX + i * step, padT + (1 - (p - min) / range) * (H - padT - padB)]; });
+      var line = xy.map(function (c, i) { return (i ? 'L' : 'M') + c[0].toFixed(1) + ' ' + c[1].toFixed(1); }).join(' ');
+      var uid = 'spk' + Math.round(xy[0][1] * 100 + pts.length) + '-' + Math.round(W);
+      if (svg.dataset.area === '1') {
+        var grad = document.createElementNS(NS, 'linearGradient');
+        grad.setAttribute('id', uid); grad.setAttribute('x1', '0'); grad.setAttribute('y1', '0'); grad.setAttribute('x2', '0'); grad.setAttribute('y2', '1');
+        var s0 = document.createElementNS(NS, 'stop'); s0.setAttribute('offset', '0'); s0.style.stopColor = 'var(--spk)'; s0.style.stopOpacity = '0.22';
+        var s1 = document.createElementNS(NS, 'stop'); s1.setAttribute('offset', '1'); s1.style.stopColor = 'var(--spk)'; s1.style.stopOpacity = '0';
+        grad.appendChild(s0); grad.appendChild(s1); svg.appendChild(grad);
+        var area = document.createElementNS(NS, 'path');
+        area.setAttribute('d', line + ' L ' + xy[xy.length - 1][0].toFixed(1) + ' ' + H + ' L ' + xy[0][0].toFixed(1) + ' ' + H + ' Z');
+        area.setAttribute('fill', 'url(#' + uid + ')'); svg.appendChild(area);
+      }
+      var path = document.createElementNS(NS, 'path'); path.setAttribute('class', 'spark-line'); path.setAttribute('d', line); path.setAttribute('pathLength', '1'); svg.appendChild(path);
+      var ex = xy[xy.length - 1][0], ey = xy[xy.length - 1][1];
+      var halo = document.createElementNS(NS, 'circle'); halo.setAttribute('class', 'spark-halo'); halo.setAttribute('cx', ex); halo.setAttribute('cy', ey); halo.setAttribute('r', 3); halo.setAttribute('opacity', '0.5'); svg.appendChild(halo);
+      var dot = document.createElementNS(NS, 'circle'); dot.setAttribute('class', 'spark-dot'); dot.setAttribute('cx', ex); dot.setAttribute('cy', ey); dot.setAttribute('r', 3); svg.appendChild(dot);
+    }
+    function bar(el) {
+      var pts = el.dataset.points.split(',').map(Number), max = Math.max.apply(null, pts);
+      pts.forEach(function (p, i) {
+        var b = document.createElement('i');
+        b.style.height = Math.max(8, (p / max) * 100) + '%';
+        b.style.animationDelay = (i * 0.04) + 's';
+        if (i === pts.length - 1) b.className = 'hot';
+        el.appendChild(b);
+      });
+    }
+    // Expose so the playground can re-render graphics after it rebuilds a card.
+    window.MantelStatGraphics = function (root) {
+      var r = root || document;
+      r.querySelectorAll('[data-spark]').forEach(spark);
+      r.querySelectorAll('[data-bar]').forEach(bar);
+    };
+    window.MantelStatGraphics(document);
   })();

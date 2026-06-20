@@ -1,18 +1,21 @@
 /* Mantel DS site shell — layout, sidebar nav, search, dashboard.
    Component visuals come from kit.css; this only frames them. */
+.ds-body.ds-home { background: var(--ink-100); }
 .ds-body { margin: 0; display: flex; min-height: 100vh; background: var(--ink-50); color: var(--ink-900);
            font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
 .ds-nav { position: sticky; top: 0; align-self: flex-start; height: 100vh; width: 252px; flex: none; box-sizing: border-box;
           overflow-y: auto; background: #fff; border-right: 1px solid var(--ink-150); padding: 18px 12px; }
-.ds-brand { display: flex; align-items: baseline; gap: 8px; padding: 4px 8px 14px; }
+.ds-brand { display: flex; align-items: baseline; gap: 8px; padding: 4px 16px 14px; }
 .ds-brand a { font-size: 18px; font-weight: 700; letter-spacing: -.02em; color: var(--ink-900); text-decoration: none; }
+.ds-brand .ds-logo { display: inline-flex; }
+.ds-brand .ds-logo img { height: 20px; width: auto; display: block; }
 .ds-ver { font-size: 11px; color: var(--ink-400); font-variant-numeric: tabular-nums; }
 /* Aligned to the DS input field (kit.css .mt-input): 36px · 8px radius · white fill ·
    solid ink-400 border · ink-500 leading icon. Hover ink-500, focus brand-600 + shadow-focus. */
-.ds-search { width: 100%; box-sizing: border-box; height: 36px; padding: 0 12px 0 34px; margin-bottom: 8px;
+.ds-search { width: 100%; box-sizing: border-box; height: 36px; padding: 0 12px 0 38px; margin-bottom: 8px;
              border: 1px solid var(--ink-400); border-radius: var(--radius-md); background-color: #fff;
              background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236A6E75' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M21 21l-4.2-4.2'/%3E%3C/svg%3E");
-             background-repeat: no-repeat; background-position: 12px center; background-size: 16px;
+             background-repeat: no-repeat; background-position: 16px center; background-size: 16px;
              font: inherit; font-size: 14px; color: var(--ink-900);
              transition: border-color .18s var(--ease), box-shadow .18s var(--ease); }
 .ds-search::placeholder { color: var(--ink-400); }
@@ -27,11 +30,12 @@
 .ds-pop-item:hover { background: var(--ink-100); color: var(--ink-900); text-decoration: none; }
 .ds-pop-arrow { color: var(--ink-300); font-size: 12px; }
 .ds-pop-item:hover .ds-pop-arrow { color: var(--brand-600); }
-.ds-links { display: flex; flex-direction: column; }
+.ds-links { display: flex; flex-direction: column; margin-top: 10px; }
 /* Section divider — a hairline above each group header (Design review / Foundations / Components) */
-.ds-group { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-900); padding: 14px 8px 6px; margin-top: 8px; border-top: 1px solid var(--ink-150); }
-/* Review-count badge beside the Design review nav group — items awaiting review */
-.ds-wip { display: inline-flex; align-items: center; justify-content: center; min-width: 16px; height: 16px; margin-left: 6px; padding: 0 5px; border-radius: var(--radius-full); background: var(--accent-amber); color: #fff; font-size: 10px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; vertical-align: middle; }
+.ds-group { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-900); padding: 14px 16px 6px; margin-top: 18px; border-top: 1px solid var(--ink-150); }
+/* Review-count badge on the Review queue nav item — items awaiting review.
+   Mirrors the strength-badge component (soft amber tint, circular). */
+.ds-wip { display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; padding: 0 6px; border-radius: var(--radius-full); background: var(--accent-red-bg); color: var(--accent-red); font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1; flex-shrink: 0; }
 /* Front-end divergence marker — this component differs from / is pending on the front-end UI Kit */
 .ds-fe { display: inline-flex; align-items: center; margin-left: 6px; padding: 1px 5px; border-radius: var(--radius-full); background: var(--ink-100); color: var(--ink-600); font-size: 9px; font-weight: 700; letter-spacing: .04em; line-height: 1.5; vertical-align: middle; }
 /* Construction / pending warning banner on Design review pages */
@@ -40,8 +44,11 @@
 .wip-banner svg { width: 19px; height: 19px; color: var(--accent-amber); flex-shrink: 0; }
 .wip-banner .t { font-size: 13px; color: var(--ink-800); line-height: 1.45; }
 .wip-banner .t b { color: var(--accent-amber); font-weight: 600; }
-.ds-link { display: block; padding: 7px 12px; border-radius: var(--radius-full); font-size: 14px; color: var(--ink-700); text-decoration: none; }
-.ds-link:hover { background: var(--ink-100); color: var(--ink-900); }
+.ds-link { display: block; padding: 7px 16px; border-radius: var(--radius-full); font-size: 15px; color: var(--ink-700); text-decoration: none; }
+.ds-link:hover { background: var(--ink-100); color: var(--ink-900); text-decoration: none; }
+/* Nav item carrying a count badge — push the badge to the trailing edge */
+.ds-link:has(.ds-wip) { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.ds-link:focus-visible { outline: none; background: var(--ink-100); color: var(--ink-900); box-shadow: var(--shadow-focus); }
 /* MD3-style active: soft tonal "pill" (secondary-container tint + on-container text), not a saturated fill */
 .ds-link.is-active { background: var(--brand-50); color: var(--brand-700); font-weight: 600; }
 .ds-hide { display: none !important; }
@@ -60,7 +67,7 @@
 .ds-card { display: block; background: #fff; border-radius: var(--radius-2xl); border: 1px solid var(--ink-200);
            box-shadow: 0 1px 2px rgb(15 14 13 / 0.04), 0 8px 20px -10px rgb(15 14 13 / 0.10); overflow: hidden;
            text-decoration: none; color: inherit; transition: transform .18s var(--ease), box-shadow .18s var(--ease), border-color .18s var(--ease); }
-.ds-card:hover { transform: translateY(-3px); border-color: var(--ink-300); box-shadow: var(--shadow-hover); }
+.ds-card:hover { transform: translateY(-3px); border-color: var(--brand-400); box-shadow: var(--shadow-hover), 0 0 0 1px var(--brand-400); text-decoration: none; }
 .ds-thumb { position: relative; height: 168px; overflow: hidden; background: var(--ink-50); border-bottom: 1px solid var(--ink-150); }
 .ds-thumb iframe { position: absolute; top: 0; left: 0; width: calc(100% / 0.6); height: calc(168px / 0.6); border: 0; transform: scale(0.6); transform-origin: top left; pointer-events: none; }
 /* Full tables need a roomier viewport so columns don't collide; zoom out a touch.
@@ -190,8 +197,8 @@ main.ds-main { display: block; }
 .type-table .api-type { font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-600); white-space: normal; line-height: 1.5; letter-spacing: .005em; }
 
 /* Device preview frame — 390px = iPhone 14/15/16 logical width (the 2026 baseline;
-   360px is now the conservative floor, not the common case). */
-.device { width: 390px; flex: none; display: flex; flex-direction: column; min-height: 420px; border: 1px solid var(--ink-200); border-radius: 30px; background: #fff; box-shadow: var(--shadow-card); overflow: hidden; }
+   360px is now the conservative floor, not the common case). 9:19.5 = real phone aspect. */
+.device { width: 390px; flex: none; display: flex; flex-direction: column; aspect-ratio: 9 / 19.5; border: 1px solid var(--ink-200); border-radius: 44px; background: #fff; box-shadow: var(--shadow-card); overflow: hidden; }
 /* iOS-style status bar — time + Dynamic Island + signal/wifi/battery; reads as a phone, not a sheet */
 .device-bar { position: relative; flex: none; display: flex; align-items: center; justify-content: space-between; height: 38px; padding: 0 22px; }
 .device-bar .time { font-size: 12.5px; font-weight: 600; color: var(--ink-900); font-variant-numeric: tabular-nums; letter-spacing: .02em; }
@@ -218,12 +225,13 @@ main.ds-main { display: block; }
 .pg-controls { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 14px 22px; padding: 15px 20px 17px; background: var(--ink-50); border-top: 1px solid var(--ink-150); }
 .pg-ctrl { display: flex; flex-direction: column; gap: 6px; }
 .pg-ctrl > span { font-family: var(--font-mono); font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-500); }
-.pg-ctrl select, .pg-ctrl input[type="text"] { height: 34px; min-width: 132px; box-sizing: border-box; padding: 0 11px; border: 1px solid var(--ink-200); border-radius: var(--radius-md); background: #fff; font: inherit; font-size: 13px; color: var(--ink-900); cursor: pointer; }
+.pg-ctrl select, .pg-ctrl input[type="text"] { height: 36px; min-width: 132px; box-sizing: border-box; padding: 0 12px; border: 1px solid var(--ink-400); border-radius: var(--radius-md); background: #fff; font: inherit; font-size: 14px; color: var(--ink-900); cursor: pointer; transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease); }
 /* custom chevron (native arrow ignores padding-right) so it sits a comfortable 12px off the edge */
 .pg-ctrl select { appearance: none; -webkit-appearance: none; padding-right: 34px;
                   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236A6E75' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
                   background-repeat: no-repeat; background-position: right 12px center; }
 .pg-ctrl input[type="text"] { cursor: text; }
+.pg-ctrl select:hover, .pg-ctrl input[type="text"]:hover { border-color: var(--ink-500); }
 .pg-ctrl select:focus, .pg-ctrl input[type="text"]:focus { outline: none; border-color: var(--brand-600); box-shadow: var(--shadow-focus); }
 .pg-ctrl-toggle { justify-content: flex-end; }
 .pg-switch { width: 38px; height: 22px; padding: 0; border: 0; border-radius: var(--radius-full); background: var(--ink-300); position: relative; cursor: pointer; transition: background .18s var(--ease); }
@@ -236,4 +244,26 @@ main.ds-main { display: block; }
 .pg-lead { margin-top: 28px; padding: 20px 22px 24px; background: var(--brand-50); border: 1px solid var(--brand-100); border-radius: 20px; }
 .pg-lead > .head { margin-bottom: 16px; padding-bottom: 14px; border-bottom-color: var(--brand-100); }
 
-@media (max-width: 760px) { .ds-nav { display: none; } .ds-main { padding: 24px 18px 80px; } }
+/* Mobile nav: hamburger trigger + off-canvas drawer (both inert on desktop) */
+.ds-navbtn { display: none; }
+.ds-nav-backdrop { display: none; }
+
+@media (max-width: 760px) {
+  .ds-main { padding: 60px 18px 80px; }
+  /* Hamburger — floats top-left, above the drawer so it morphs to a close (X) */
+  .ds-navbtn { position: fixed; top: 14px; left: 14px; z-index: 80; display: inline-flex; align-items: center; justify-content: center;
+               width: 40px; height: 40px; padding: 0; border: 1px solid var(--ink-200); border-radius: var(--radius-md);
+               background: #fff; color: var(--ink-800); box-shadow: var(--shadow-card); cursor: pointer; }
+  .ds-navbtn svg { width: 20px; height: 20px; display: block; }
+  .ds-navbtn .ic-close { display: none; }
+  body.nav-open .ds-navbtn .ic-open { display: none; }
+  body.nav-open .ds-navbtn .ic-close { display: block; }
+  /* Sidebar slides in from the left; padding-top clears the floating button */
+  .ds-nav { position: fixed; top: 0; left: 0; z-index: 70; height: 100vh; padding-top: 60px;
+            transform: translateX(-100%); transition: transform .26s var(--ease); box-shadow: var(--shadow-pop); }
+  body.nav-open .ds-nav { transform: none; }
+  /* Dim + tap-to-dismiss layer behind the drawer */
+  .ds-nav-backdrop { display: block; position: fixed; inset: 0; z-index: 65; background: rgb(15 14 13 / .42);
+                     opacity: 0; pointer-events: none; transition: opacity .26s var(--ease); }
+  body.nav-open .ds-nav-backdrop { opacity: 1; pointer-events: auto; }
+}
