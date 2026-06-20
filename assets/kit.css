@@ -1151,10 +1151,10 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
 }
 .mt-menu-label {
   font-family: var(--font-mono);
-  font-size: 10.5px;
+  font-size: 12px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--ink-500);
+  color: var(--ink-600);
   font-weight: var(--fw-semibold);
   padding: 8px 10px 4px;
 }
@@ -1184,7 +1184,7 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
   margin-left: auto;
   font-family: var(--font-mono);
   font-size: 12px;
-  color: var(--ink-500);
+  color: var(--ink-600);
   letter-spacing: 0.005em;
 }
 .mt-menu-item.is-danger { color: var(--accent-red); }
