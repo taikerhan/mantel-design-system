@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Proposal settings — UX exploration (3 directions)</title>
+
+<!--
+  EXPLORATION — UX rework of the CEO's Company Settings · Proposal page.
+  Brief: forget DS/components, fix the page-level UX. Four fixes applied across
+  all three directions:
+    1. Sits in a real settings frame (nav / clear sections) so it reads as settings.
+    2. Every setting has a label + one-line description of its effect.
+    3. Switches instead of checkboxes (instant-state semantics).
+    4. The save model is made explicit — each version demos a different one.
+  Three directions, switchable up top:
+    A — Classic settings list + dirty-state save bar (explicit save)
+    C — Reorganized information architecture + scroll-spy nav (explicit Save bar) · shown by default
+  Borrows only Geist + color tokens + the switch from mantel.css; all page
+  structure is fresh.
+-->
+
+<link rel="stylesheet" href="../styles/mantel.css">
+<style>
+  :root {
+    --vx-bg: var(--ink-50);
+    --vx-line: var(--ink-150);
+    --vx-card-shadow: var(--shadow-card);
+    --vx-expo: var(--ease-snap);
+  }
+  body.vx-body {
+    display: block; margin: 0; min-height: 100vh;
+    background: var(--vx-bg); color: var(--ink-900);
+    align-items: stretch;
+    overflow-x: clip;   /* contain the full-bleed sticky header without breaking position:sticky */
+  }
+  .vx-body * { box-sizing: border-box; }
+
+  /* ===== Top version switcher ===== */
+  .vx-switch {
+    position: fixed; right: 22px; bottom: 22px; z-index: 90;
+    display: inline-flex; align-items: center;
+    padding: 5px; border-radius: var(--radius-xl);
+    background: var(--ink-900);
+    box-shadow: var(--shadow-pop);
+  }
+  .vx-switch-brand { display: none; }
+  .vx-switch-dot { display: none; }
+  .vx-seg { display: inline-flex; background: transparent; border-radius: 10px; padding: 0; gap: 2px; }
+  .vx-seg button {
+    font-family: var(--font-sans); border: 0; cursor: pointer; background: transparent;
+    height: 34px; padding: 0 16px; border-radius: var(--radius-md); font-size: 13px; font-weight: 500;
+    color: rgba(255,255,255,.65); display: inline-flex; align-items: center; gap: 7px;
+    transition: color .2s var(--ease), background-color .2s var(--ease);
+  }
+  .vx-seg button .k { font-weight: 700; color: rgba(255,255,255,.4); transition: color .2s var(--ease); }
+  .vx-seg button:hover { color: #fff; background: rgba(255,255,255,.08); }
+  .vx-seg button.is-active { background: #fff; color: var(--ink-900); box-shadow: 0 1px 2px rgba(0,0,0,.2); }
+  .vx-seg button.is-active .k { color: var(--brand-600); }
+
+  /* device-preview segment (left of the version toggle) */
+  .vx-dev { gap: 2px; }
+  .vx-dev button { padding: 0 9px; }
+  .vx-dev button svg { width: 16px; height: 16px; }
+  .vx-seg-div { width: 1px; align-self: stretch; margin: 5px 6px; background: rgba(255,255,255,.16); }
+
+  /* viewport overlay — loads the page in an iframe at the real device width so @media fires */
+  .vx-vp { position: fixed; inset: 0; z-index: 80; display: none; align-items: center; justify-content: center; background: rgba(14, 16, 20, 0.42); backdrop-filter: blur(5px); }
+  .vx-vp.is-open { display: flex; }
+  .vx-vp-scale { transform-origin: center center; }
+  .vx-vp-frame { position: relative; background: var(--ink-900); box-shadow: 0 50px 90px -25px rgba(0,0,0,.65); }
+  .vx-vp[data-mode="mobile"] .vx-vp-frame { border-radius: 46px; padding: 12px; }
+  .vx-vp[data-mode="pad"] .vx-vp-frame { border-radius: 30px; padding: 16px; }
+  .vx-vp-frame iframe { display: block; border: 0; background: #fff; }
+  .vx-vp[data-mode="mobile"] iframe { width: 390px; height: 844px; border-radius: 34px; }
+  .vx-vp[data-mode="pad"] iframe { width: 834px; height: 1112px; border-radius: 14px; }
+  .vx-vp-label { position: absolute; left: 50%; top: -38px; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 8px; color: #fff; font-family: var(--font-sans); font-size: 13px; font-weight: 600; letter-spacing: .01em; white-space: nowrap; }
+  .vx-vp-label b { font-weight: 600; }
+  .vx-vp-label .dim { color: rgba(255,255,255,.55); font-variant-numeric: tabular-nums; }
+  .vx-vp-close { position: absolute; right: -2px; top: -40px; width: 30px; height: 30px; border-radius: var(--radius-full); border: 0; cursor: pointer; background: rgba(255,255,255,.14); color: #fff; display: inline-flex; align-items: center; justify-content: center; transition: background-color .15s var(--ease); }
+  .vx-vp-close:hover { background: rgba(255,255,255,.26); }
+  .vx-vp-close svg { width: 16px; height: 16px; }
+  /* mobile notch / tablet camera dot */
+  .vx-vp[data-mode="mobile"] .vx-vp-frame::before { content: ""; position: absolute; top: 22px; left: 50%; transform: translateX(-50%); width: 120px; height: 5px; border-radius: var(--radius-full); background: rgba(255,255,255,.22); z-index: 2; }
+  .vx-vp[data-mode="pad"] .vx-vp-frame::before { content: ""; position: absolute; top: 50%; left: 7px; transform: translateY(-50%); width: 5px; height: 5px; border-radius: var(--radius-full); background: rgba(255,255,255,.3); }
+
+  /* embedded (inside the device iframe): hide chrome, fit content */
+  body.is-embed .vx-switch, body.is-embed .vx-vp { display: none !important; }
+
+  /* ===== Shared building blocks ===== */
+  .vx-stage[hidden] { display: none; }
+
+  .vx-h1 { font-size: 24px; font-weight: 700; letter-spacing: -.019em; color: var(--ink-900); }
+  .vx-lede { font-size: 14px; color: var(--ink-500); margin-top: 12px; line-height: 1.55; max-width: 56ch; }
+
+  .vx-card {
+    background: #fff; border-radius: var(--radius-2xl);
+    box-shadow: var(--vx-card-shadow); overflow: hidden;
+  }
+  .vx-card + .vx-card { margin-top: 18px; }
+  .vx-card-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    padding: 16px 22px; border-bottom: 1px solid var(--ink-100);
+  }
+  .vx-card-eyebrow { font-size: var(--fs-xs); font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--brand-600); margin-bottom: 7px; }
+  .vx-card-title { font-size: 19px; font-weight: 600; letter-spacing: -.016em; color: var(--ink-900); }
+  .vx-card-desc { display: none; }   /* card-head descriptions removed per direction */
+  .vx-card-body { padding: 4px 22px; }
+
+  /* setting row: text block + control */
+  .vx-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; padding: 16px 0; border-bottom: 1px solid var(--ink-100); }
+  .vx-row:last-child { border-bottom: 0; }
+  .vx-row-text { min-width: 0; }
+  .vx-row-label { font-size: 14px; font-weight: 500; color: var(--ink-900); display: flex; align-items: center; gap: 8px; }
+  .vx-row-desc { font-size: 13px; color: var(--ink-500); margin-top: 3px; line-height: 1.5; max-width: 60ch; }
+  .vx-row-control { flex-shrink: 0; padding-top: 1px; }
+  .vx-gov { font-size: var(--fs-xs); font-weight: 600; color: var(--ink-500); background: var(--ink-100); border-radius: 4px; padding: 2px 7px; display: inline-flex; align-items: center; gap: 4px; }
+  .vx-gov svg { width: 11px; height: 11px; }
+
+  /* collapsible subgroup (Advanced HVAC) */
+  .vx-sub { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .42s var(--vx-expo); }
+  .vx-sub.is-open { grid-template-rows: 1fr; }
+  .vx-sub-inner { overflow: hidden; }
+  .vx-sub-pad { padding-top: 2px; padding-bottom: 4px; }   /* keep .vx-card-body's 22px horizontal padding */
+
+  /* nested dependent options — recessed tinted panel attached under the master (no hanging indent line) */
+  .vx-detail { margin: 6px 0 14px; background: var(--ink-50); border: 1px solid var(--ink-150); border-radius: var(--radius-lg); padding: 0 16px; }
+  .vx-detail .vx-row { border-bottom-color: var(--ink-200); }
+  .vx-detail .vx-row:last-child { border-bottom: 0; }
+  /* toggle chips — short related sub-flags shown together (efficiency ratings) */
+  .vx-chipset { display: inline-flex; flex-wrap: wrap; gap: 8px; }
+  .vx-toggle-chip { font-family: var(--font-sans); cursor: pointer; user-select: none; position: relative; display: inline-flex; align-items: center; gap: 7px; height: 32px; padding: 0 13px 0 11px; border-radius: var(--radius-md); border: 1px solid var(--ink-200); background: #fff; color: var(--ink-600); font-size: 13px; font-weight: 500; transition: all .15s var(--ease); }
+  .vx-toggle-chip:hover { border-color: var(--ink-400); }
+  .vx-toggle-chip input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .vx-toggle-chip .tick { width: 15px; height: 15px; border-radius: 4px; border: 1.5px solid var(--ink-300); display: inline-flex; align-items: center; justify-content: center; transition: all .15s var(--ease); }
+  .vx-toggle-chip .tick svg { width: 10px; height: 10px; color: #fff; opacity: 0; }
+  .vx-toggle-chip.is-on { border-color: var(--brand-600); background: var(--brand-50); color: var(--brand-700); }
+  .vx-toggle-chip.is-on .tick { background: var(--brand-600); border-color: var(--brand-600); }
+  .vx-toggle-chip.is-on .tick svg { opacity: 1; }
+
+  /* number stepper */
+  .vx-stepper { display: inline-flex; align-items: stretch; border: 1px solid var(--ink-300); border-radius: var(--radius-md); overflow: hidden; height: 38px; background: #fff; }
+  .vx-stepper button { width: 38px; border: 0; background: #fff; cursor: pointer; color: var(--ink-600); font-size: var(--fs-xl); display: flex; align-items: center; justify-content: center; transition: background-color .15s var(--ease); }
+  .vx-stepper button:hover { background: var(--ink-100); color: var(--ink-900); }
+  .vx-stepper input { width: 56px; padding: 0; border: 0; border-left: 1px solid var(--ink-200); border-right: 1px solid var(--ink-200); text-align: center; font-family: var(--font-sans); font-size: var(--fs-base); font-weight: 600; font-variant-numeric: tabular-nums; color: var(--ink-900); }
+  .vx-stepper input::-webkit-outer-spin-button, .vx-stepper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .vx-stepper input[type=number] { -moz-appearance: textfield; }
+  .vx-stepper input:focus { outline: none; }
+  .vx-suffix { font-size: 14px; color: var(--ink-600); margin-left: 12px; }
+
+  /* preset chips */
+  .vx-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .vx-chip { font-family: var(--font-sans); cursor: pointer; border: 1px solid var(--ink-200); background: #fff; height: 36px; padding: 0 16px; border-radius: var(--radius-md); font-size: 14px; font-weight: 500; color: var(--ink-700); font-variant-numeric: tabular-nums; transition: all .15s var(--ease); }
+  .vx-chip:hover { border-color: var(--ink-400); color: var(--ink-900); }
+  .vx-chip.is-active { background: var(--brand-600); border-color: var(--brand-600); color: #fff; }
+  .vx-custom-days { display: inline-flex; align-items: center; gap: 6px; flex-basis: 100%; margin-top: 12px; }
+  .vx-custom-days[hidden] { display: none; }
+  .vx-input-sm { width: 66px; height: 36px; border: 1px solid var(--ink-300); border-radius: var(--radius-md); padding: 0 10px; font-family: var(--font-sans); font-size: 14px; font-weight: 600; text-align: center; font-variant-numeric: tabular-nums; color: var(--ink-900); }
+  .vx-input-sm:focus { outline: none; border-color: var(--brand-600); box-shadow: var(--shadow-focus); }
+  .vx-input-sm::-webkit-outer-spin-button, .vx-input-sm::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+  /* buttons */
+  .vx-btn { font-family: var(--font-sans); height: 40px; padding: 0 20px; border-radius: var(--radius-md); font-size: 14px; font-weight: 600; cursor: pointer; border: 0; display: inline-flex; align-items: center; gap: 8px; transition: all .18s var(--ease); }
+  .vx-btn-primary { color: #fff; background: var(--brand-600); box-shadow: var(--shadow-button); }
+  .vx-btn-primary:hover { background: var(--brand-700); }
+  .vx-btn-ghost { background: transparent; color: var(--ink-600); }
+  .vx-btn-ghost:hover { background: var(--ink-100); color: var(--ink-900); }
+  /* confirm-dialog action buttons (DS .btn-neutral / .btn-danger live in kit.css, not mantel.css) */
+  .vx-btn-neutral { background: #fff; color: var(--ink-800); border: 1px solid var(--ink-300); }
+  .vx-btn-neutral:hover { background: var(--ink-50); border-color: var(--ink-400); color: var(--ink-900); }
+  .vx-btn-danger { color: #fff; background: var(--accent-red); box-shadow: var(--shadow-button); }
+  .vx-btn-danger:hover { background: color-mix(in srgb, var(--accent-red) 88%, var(--ink-900)); }
+  /* secondary = DS blue outline (brand-600 text + border), deepens to brand-700 on hover */
+  .vx-btn-secondary { background: #fff; color: var(--brand-600); border: 1px solid var(--brand-600); }
+  .vx-btn-secondary:hover { background: var(--brand-50); border-color: var(--brand-700); color: var(--brand-700); }
+  /* leave-confirmation dialog sits above the version switcher (z-90) + device preview (z-80) */
+  .mt-backdrop { z-index: 100; }
+  .mt-modal { z-index: 101; }
+  /* three actions need more room than the 440px confirm default */
+  #leave-modal { width: min(520px, calc(100vw - 32px)); }
+  #leave-modal .mt-confirm-actions { flex-wrap: wrap; }
+
+  /* save status (auto-save) */
+  .vx-status { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 500; color: var(--ink-500); }
+  .vx-status svg { width: 15px; height: 15px; }
+  .vx-status.is-saved { color: var(--accent-green); }
+  .vx-status.is-saving { color: var(--ink-400); }
+  .vx-status:empty { display: none; }   /* no "saved" badge until the user actually changes something */
+
+  /* =========================================================================
+     STAGE A — classic settings list with left nav + dirty save bar
+     ========================================================================= */
+  .stage-a .vx-app, .stage-c .vx-app {
+    display: grid; grid-template-columns: 232px minmax(0,1fr);
+    gap: 40px; max-width: 1120px; margin: 0 auto; padding: 36px 28px 140px;
+  }
+  .stage-c .vx-app { grid-template-columns: minmax(0,1fr); max-width: 760px; padding-bottom: 90px; }
+  .vx-nav { position: sticky; top: 24px; align-self: start; }
+  .vx-nav-title { font-size: var(--fs-xs); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-400); padding: 0 12px 10px; }
+  .vx-nav a { display: flex; align-items: center; gap: 10px; height: 38px; padding: 0 12px; border-radius: var(--radius-md); font-size: 14px; font-weight: 500; color: var(--ink-800); text-decoration: none; transition: all .15s var(--ease); }
+  .vx-nav a svg { width: 17px; height: 17px; color: var(--ink-400); }
+  .vx-nav a:hover { background: var(--ink-100); color: var(--ink-900); }
+  .vx-nav a.is-active { background: var(--brand-600); color: #fff; font-weight: 600; }
+  .vx-nav a.is-active svg { color: #fff; }
+  .vx-nav a.is-active:hover { background: var(--brand-700); color: #fff; }
+  .vx-back { display: inline-flex; align-items: center; gap: 5px; background: transparent; border: 0; cursor: pointer; font-family: var(--font-sans); font-size: 13px; font-weight: 500; color: var(--ink-500); padding: 0 0 10px; transition: color .15s var(--ease); }
+  .vx-back:hover { color: var(--ink-900); }
+  .vx-back svg { width: 16px; height: 16px; }
+  .vx-reset { display: inline-flex; align-items: center; gap: 6px; background: transparent; border: 1px solid var(--ink-200); cursor: pointer; font-family: var(--font-sans); font-size: 13px; font-weight: 500; color: var(--ink-600); height: 34px; padding: 0 14px; border-radius: var(--radius-md); flex-shrink: 0; transition: all .15s var(--ease); }
+  .vx-reset:hover { border-color: var(--ink-400); color: var(--ink-900); background: #fff; }
+  .vx-reset svg { width: 15px; height: 15px; }
+  .vx-page-foot { margin-top: 26px; padding-top: 22px; border-top: 1px solid var(--vx-line); display: flex; }
+  .vx-page-foot .vx-reset:hover { border-color: var(--accent-red); color: var(--accent-red); }
+  .vx-main { min-width: 0; }
+  .vx-main-head { margin-bottom: 24px; }
+
+  /* save controls live inline in the (sticky) page header — light, not a black bar */
+  .stage-a .vx-main-head,
+  .stage-c .vx-main-head {
+    position: sticky; top: 0; z-index: 30;
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 24px;
+    margin: 0 0 18px; padding: 14px 0;
+    background: var(--vx-bg);
+    border-bottom: 1px solid transparent;
+    transition: border-color .2s var(--ease), box-shadow .2s var(--ease);
+  }
+  .stage-a .vx-main-head.is-stuck,
+  .stage-c .vx-main-head.is-stuck { border-bottom-color: var(--vx-line); box-shadow: var(--shadow-hover); }
+  .stage-a .vx-head-text,
+  .stage-c .vx-head-text { min-width: 0; }
+  .vx-stick-sentinel { display: block; height: 1px; }
+  .vx-save-cluster {
+    display: flex; align-items: center; gap: 12px; flex-shrink: 0; padding-top: 3px;
+    opacity: 0; transform: translateY(-4px); pointer-events: none;
+    transition: opacity .25s var(--vx-expo), transform .25s var(--vx-expo);
+  }
+  .stage-a.is-dirty .vx-save-cluster,
+  .stage-c.is-dirty .vx-save-cluster { opacity: 1; transform: none; pointer-events: auto; }
+  .vx-save-note { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink-500); white-space: nowrap; }
+  .vx-save-note .pip { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-amber); box-shadow: 0 0 0 4px var(--accent-amber-bg); }
+  .vx-save-cluster .vx-btn { height: 36px; padding: 0 16px; font-size: 13px; }
+
+  /* Stage C header: breadcrumb on top, title + Save on one row, lede full-width (no squeeze) */
+  /* full-bleed: the sticky header spans the whole viewport so its divider/shadow runs edge-to-edge;
+     content is re-inset with padding so it stays aligned to the centred settings column */
+  .stage-c .vx-main-head { display: block; margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw); padding-left: calc(50vw - 50%); padding-right: calc(50vw - 50%); }
+  .stage-c .vx-head-row { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-top: 2px; }
+  /* Save is always shown — disabled until there are edits; note + Discard reveal on edit */
+  .stage-c .vx-save-cluster { opacity: 1; transform: none; pointer-events: auto; padding-top: 0; }
+  .stage-c .vx-save-note,
+  .stage-c .vx-save-cluster [data-discard] { display: none; }
+  .stage-c.is-dirty .vx-save-note { display: inline-flex; }
+  .stage-c.is-dirty .vx-save-cluster [data-discard] { display: inline-flex; }
+  /* matches the DS disabled rule (kit.css .btn:disabled) — dim to 50%, not a grey recolor */
+  .vx-btn:disabled, .vx-btn[disabled] { opacity: .5; cursor: not-allowed; pointer-events: none; }
+
+  /* =========================================================================
+     STAGE C — scroll-spy IA
+     ========================================================================= */
+  .stage-c .vx-section-title { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-400); margin: 30px 4px 12px; scroll-margin-top: 24px; }
+  .stage-c .vx-section-title:first-child { margin-top: 0; }
+  .stage-c .vx-nav a.spy-active { background: var(--brand-50); color: var(--brand-700); font-weight: 600; }
+  .stage-c .vx-nav a.spy-active svg { color: var(--brand-600); }
+
+  /* STAGE D — original labels, on/off state descriptions */
+  .stage-d .vx-appd { max-width: 720px; margin: 0 auto; padding: 36px 28px 80px; }
+  .stage-d .vx-main-head { margin-bottom: 24px; }
+  .vx-state { font-weight: 500; margin-top: 3px; font-size: 13px; transition: color .18s var(--ease); }
+  .vx-state.is-on { color: var(--accent-green); }
+  .vx-state.is-off { color: var(--ink-400); }
+
+  /* on/off label to the left of a toggle */
+  .vx-onoff-wrap { display: inline-flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .vx-onoff { font-size: var(--fs-xs); font-weight: 700; min-width: 26px; text-align: right; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-400); transition: color .15s var(--ease); }
+  .vx-onoff.is-on { color: var(--brand-600); }
+
+  /* more-obvious auto-save: circled check + toast */
+  .vx-status.is-saved { color: var(--accent-green); font-weight: 600; }
+  .vx-status.is-saved svg { box-sizing: content-box; width: 12px; height: 12px; padding: 3px; background: var(--accent-green); color: #fff; border-radius: 50%; }
+  .vx-toast { position: fixed; left: 50%; bottom: 92px; transform: translateX(-50%) translateY(22px); display: inline-flex; align-items: center; gap: 9px; background: var(--ink-900); color: #fff; padding: 11px 16px 11px 13px; border-radius: var(--radius-lg); box-shadow: var(--shadow-pop); font-size: 13px; font-weight: 500; opacity: 0; pointer-events: none; transition: opacity .45s var(--ease), transform .55s var(--ease); z-index: 60; }
+  .vx-toast.is-show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .vx-toast .tk { width: 18px; height: 18px; border-radius: 50%; background: var(--accent-green); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .vx-toast .tk svg { width: 11px; height: 11px; color: #fff; }
+
+  /* right-aligned checkbox (option C equipment) */
+  .vx-check { cursor: pointer; display: inline-flex; align-items: center; }
+  .vx-check input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .vx-check .vx-check-box { width: 20px; height: 20px; border-radius: 4px; border: 1.5px solid var(--ink-300); background: #fff; display: inline-flex; align-items: center; justify-content: center; transition: all .15s var(--ease); }
+  .vx-check .vx-check-box svg { width: 13px; height: 13px; color: #fff; opacity: 0; transition: opacity .12s var(--ease); }
+  .vx-check:hover .vx-check-box { border-color: var(--ink-400); }
+  .vx-check input:checked + .vx-check-box { background: var(--brand-600); border-color: var(--brand-600); }
+  .vx-check input:checked + .vx-check-box svg { opacity: 1; }
+  .vx-check input:focus-visible + .vx-check-box { box-shadow: var(--shadow-focus); }
+
+  @media (max-width: 900px) {
+    .stage-a .vx-app, .stage-c .vx-app { grid-template-columns: 1fr; }
+    .vx-nav { display: none; }
+    .vx-panes { grid-template-columns: 1fr; }
+    .vx-preview { position: static; }
+    /* full-bleed sticky header on mobile: cancel the app's 28px side padding so the
+       header background, bottom hairline and stuck-shadow reach both screen edges
+       (otherwise the scrolling card edge + its shadow peek through the side gaps). */
+    .stage-a .vx-main-head { margin-inline: -28px; padding-inline: 28px; }
+  }
+  @media (max-width: 560px) {
+    /* governed-by badge drops under the label instead of crowding the wrapped title */
+    .vx-row-label { flex-direction: column; align-items: flex-start; gap: 6px; }
+  }
+</style>
+</head>
+<body class="vx-body">
+<style>.rq-back{transition:color .15s var(--ease)}.rq-back:hover{color:var(--brand-700)}.rq-back .rq-arrow{transition:transform .15s var(--ease)}.rq-back:hover .rq-arrow{transform:translateX(-2px)}</style>
+<a href="../review.html" class="rq-back" style="display:flex;align-items:center;gap:9px;padding:10px 20px;background:#fff;border-bottom:1px solid var(--ink-150);font-size:13px;font-weight:500;color:var(--ink-600);text-decoration:none">
+  <svg class="rq-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"></path><path d="M12 19l-7-7 7-7"></path></svg>
+  <span>Back to Review queue</span>
+  <span style="margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-violet)"><span style="width:7px;height:7px;border-radius:50%;background:currentColor"></span>Exploring</span>
+</a>
+
+<!-- ===== Version switcher ===== -->
+<header class="vx-switch">
+  <div class="vx-switch-brand"><span class="vx-switch-dot"></span> <span><b>Proposal settings</b> · UX exploration</span></div>
+  <div class="vx-seg vx-dev" role="group" aria-label="Preview device">
+    <button data-dev="desktop" class="is-active" title="Desktop view" aria-label="Desktop view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg></button>
+    <button data-dev="pad" title="iPad view" aria-label="iPad view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg></button>
+    <button data-dev="mobile" title="Mobile view" aria-label="Mobile view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2.5"/><path d="M11 18h2"/></svg></button>
+  </div>
+  <div class="vx-seg-div" aria-hidden="true"></div>
+  <div class="vx-seg" role="tablist">
+    <button data-go="c" class="is-active"><span class="k">C</span> Reorganized + Save</button>
+  </div>
+</header>
+
+<!-- device-preview overlay (iframe at true device width) -->
+<div class="vx-vp" id="vx-vp" data-mode="mobile" hidden>
+  <div class="vx-vp-scale" id="vx-vp-scale">
+    <div class="vx-vp-frame">
+      <div class="vx-vp-label"><b id="vx-vp-name">Mobile</b> <span class="dim" id="vx-vp-size">390 × 844</span></div>
+      <button class="vx-vp-close" id="vx-vp-close" title="Exit preview" aria-label="Exit preview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      <iframe id="vx-vp-frame" title="Device preview"></iframe>
+    </div>
+  </div>
+</div>
+
+<!-- =======================================================================
+     STAGE A — Classic settings list, left nav, dirty save bar
+     ======================================================================= -->
+<section class="vx-stage stage-a" data-stage="a" hidden>
+  <div class="vx-app">
+
+    <!-- settings nav -->
+    <nav class="vx-nav" aria-label="Company settings">
+      <div class="vx-nav-title">Company settings</div>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 0 0-2-1.2L14 1h-4l-.4 2.6a7 7 0 0 0-2 1.2l-2.4-1-2 3.4 2 1.6A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 2 1.2L10 23h4l.4-2.6a7 7 0 0 0 2-1.2l2.4 1 2-3.4-2-1.6c.1-.4.1-.8.1-1.2Z"/></svg> General</a>
+      <a href="#" class="is-active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg> Proposal</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg> Team &amp; roles</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="6.5" cy="11.5" r="2.5"/><circle cx="17.5" cy="14.5" r="2.5"/><circle cx="9" cy="18" r="2.5"/></svg> Branding</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg> Billing</a>
+    </nav>
+
+    <!-- main -->
+    <main class="vx-main">
+      <span class="vx-stick-sentinel" aria-hidden="true"></span>
+      <div class="vx-main-head">
+        <div class="vx-head-text">
+          <button class="vx-back" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg> Back</button>
+          <h1 class="vx-h1">Company Proposal</h1>
+          <p class="vx-lede">Control what homeowners see on a proposal and how long it stays valid. Changes apply to every new proposal your team sends.</p>
+          <span class="vx-status" id="a-status" style="margin-top:10px;"></span>
+        </div>
+      </div>
+
+      <!-- Display -->
+      <section class="vx-card">
+        <div class="vx-card-head"><div><div class="vx-card-title">Pricing &amp; display</div><div class="vx-card-desc">Toggle the pieces of pricing and detail shown on the proposal and its title page.</div></div></div>
+        <div class="vx-card-body">
+          <div class="vx-row">
+            <div class="vx-row-text"><div class="vx-row-label">Line-item pricing</div><div class="vx-row-desc">Break out individual equipment and labor costs instead of one option price.</div></div>
+            <label class="mt-switch vx-row-control"><input type="checkbox"><span class="mt-switch-track"></span></label>
+          </div>
+          <div class="vx-row">
+            <div class="vx-row-text"><div class="vx-row-label">Discount total</div><div class="vx-row-desc">Show the combined savings beneath each option's price.</div></div>
+            <label class="mt-switch vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label>
+          </div>
+          <div class="vx-row">
+            <div class="vx-row-text"><div class="vx-row-label">Price range on cover <span class="vx-gov"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Governed by MAN-5069</span></div><div class="vx-row-desc">Display the low–high estimate on the cover before the homeowner opens the detail.</div></div>
+            <label class="mt-switch vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label>
+          </div>
+          <div class="vx-row">
+            <div class="vx-row-text"><div class="vx-row-label">Evaporator coils</div><div class="vx-row-desc">List the matched coil for each system on the proposal and contract.</div></div>
+            <label class="mt-switch vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label>
+          </div>
+        </div>
+      </section>
+
+      <!-- Access -->
+      <section class="vx-card">
+        <div class="vx-card-head"><div><div class="vx-card-title">Homeowner access</div><div class="vx-card-desc">How homeowners reach the proposal link.</div></div></div>
+        <div class="vx-card-body">
+          <div class="vx-row">
+            <div class="vx-row-text"><div class="vx-row-label">Require email to view</div><div class="vx-row-desc">Homeowners must enter their email before the proposal opens. Helps confirm who's viewing.</div></div>
+            <label class="mt-switch vx-row-control"><input type="checkbox"><span class="mt-switch-track"></span></label>
+          </div>
+        </div>
+      </section>
+
+      <!-- Advanced HVAC -->
+      <section class="vx-card">
+        <div class="vx-card-head">
+          <div><div class="vx-card-title">Equipment details</div></div>
+        </div>
+        <div class="vx-card-body">
+          <div class="vx-row" style="align-items:center;">
+            <div class="vx-row-text"><div class="vx-row-label">Show Efficiency ratings</div><div class="vx-row-desc">Select the ratings you'd like to show on each option card.</div></div>
+            <label class="mt-switch vx-row-control"><input type="checkbox" data-master="a-eff" checked><span class="mt-switch-track"></span></label>
+          </div>
+          <div class="vx-sub is-open" id="a-eff"><div class="vx-sub-inner"><div style="padding:0 0 16px;">
+            <div class="vx-chipset">
+              <label class="vx-toggle-chip"><input type="checkbox" checked><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg></span>SEER2</label>
+              <label class="vx-toggle-chip"><input type="checkbox" checked><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg></span>EER2</label>
+              <label class="vx-toggle-chip"><input type="checkbox" checked><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg></span>HSPF2</label>
+              <label class="vx-toggle-chip"><input type="checkbox" checked><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg></span>AFUE</label>
+            </div>
+          </div></div></div>
+          <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Show equipment model numbers</div></div><label class="mt-switch vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
+          <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Show equipment sizing</div></div><label class="mt-switch vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
+        </div>
+      </section>
+
+      <!-- Validity -->
+      <section class="vx-card">
+        <div class="vx-card-head"><div><div class="vx-card-title">Proposal validity</div><div class="vx-card-desc">When a sent proposal expires by default.</div></div></div>
+        <div class="vx-card-body">
+          <div class="vx-row" style="border-bottom:0;">
+            <div class="vx-row-text"><div class="vx-row-label">Proposal expiry (days)</div><div class="vx-row-desc">A proposal stops accepting signatures this many days after it's sent. Reps can override per proposal.</div></div>
+            <div class="vx-row-control" style="display:flex;align-items:center;">
+              <div class="vx-stepper"><button type="button" data-step="-1">−</button><input type="number" value="14" min="1"><button type="button" data-step="1">+</button></div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <div class="vx-page-foot">
+        <button class="vx-reset" type="button" data-reset><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg> Reset all changes to default</button>
+      </div>
+    </main>
+  </div>
+
+</section>
+
+<!-- =======================================================================
+     STAGE C — Reorganized IA + scroll-spy nav, explicit Save bar (backend requires an explicit save)
+     ======================================================================= -->
+<section class="vx-stage stage-c" data-stage="c">
+  <div class="vx-app">
+    <main class="vx-main">
+      <span class="vx-stick-sentinel" aria-hidden="true"></span>
+      <div class="vx-main-head">
+        <nav class="mt-crumbs" aria-label="Breadcrumb" style="margin-bottom:6px;">
+          <a class="mt-crumb" href="#">Company Settings</a>
+          <span class="mt-crumb-sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"></path></svg></span>
+          <span class="mt-crumb-current">Proposal</span>
+        </nav>
+        <div class="vx-head-row">
+          <h1 class="vx-h1">Company Settings</h1>
+          <div class="vx-save-cluster">
+            <span class="vx-save-note"><span class="pip"></span><span id="c-status">Unsaved changes</span></span>
+            <button class="vx-btn vx-btn-secondary" type="button" data-discard>Discard</button>
+            <button class="vx-btn vx-btn-primary" type="button" data-save disabled>Save changes</button>
+          </div>
+        </div>
+        <p class="vx-lede">Control how proposals are presented to homeowners. Replaces the legacy Retool configuration.</p>
+      </div>
+
+      <h2 class="vx-section-title" id="c-pricing">Pricing</h2>
+      <section class="vx-card">
+        <div class="vx-card-body">
+          <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Line item prices</div><div class="vx-row-desc">Break out equipment and labor instead of a single option price.</div></div><label class="mt-switch vx-row-control"><input type="checkbox"><span class="mt-switch-track"></span></label></div>
+          <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Total discounts</div><div class="vx-row-desc">Show the combined savings beneath each option's price.</div></div><label class="mt-switch vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
+          <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Price range on title page <span class="vx-gov"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Governed by MAN-5069</span></div><div class="vx-row-desc">Display the low–high estimate on the cover page.</div></div><label class="mt-switch vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
+        </div>
+      </section>
+
+      <h2 class="vx-section-title" id="c-access">Access</h2>
+      <section class="vx-card">
+        <div class="vx-card-body">
+          <div class="vx-row" style="border-bottom:0;"><div class="vx-row-text"><div class="vx-row-label">Require email to view</div><div class="vx-row-desc">Homeowners enter their email before the proposal opens.</div></div><label class="mt-switch vx-row-control"><input type="checkbox"><span class="mt-switch-track"></span></label></div>
+        </div>
+      </section>
+
+      <h2 class="vx-section-title" id="c-equipment">Equipment</h2>
+      <section class="vx-card">
+        <div class="vx-card-body">
+          <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Evaporator coils</div><div class="vx-row-desc">List the matched coil for each system on the proposal and contract.</div></div><label class="mt-switch vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
+          <div class="vx-row" style="border-bottom:0;align-items:center;">
+            <div class="vx-row-text"><div class="vx-row-label">Efficiency ratings &amp; specs</div><div class="vx-row-desc">Master switch for the equipment detail shown on option cards.</div></div>
+            <label class="mt-switch vx-row-control"><input type="checkbox" data-master="c-hvac" checked><span class="mt-switch-track"></span></label>
+          </div>
+          <div class="vx-sub is-open" id="c-hvac"><div class="vx-sub-inner">
+            <div class="vx-detail">
+              <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">SEER2</div></div><label class="vx-check vx-row-control"><input type="checkbox" checked><span class="vx-check-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg></span></label></div>
+              <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">EER2</div></div><label class="vx-check vx-row-control"><input type="checkbox" checked><span class="vx-check-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg></span></label></div>
+              <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">HSPF2</div></div><label class="vx-check vx-row-control"><input type="checkbox" checked><span class="vx-check-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg></span></label></div>
+              <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">AFUE</div></div><label class="vx-check vx-row-control"><input type="checkbox" checked><span class="vx-check-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg></span></label></div>
+              <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Equipment Model Numbers</div></div><label class="vx-check vx-row-control"><input type="checkbox" checked><span class="vx-check-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg></span></label></div>
+              <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Equipment Sizing</div></div><label class="vx-check vx-row-control"><input type="checkbox" checked><span class="vx-check-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg></span></label></div>
+            </div>
+          </div></div>
+        </div>
+      </section>
+
+      <h2 class="vx-section-title" id="c-validity">Validity</h2>
+      <section class="vx-card">
+        <div class="vx-card-body">
+          <div class="vx-row" style="border-bottom:0;flex-direction:column;align-items:stretch;gap:12px;">
+            <div class="vx-row-text"><div class="vx-row-label">Default expiry</div><div class="vx-row-desc">How long a sent proposal keeps accepting signatures. Reps can override per proposal.</div></div>
+            <div class="vx-chips" id="c-expiry">
+              <button class="vx-chip" data-days="7">7 days</button>
+              <button class="vx-chip is-active" data-days="14">14 days</button>
+              <button class="vx-chip" data-days="30">30 days</button>
+              <button class="vx-chip" data-days="60">60 days</button>
+              <button class="vx-chip" data-days="0">Never</button>
+              <button class="vx-chip" data-custom>Custom</button>
+              <div class="vx-custom-days" hidden><input class="vx-input-sm" type="number" value="45" min="1"><span class="vx-suffix">days</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <div class="vx-page-foot">
+        <button class="vx-reset" type="button" data-reset><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg> Reset all changes to default</button>
+      </div>
+    </main>
+  </div>
+</section>
+
+<!-- =======================================================================
+     STAGE D — CEO's original labels, description = live On / Off state
+     ======================================================================= -->
+<section class="vx-stage stage-d" data-stage="d" hidden>
+  <div class="vx-appd">
+    <div class="vx-main-head">
+      <div>
+        <h1 class="vx-h1">Company Settings</h1>
+        <p class="vx-lede">Control how proposals are presented to homeowners. Each row's label is the setting; the line beneath shows whether it's currently on or off.</p>
+        <span class="vx-status" id="d-status" style="margin-top:10px;"></span>
+      </div>
+    </div>
+
+    <!-- Proposal display -->
+    <section class="vx-card">
+      <div class="vx-card-head"><div><div class="vx-card-title">Proposal display</div><div class="vx-card-desc">What appears on the proposal and title page.</div></div></div>
+      <div class="vx-card-body">
+        <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Show line item prices</div><div class="vx-state">Off</div></div><label class="mt-switch vx-row-control"><input type="checkbox"><span class="mt-switch-track"></span></label></div>
+        <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Show total discounts below Option price</div><div class="vx-state">Off</div></div><label class="mt-switch vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
+        <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Should access proposal require email</div><div class="vx-state">Off</div></div><label class="mt-switch vx-row-control"><input type="checkbox"><span class="mt-switch-track"></span></label></div>
+        <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Show Price Range on Title Page <span class="vx-gov"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Governed by MAN-5069</span></div><div class="vx-state">Off</div></div><label class="mt-switch vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
+        <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Display evaporator coils on Proposal and Contract</div><div class="vx-state">Off</div></div><label class="mt-switch vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
+      </div>
+    </section>
+
+    <!-- Expiry -->
+    <section class="vx-card">
+      <div class="vx-card-head"><div><div class="vx-card-title">Expiry</div><div class="vx-card-desc">How long a sent proposal stays valid by default.</div></div></div>
+      <div class="vx-card-body">
+        <div class="vx-row" style="border-bottom:0;"><div class="vx-row-text"><div class="vx-row-label">Default Expiry Duration</div><div class="vx-row-desc">Applies to every new proposal.</div></div>
+          <div class="vx-row-control" style="display:flex;align-items:center;"><div class="vx-stepper"><button type="button" data-step="-1">−</button><input type="number" value="14" min="1"><button type="button" data-step="1">+</button></div><span class="vx-suffix">days</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Advanced HVAC settings -->
+    <section class="vx-card">
+      <div class="vx-card-head">
+        <div><div class="vx-card-title">Advanced HVAC settings</div><div class="vx-state">Off</div></div>
+        <label class="mt-switch vx-row-control"><input type="checkbox" data-master="d-hvac" checked><span class="mt-switch-track"></span></label>
+      </div>
+      <div class="vx-sub is-open" id="d-hvac"><div class="vx-sub-inner"><div class="vx-card-body vx-sub-pad">
+        <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Option card show SEER2</div><div class="vx-state">Off</div></div><label class="mt-switch vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
+        <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Option card show EER2</div><div class="vx-state">Off</div></div><label class="mt-switch vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
+        <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Option card show HSPF2</div><div class="vx-state">Off</div></div><label class="mt-switch vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
+        <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Option card show AFUE</div><div class="vx-state">Off</div></div><label class="mt-switch vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
+        <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Display equipment model numbers</div><div class="vx-state">Off</div></div><label class="mt-switch vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
+        <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Display equipment sizing</div><div class="vx-state">Off</div></div><label class="mt-switch vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
+      </div></div></div>
+    </section>
+  </div>
+</section>
+
+<div class="vx-toast" id="vx-toast"><span class="tk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg></span> Changes saved</div>
+
+<!-- DS confirm dialog — unsaved-changes guard fired from the breadcrumb parent -->
+<div class="mt-backdrop" data-leave-backdrop></div>
+<div class="mt-modal is-confirm" id="leave-modal" role="alertdialog" aria-modal="true" aria-labelledby="leave-modal-title" aria-describedby="leave-modal-body">
+  <div class="mt-confirm-icon is-warning"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></div>
+  <h3 class="mt-confirm-title" id="leave-modal-title">Leave with unsaved changes?</h3>
+  <p class="mt-confirm-body" id="leave-modal-body">Your changes to the proposal settings haven't been saved yet.</p>
+  <div class="mt-confirm-actions">
+    <button class="vx-btn vx-btn-neutral" type="button" data-leave-stay>Keep editing</button>
+    <button class="vx-btn vx-btn-neutral" type="button" data-leave-go>Discard &amp; leave</button>
+    <button class="vx-btn vx-btn-primary" type="button" data-leave-save>Save &amp; leave</button>
+  </div>
+</div>
+
+<script>
+  // ---- embed mode (running inside the device-preview iframe) ----
+  const VP_PARAMS = new URLSearchParams(location.search);
+  const IS_EMBED = VP_PARAMS.get('embed') === '1';
+  const stages = document.querySelectorAll('.vx-stage');
+  const showStage = v => stages.forEach(s => s.hidden = s.dataset.stage !== v);
+  if (IS_EMBED) { document.body.classList.add('is-embed'); showStage(VP_PARAMS.get('v') || 'a'); }
+
+  // ---- version switcher ----
+  document.querySelectorAll('[data-go]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      showStage(btn.dataset.go);
+      document.querySelectorAll('[data-go]').forEach(x => x.classList.toggle('is-active', x === btn));
+      window.scrollTo({ top: 0 });
+      if (vpOpen) loadVP();   // keep an open device preview in sync with the version
+    });
+  });
+
+  // ---- device preview: load the page in an iframe at the true device width ----
+  const DEVICES = { pad: { name: 'iPad', w: 834, h: 1112, pad: 32 }, mobile: { name: 'Mobile', w: 390, h: 844, pad: 24 } };
+  const vp = document.getElementById('vx-vp');
+  const vpScale = document.getElementById('vx-vp-scale');
+  const vpIframe = document.getElementById('vx-vp-frame');
+  const vpName = document.getElementById('vx-vp-name');
+  const vpSize = document.getElementById('vx-vp-size');
+  let vpOpen = false, vpMode = 'mobile';
+  const activeVersion = () => { const b = document.querySelector('[data-go].is-active'); return b ? b.dataset.go : 'a'; };
+  const baseURL = () => location.href.split('#')[0].split('?')[0];
+  const setDev = mode => document.querySelectorAll('[data-dev]').forEach(b => b.classList.toggle('is-active', b.dataset.dev === mode));
+  function loadVP() { vpIframe.src = baseURL() + '?embed=1&v=' + activeVersion(); }
+  function fitVP() {
+    if (!vpOpen) return;
+    const d = DEVICES[vpMode], fw = d.w + d.pad, fh = d.h + d.pad;
+    const s = Math.min(1, (window.innerWidth - 80) / fw, (window.innerHeight - 110) / fh);
+    vpScale.style.transform = 'scale(' + s + ')';
+  }
+  function openVP(mode) {
+    vpMode = mode; vpOpen = true;
+    const d = DEVICES[mode];
+    vp.dataset.mode = mode; vpName.textContent = d.name; vpSize.textContent = d.w + ' × ' + d.h;
+    vp.hidden = false; vp.classList.add('is-open');
+    loadVP(); fitVP();
+  }
+  function closeVP() { vpOpen = false; vp.classList.remove('is-open'); vp.hidden = true; vpIframe.src = 'about:blank'; setDev('desktop'); }
+  if (!IS_EMBED) {
+    document.querySelectorAll('[data-dev]').forEach(btn => btn.addEventListener('click', () => {
+      const mode = btn.dataset.dev; setDev(mode);
+      if (mode === 'desktop') closeVP(); else openVP(mode);
+    }));
+    document.getElementById('vx-vp-close').addEventListener('click', closeVP);
+    vp.addEventListener('click', e => { if (e.target === vp || e.target === vpScale) closeVP(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && vpOpen) closeVP(); });
+    window.addEventListener('resize', fitVP);
+  }
+
+  // ---- master switch -> collapsible subgroup ----
+  document.querySelectorAll('[data-master]').forEach(m => {
+    const group = document.getElementById(m.dataset.master);
+    const sync = () => group.classList.toggle('is-open', m.checked);
+    m.addEventListener('change', sync); sync();
+  });
+
+  // ---- toggle chips (efficiency ratings) ----
+  document.querySelectorAll('.vx-toggle-chip').forEach(chip => {
+    const cb = chip.querySelector('input');
+    const sync = () => chip.classList.toggle('is-on', cb.checked);
+    cb.addEventListener('change', sync); sync();
+  });
+
+  // ---- steppers ----
+  document.querySelectorAll('.vx-stepper').forEach(st => {
+    const input = st.querySelector('input');
+    st.querySelectorAll('[data-step]').forEach(b => b.addEventListener('click', () => {
+      const next = Math.max(1, (parseInt(input.value, 10) || 0) + parseInt(b.dataset.step, 10));
+      input.value = next; input.dispatchEvent(new Event('change', { bubbles: true }));
+    }));
+  });
+
+  // ---- A: dirty save bar ----
+  (() => {
+    const stage = document.querySelector('.stage-a');
+    const head = stage.querySelector('.vx-main-head');
+    const status = stage.querySelector('#a-status');
+    const toast = document.getElementById('vx-toast');
+    // On/Off label to the left of every toggle
+    stage.querySelectorAll('label.mt-switch').forEach(sw => {
+      const cb = sw.querySelector('input');
+      const wrap = document.createElement('div'); wrap.className = 'vx-onoff-wrap';
+      const tag = document.createElement('span'); tag.className = 'vx-onoff';
+      sw.parentNode.insertBefore(wrap, sw); wrap.appendChild(tag); wrap.appendChild(sw);
+      const s = () => { tag.textContent = cb.checked ? 'On' : 'Off'; tag.classList.toggle('is-on', cb.checked); };
+      cb.addEventListener('change', s); s();
+    });
+    let t, tt;
+    stage.addEventListener('change', () => {
+      status.className = 'vx-status is-saving'; status.innerHTML = 'Saving…';
+      clearTimeout(t);
+      t = setTimeout(() => {
+        status.className = 'vx-status is-saved';
+        status.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12l5 5 9-11"/></svg> All changes saved';
+        toast.classList.add('is-show'); clearTimeout(tt); tt = setTimeout(() => toast.classList.remove('is-show'), 1800);
+      }, 650);
+    });
+    const resetBtn = stage.querySelector('[data-reset]');
+    resetBtn.addEventListener('click', () => {
+      stage.querySelectorAll('input[type=checkbox]').forEach(cb => cb.checked = cb.defaultChecked);
+      stage.querySelectorAll('input[type=number]').forEach(n => n.value = n.defaultValue);
+      stage.querySelectorAll('input').forEach(i => i.dispatchEvent(new Event('change', { bubbles: true })));
+    });
+    const sentinel = stage.querySelector('.vx-stick-sentinel');
+    new IntersectionObserver(([e]) => head.classList.toggle('is-stuck', !e.isIntersecting), { rootMargin: '-1px 0px 0px 0px', threshold: 0 }).observe(sentinel);
+  })();
+
+  // ---- C: explicit Save bar (backend requires a save action) + scroll-spy + expiry chips ----
+  (() => {
+    const stage = document.querySelector('.stage-c');
+    const head = stage.querySelector('.vx-main-head');
+    const status = stage.querySelector('#c-status');
+    const saveBtn = stage.querySelector('[data-save]');
+    const discardBtn = stage.querySelector('[data-discard]');
+    const toast = document.getElementById('vx-toast');
+    let saving = false, tt;
+
+    // expiry chips
+    const chips = stage.querySelector('#c-expiry');
+    const customBox = chips.querySelector('.vx-custom-days');
+    const chipId = c => c ? (c.hasAttribute('data-custom') ? 'custom' : c.dataset.days) : null;
+    const defaultChipId = chipId(chips.querySelector('.vx-chip.is-active'));   // factory default, before any interaction
+    function setActiveChip(id) {
+      chips.querySelectorAll('.vx-chip').forEach(c => c.classList.toggle('is-active', chipId(c) === id));
+      const a = chips.querySelector('.vx-chip.is-active');
+      customBox.hidden = !(a && a.hasAttribute('data-custom'));
+    }
+    chips.querySelectorAll('.vx-chip').forEach(c => c.addEventListener('click', () => {
+      setActiveChip(chipId(c));
+      recompute();
+    }));
+
+    // Dirty = current state differs from the last SAVED state. Toggling a setting back to its
+    // saved value clears dirty, so the Save button only lights up on a real net change.
+    const snap = () => ({
+      cb: [...stage.querySelectorAll('input[type=checkbox]')].map(c => c.checked),
+      num: [...stage.querySelectorAll('input[type=number]')].map(n => n.value),
+      chip: chipId(chips.querySelector('.vx-chip.is-active')),
+    });
+    const keyOf = s => s.cb.map(Number).join('') + '~' + s.num.join('|') + '~' + s.chip;
+    function restore(s) {
+      const cbs = [...stage.querySelectorAll('input[type=checkbox]')];
+      s.cb.forEach((v, i) => { if (cbs[i]) cbs[i].checked = v; });
+      const nums = [...stage.querySelectorAll('input[type=number]')];
+      s.num.forEach((v, i) => { if (nums[i]) nums[i].value = v; });
+      setActiveChip(s.chip);
+      stage.querySelectorAll('input').forEach(i => i.dispatchEvent(new Event('change', { bubbles: true })));
+    }
+    let baseline = snap();   // the last saved state (starts at the on-load values)
+
+    function recompute() {
+      if (saving) return;
+      const dirty = keyOf(snap()) !== keyOf(baseline);
+      stage.classList.toggle('is-dirty', dirty);
+      saveBtn.disabled = !dirty;
+      if (dirty) status.textContent = 'Unsaved changes';
+    }
+    stage.addEventListener('change', recompute);
+
+    function doSave() {
+      if (saving || !stage.classList.contains('is-dirty')) return;
+      saving = true; saveBtn.disabled = true; status.textContent = 'Saving…';
+      clearTimeout(tt);
+      tt = setTimeout(() => {
+        saving = false;
+        baseline = snap();              // the saved state becomes the new baseline
+        stage.classList.remove('is-dirty');
+        saveBtn.disabled = true;
+        toast.classList.add('is-show');
+        setTimeout(() => toast.classList.remove('is-show'), 1800);
+      }, 650);
+    }
+    saveBtn.addEventListener('click', doSave);
+
+    // Discard → restore the last saved state (clears dirty)
+    function discard() { restore(baseline); recompute(); }
+    discardBtn.addEventListener('click', discard);
+
+    // warn before leaving the page with unsaved edits (back link, tab close, reload)
+    if (!IS_EMBED) window.addEventListener('beforeunload', e => {
+      if (stage.classList.contains('is-dirty')) { e.preventDefault(); e.returnValue = ''; }
+    });
+    // Reset → restore factory defaults (this is a real change vs the saved state, so Save may light up)
+    const resetBtn = stage.querySelector('[data-reset]');
+    if (resetBtn) resetBtn.addEventListener('click', () => {
+      stage.querySelectorAll('input[type=checkbox]').forEach(cb => cb.checked = cb.defaultChecked);
+      stage.querySelectorAll('input[type=number]').forEach(n => n.value = n.defaultValue);
+      setActiveChip(defaultChipId);
+      stage.querySelectorAll('input').forEach(i => i.dispatchEvent(new Event('change', { bubbles: true })));
+      recompute();
+    });
+
+    // sticky-header shadow when the head pins to the top
+    const sentinel = stage.querySelector('.vx-stick-sentinel');
+    if (sentinel) new IntersectionObserver(([e]) => head.classList.toggle('is-stuck', !e.isIntersecting), { rootMargin: '-1px 0px 0px 0px', threshold: 0 }).observe(sentinel);
+
+    // scroll-spy
+    const links = [...stage.querySelectorAll('[data-spy]')];
+    const map = new Map(links.map(l => [l.dataset.spy, l]));
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          links.forEach(l => l.classList.remove('spy-active'));
+          map.get(e.target.id)?.classList.add('spy-active');
+        }
+      });
+    }, { rootMargin: '-24px 0px -68% 0px' });
+    stage.querySelectorAll('.vx-section-title').forEach(s => io.observe(s));
+
+    // leave-confirmation — clicking the breadcrumb parent with unsaved edits opens the DS confirm dialog
+    const leaveModal = document.getElementById('leave-modal');
+    const leaveBackdrop = document.querySelector('[data-leave-backdrop]');
+    const crumbParent = stage.querySelector('.mt-crumb[href]');
+    const openLeave = () => { leaveModal.classList.add('is-open'); leaveBackdrop.classList.add('is-open'); };
+    const closeLeave = () => { leaveModal.classList.remove('is-open'); leaveBackdrop.classList.remove('is-open'); };
+    if (crumbParent) crumbParent.addEventListener('click', e => {
+      if (stage.classList.contains('is-dirty')) { e.preventDefault(); openLeave(); }
+    });
+    leaveModal.querySelector('[data-leave-stay]').addEventListener('click', closeLeave);
+    leaveModal.querySelector('[data-leave-go]').addEventListener('click', () => { discard(); closeLeave(); });
+    leaveModal.querySelector('[data-leave-save]').addEventListener('click', () => { doSave(); closeLeave(); });
+    leaveBackdrop.addEventListener('click', closeLeave);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && leaveModal.classList.contains('is-open')) closeLeave(); });
+  })();
+
+  // ---- D: description reflects live On / Off state + auto-save ----
+  (() => {
+    const stage = document.querySelector('.stage-d');
+    stage.querySelectorAll('.vx-state').forEach(s => {
+      const host = s.closest('.vx-row, .vx-card-head');
+      const cb = host && host.querySelector('input[type="checkbox"]');
+      if (!cb) return;
+      const sync = () => {
+        s.textContent = cb.checked ? 'On' : 'Off';
+        s.classList.toggle('is-on', cb.checked);
+        s.classList.toggle('is-off', !cb.checked);
+      };
+      cb.addEventListener('change', sync); sync();
+    });
+    const status = stage.querySelector('#d-status');
+    const toast = document.getElementById('vx-toast');
+    let t, tt;
+    stage.addEventListener('change', () => {
+      status.className = 'vx-status is-saving'; status.innerHTML = 'Saving…';
+      clearTimeout(t);
+      t = setTimeout(() => {
+        status.className = 'vx-status is-saved';
+        status.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12l5 5 9-11"/></svg> All changes saved';
+        toast.classList.add('is-show'); clearTimeout(tt); tt = setTimeout(() => toast.classList.remove('is-show'), 1800);
+      }, 650);
+    });
+  })();
+</script>
+</body>
+</html>
