@@ -71,7 +71,10 @@
            text-decoration: none; color: inherit; transition: transform .18s var(--ease), box-shadow .18s var(--ease), border-color .18s var(--ease); }
 .ds-card:hover { transform: translateY(-3px); border-color: var(--brand-400); box-shadow: var(--shadow-hover), 0 0 0 1px var(--brand-400); text-decoration: none; }
 .ds-thumb { position: relative; height: 168px; overflow: hidden; background: var(--ink-50); border-bottom: 1px solid var(--ink-150); }
-.ds-thumb iframe { position: absolute; top: 0; left: 0; width: calc(100% / 0.6); height: calc(168px / 0.6); border: 0; transform: scale(0.6); transform-origin: top left; pointer-events: none; }
+/* Skeleton shimmer behind each lazy thumbnail (reuses kit.css mt-skeleton-shimmer); the iframe's own bg covers it once loaded, and .is-loaded fades + stops it. */
+.ds-thumb::before { content: ""; position: absolute; inset: 0; z-index: 0; background: linear-gradient(90deg, var(--ink-100) 0%, var(--ink-150) 50%, var(--ink-100) 100%); background-size: 200% 100%; animation: mt-skeleton-shimmer 1.4s linear infinite; }
+.ds-thumb.is-loaded::before { animation: none; opacity: 0; transition: opacity .35s var(--ease); }
+.ds-thumb iframe { position: absolute; top: 0; left: 0; z-index: 1; width: calc(100% / 0.6); height: calc(168px / 0.6); border: 0; transform: scale(0.6); transform-origin: top left; pointer-events: none; }
 /* Full tables need a roomier viewport so columns don't collide; zoom out a touch.
    The calc keeps the iframe mapped exactly onto the tile, so centering still holds. */
 .ds-card.thumb-wide .ds-thumb iframe { width: calc(100% / 0.38); height: calc(168px / 0.38); transform: scale(0.38); }

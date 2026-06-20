@@ -213,3 +213,12 @@
     if (e.key === 'Escape') { menu.classList.add('ds-hide'); s.blur(); }
   });
 })();
+
+  /* Dashboard thumbnails — drop the skeleton shimmer once each lazy iframe loads */
+  (function () {
+    document.querySelectorAll('.ds-thumb').forEach(function (thumb) {
+      var iframe = thumb.querySelector('iframe');
+      if (!iframe) return;
+      iframe.addEventListener('load', function () { thumb.classList.add('is-loaded'); });
+    });
+  })();
