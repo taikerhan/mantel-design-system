@@ -53,6 +53,8 @@
 .ds-link.is-active { background: var(--brand-50); color: var(--brand-700); font-weight: 600; }
 .ds-hide { display: none !important; }
 .ds-main { flex: 1; min-width: 0; box-sizing: border-box; padding: 40px 48px 120px; max-width: 1120px; margin: 0; }
+/* Overview (design-system page) trial — center the content in the space beside the nav, with a wider measure */
+.ds-home .ds-main { max-width: 1280px; margin-inline: auto; }
 /* Back link — return from a Design review detail page to the queue */
 .ds-back { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 500; color: var(--ink-500); text-decoration: none; margin-bottom: 14px; transition: color .15s var(--ease); }
 .ds-back:hover { color: var(--brand-700); text-decoration: none; }
