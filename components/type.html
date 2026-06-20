@@ -5,9 +5,9 @@
       </div>
 
       <div class="type-banner"><span class="p2">Phase 2</span><span>The shipped product currently renders in <b>System sans</b>. <b>Geist</b> is a proposed Phase 2 upgrade — use the toggle to preview the specimen and scale in either typeface. No production change until Phase 2 is approved.</span></div>
-      <div class="type-toggle" role="group" aria-label="Preview typeface">
-        <button class="tt-opt is-active" data-font="system">System sans <small>current</small></button>
-        <button class="tt-opt" data-font="geist">Geist <small>Phase 2</small></button>
+      <div class="mt-segmented" role="tablist" aria-label="Preview typeface" style="margin: 2px 0 18px;">
+        <button class="mt-segmented-option is-active" role="tab" data-font="system">System sans</button>
+        <button class="mt-segmented-option" role="tab" data-font="geist">Geist</button>
       </div>
 
       <div id="type-preview" data-font="system">
@@ -151,10 +151,9 @@
 (function(){
   var wrap=document.getElementById('type-preview');
   var nameEl=document.getElementById('tp-name');
-  var opts=document.querySelectorAll('.tt-opt');
+  var opts=document.querySelectorAll('.mt-segmented-option[data-font]');
   var labels={system:'System sans',geist:'Geist'};
   opts.forEach(function(o){o.addEventListener('click',function(){
-    opts.forEach(function(x){x.classList.toggle('is-active',x===o);});
     wrap.dataset.font=o.dataset.font;
     if(nameEl)nameEl.textContent=labels[o.dataset.font];
   });});
