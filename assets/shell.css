@@ -24,7 +24,7 @@
 .ds-search-wrap { position: relative; }
 .ds-search-pop { position: absolute; top: 40px; left: 0; right: 0; z-index: 20; padding: 6px;
                  background: #fff; border: 1px solid var(--ink-200); border-radius: var(--radius-lg); box-shadow: var(--shadow-pop); }
-.ds-pop-head { font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-400); padding: 6px 8px 5px; }
+.ds-pop-head { font-size: 12px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-600); padding: 6px 8px 5px; }
 .ds-pop-item { display: flex; align-items: center; justify-content: space-between; padding: 7px 9px; border-radius: var(--radius-md);
                font-size: 13px; color: var(--ink-700); text-decoration: none; }
 .ds-pop-item:hover { background: var(--ink-100); color: var(--ink-900); text-decoration: none; }
@@ -32,7 +32,7 @@
 .ds-pop-item:hover .ds-pop-arrow { color: var(--brand-600); }
 .ds-links { display: flex; flex-direction: column; margin-top: 10px; }
 /* Section divider — a hairline above each group header (Design review / Foundations / Components) */
-.ds-group { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-900); padding: 14px 16px 6px; margin-top: 18px; border-top: 1px solid var(--ink-150); }
+.ds-group { font-size: 12px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-900); padding: 14px 16px 6px; margin-top: 18px; border-top: 1px solid var(--ink-150); }
 /* Review-count badge on the Review queue nav item — items awaiting review.
    Mirrors the strength-badge component (soft amber tint, circular). */
 .ds-wip { display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; padding: 0 6px; border-radius: var(--radius-full); background: var(--accent-red-bg); color: var(--accent-red); font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1; flex-shrink: 0; }
@@ -59,12 +59,12 @@
 .ds-back:hover { color: var(--brand-700); text-decoration: none; }
 .ds-back svg { width: 14px; height: 14px; }
 .ds-page-head { margin-bottom: 28px; }
-.ds-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--brand-600); }
+.ds-eyebrow { font-size: 13px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--brand-600); }
 .ds-h1 { font-size: 30px; font-weight: 700; letter-spacing: -.022em; margin: 8px 0 0; }
 .ds-lede { font-size: 14px; color: var(--ink-500); line-height: 1.6; margin: 10px 0 0; max-width: 60ch; }
 /* Front-end handoff button — direct link to the machine-readable token file (uses .btn .btn-secondary) */
 .ds-tokens { margin-top: 18px; text-decoration: none; }
-.ds-sec { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-400); margin: 28px 0 12px; }
+.ds-sec { font-size: 13px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-600); margin: 28px 0 12px; }
 .ds-sec:first-of-type { margin-top: 8px; }
 .ds-dash { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
 .ds-card { display: block; background: #fff; border-radius: var(--radius-2xl); border: 1px solid var(--ink-200);
@@ -186,7 +186,7 @@ main.ds-main { display: block; }
 .tt-opt { display: inline-flex; align-items: center; gap: 6px; border: 0; background: transparent; cursor: pointer;
           font: inherit; font-size: 13px; font-weight: 500; color: var(--ink-600); padding: 6px 14px; border-radius: var(--radius-full);
           transition: background .18s var(--ease), color .18s var(--ease); }
-.tt-opt small { font-size: 10px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-400); }
+.tt-opt small { font-size: 10px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-600); }
 .tt-opt.is-active { background: #fff; color: var(--ink-900); box-shadow: var(--shadow-card); }
 .tt-opt.is-active small { color: var(--brand-600); }
 
@@ -230,7 +230,7 @@ main.ds-main { display: block; }
 .pg-preview { display: flex; align-items: center; justify-content: center; gap: 14px; min-height: 132px; padding: 30px 24px; flex-wrap: wrap; }
 .pg-controls { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 14px 22px; padding: 15px 20px 17px; background: var(--ink-50); border-top: 1px solid var(--ink-150); }
 .pg-ctrl { display: flex; flex-direction: column; gap: 6px; }
-.pg-ctrl > span { font-family: var(--font-mono); font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-500); }
+.pg-ctrl > span { font-family: var(--font-mono); font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-600); }
 .pg-ctrl select, .pg-ctrl input[type="text"] { height: 36px; min-width: 132px; box-sizing: border-box; padding: 0 12px; border: 1px solid var(--ink-400); border-radius: var(--radius-md); background: #fff; font: inherit; font-size: 14px; color: var(--ink-900); cursor: pointer; transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease); }
 /* custom chevron (native arrow ignores padding-right) so it sits a comfortable 12px off the edge */
 .pg-ctrl select { appearance: none; -webkit-appearance: none; padding-right: 34px;
