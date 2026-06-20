@@ -1674,12 +1674,12 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
   font-size: 14px;
   font-weight: var(--fw-medium);
   letter-spacing: -0.005em;
-  color: var(--ink-600);
+  color: var(--ink-700);
   cursor: pointer;
   white-space: nowrap;
   transition: color var(--dur) var(--ease);
 }
-.mt-segmented-option:hover { color: var(--ink-800); }
+.mt-segmented-option:hover { color: var(--ink-900); }
 .mt-segmented-option.is-active { color: #fff; }
 .mt-segmented-option:disabled { color: var(--ink-300); cursor: not-allowed; }
 /* Count badge — first-class option, mirrors .mt-pill-count */
