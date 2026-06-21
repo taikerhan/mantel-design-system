@@ -608,8 +608,8 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
 .mt-switch input { position: absolute; opacity: 0; width: 0; height: 0; }
 .mt-switch .mt-switch-track {
   width: 36px; height: 20px;
-  background: var(--ink-300);
-  border: 1px solid var(--ink-400);
+  background: var(--ink-400);
+  border: 1px solid var(--ink-500);
   border-radius: var(--radius-full);
   position: relative;
   transition: background-color var(--dur) var(--ease), border-color var(--dur) var(--ease);
