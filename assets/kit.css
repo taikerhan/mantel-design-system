@@ -1144,6 +1144,7 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
 .mt-menu {
   min-width: 220px;
   background: #fff;
+  border: 1px solid var(--ink-200);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-pop);
   padding: 6px;
