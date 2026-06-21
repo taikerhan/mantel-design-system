@@ -1151,7 +1151,7 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
 }
 .mt-menu-label {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 13px;
   letter-spacing: 0.07em;
   text-transform: uppercase;
   color: var(--ink-600);
@@ -1183,7 +1183,7 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
 .mt-menu-item .mt-menu-shortcut {
   margin-left: auto;
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 13px;
   color: var(--ink-600);
   letter-spacing: 0.005em;
 }
