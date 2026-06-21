@@ -634,7 +634,7 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
 .mt-switch:hover input:checked:not(:disabled) + .mt-switch-track { background: var(--brand-700); border-color: var(--brand-700); }
 .mt-switch input:checked + .mt-switch-track::after { transform: translateX(16px); }
 .mt-switch input:focus-visible + .mt-switch-track { box-shadow: var(--shadow-focus), inset 0 1px 3px rgba(15, 14, 13, 0.18); }
-.mt-switch input:disabled + .mt-switch-track { opacity: 0.4; cursor: not-allowed; border-color: var(--ink-400); }
+.mt-switch input:disabled + .mt-switch-track { opacity: 0.4; cursor: not-allowed; border-color: var(--ink-400); box-shadow: none; }
 .mt-switch .mt-switch-label { font-size: 14px; color: var(--ink-800); }
 
 /* ----- Switch variant: high-contrast (option 2) ----- */
