@@ -36,7 +36,7 @@
 
   /* Type scale — px sizes / line heights / letter-spacing */
   --fs-2xs: 10.5px;   --lh-2xs: 14px;   --ls-2xs: 0.02em;
-  --fs-xs:  11.5px;   --lh-xs:  16px;   --ls-xs:  0.005em;
+  --fs-xs:  13px;     --lh-xs:  18px;   --ls-xs:  0.005em;
   --fs-sm:  13px;     --lh-sm:  18px;   --ls-sm:  0; /* @kind font */
   --fs-base:14px;     --lh-base:20px;   --ls-base:-0.005em;
   --fs-lg:  16px;     --lh-lg:  22px;   --ls-lg:  -0.011em;
@@ -434,7 +434,7 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
 .mt-overlay-foot .btn-default {
   height: 36px;
   padding: 0 16px;
-  font-size: 13px;
+  font-size: 14px;
 }
 
 /* ---------- Sheet — bottom (mobile-first drawer) ---------- */
