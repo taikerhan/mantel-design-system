@@ -1170,6 +1170,7 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
   border-radius: var(--radius-md);
   font-family: var(--font-sans);
   font-size: 14px;
+  font-weight: var(--fw-medium);
   color: var(--ink-900);
   cursor: pointer;
   text-align: left;
