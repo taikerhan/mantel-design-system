@@ -1,4 +1,17 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Loaders · Mantel</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="../assets/kit.css"><link rel="stylesheet" href="../assets/shell.css"></head><body class="ds-body"><aside class="ds-nav"><div class="ds-brand"><a class="ds-logo" href="../index.html" aria-label="Mantel — UI Kit home"><img src="../assets/mantel-logo.svg" alt="Mantel"></a><span class="ds-ver">UI Kit · v2.3</span></div><input class="ds-search" type="search" placeholder="Search…" aria-label="Search components"><nav class="ds-links"><a class="ds-link" href="../index.html" data-name="home dashboard overview">Overview</a><a class="ds-link" href="../changelog.html" data-name="changelog releases versions history">Changelog</a><div class="ds-group">Design review</div><a class="ds-link" href="../review.html" data-name="review queue">Review queue<span class="ds-wip" title="Items awaiting review">1</span></a><div class="ds-group">Foundations</div><a class="ds-link" href="../components/type.html" data-name="typography">Typography</a><a class="ds-link" href="../components/color.html" data-name="color">Color</a><a class="ds-link" href="../components/spacing.html" data-name="spacing">Spacing</a><a class="ds-link" href="../components/radius.html" data-name="radius">Radius</a><a class="ds-link" href="../components/shadow.html" data-name="shadow">Shadow</a><a class="ds-link" href="../components/motion.html" data-name="motion">Motion</a><div class="ds-group">Components</div><a class="ds-link" href="../components/buttons.html" data-name="buttons">Buttons</a><a class="ds-link" href="../components/form-inputs.html" data-name="form inputs">Form inputs</a><a class="ds-link" href="../components/inputs.html" data-name="search &amp; pickers">Search &amp; pickers</a><a class="ds-link" href="../components/data-table.html" data-name="table">Table</a><a class="ds-link" href="../components/modal.html" data-name="modal">Modal</a><a class="ds-link" href="../components/menu.html" data-name="dropdown menu">Dropdown menu</a><a class="ds-link" href="../components/tabs.html" data-name="tabs">Tabs</a><a class="ds-link" href="../components/segmented.html" data-name="segmented control">Segmented control</a><a class="ds-link" href="../components/btn-group.html" data-name="button group">Button group</a><a class="ds-link" href="../components/toasts.html" data-name="toasts">Toasts</a><a class="ds-link" href="../components/alerts.html" data-name="alerts">Alerts</a><a class="ds-link" href="../components/stats.html" data-name="stat card">Stat card</a><a class="ds-link" href="../components/pills.html" data-name="status pills">Status pills</a><a class="ds-link" href="../components/badges.html" data-name="strength badges">Strength badges</a><a class="ds-link" href="../components/avatars.html" data-name="avatars">Avatars</a><a class="ds-link" href="../components/tooltips.html" data-name="tooltips">Tooltips</a><a class="ds-link" href="../components/toggles.html" data-name="switch / checkbox / radio">Switch / checkbox / radio</a><a class="ds-link" href="../components/crumbs.html" data-name="breadcrumbs">Breadcrumbs</a><a class="ds-link" href="../components/pager.html" data-name="pagination">Pagination</a><a class="ds-link" href="../components/activity.html" data-name="activity feed">Activity feed</a><a class="ds-link" href="../components/sheet.html" data-name="sheet / drawer">Sheet / drawer</a><a class="ds-link" href="../components/empty.html" data-name="empty state">Empty state</a><a class="ds-link" href="../components/focus.html" data-name="focus card">Focus card</a><a class="ds-link" href="../components/live.html" data-name="live indicator">Live indicator</a><a class="ds-link is-active" href="../components/loaders.html" data-name="loaders skeleton spinner progress">Loaders</a><a class="ds-link" href="../components/category.html" data-name="category pills">Category pills</a><div class="ds-group">Combos</div><a class="ds-link" href="../components/header.html" data-name="page header combo title description breadcrumb">Page header</a></nav></aside><main class="ds-main"><div class="ds-page-head"><div class="ds-eyebrow">Components</div><h1 class="ds-h1">Loaders</h1></div><section class="block" id="loaders">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Loaders · Mantel</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="../assets/kit.css"><link rel="stylesheet" href="../assets/shell.css"><style>
+  .pg-frames { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 20px; }
+  .pg-fr { display: flex; flex-direction: column; gap: 11px; }
+  .pg-frame { position: relative; height: 232px; border: 1px solid var(--ink-200); border-radius: var(--radius-lg); overflow: hidden; background: var(--ink-50); display: flex; flex-direction: column; box-shadow: var(--shadow-card); }
+  .pg-frame-bar { height: 42px; flex-shrink: 0; background: #fff; border-bottom: 1px solid var(--ink-150); display: flex; align-items: center; gap: 7px; padding: 0 14px; }
+  .pg-frame-mark { width: 18px; height: 18px; border-radius: 5px; background: var(--brand-600); flex-shrink: 0; }
+  .pg-navpill { height: 7px; border-radius: var(--radius-full); background: var(--ink-150); }
+  .pg-frame-body { flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 20px; overflow: hidden; }
+  .pg-frame .is-top { position: absolute; top: 0; left: 0; right: 0; height: 3px; border-radius: 0; z-index: 5; }
+  .pg-fr-cap b { font-size: 14px; font-weight: 600; color: var(--ink-900); }
+  .pg-fr-cap span { display: block; font-size: 13px; color: var(--ink-600); line-height: 1.5; margin-top: 2px; }
+  .pg-hint { font-size: 13px; color: var(--ink-500); }
+  .pg-ghost { position: absolute; inset: 0; padding: 16px; display: flex; flex-direction: column; gap: 11px; }
+</style></head><body class="ds-body"><aside class="ds-nav"><div class="ds-brand"><a class="ds-logo" href="../index.html" aria-label="Mantel — UI Kit home"><img src="../assets/mantel-logo.svg" alt="Mantel"></a><span class="ds-ver">UI Kit · v2.3</span></div><input class="ds-search" type="search" placeholder="Search…" aria-label="Search components"><nav class="ds-links"><a class="ds-link" href="../index.html" data-name="home dashboard overview">Overview</a><a class="ds-link" href="../changelog.html" data-name="changelog releases versions history">Changelog</a><div class="ds-group">Design review</div><a class="ds-link" href="../review.html" data-name="review queue">Review queue<span class="ds-wip" title="Items awaiting review">1</span></a><div class="ds-group">Foundations</div><a class="ds-link" href="../components/type.html" data-name="typography">Typography</a><a class="ds-link" href="../components/color.html" data-name="color">Color</a><a class="ds-link" href="../components/spacing.html" data-name="spacing">Spacing</a><a class="ds-link" href="../components/radius.html" data-name="radius">Radius</a><a class="ds-link" href="../components/shadow.html" data-name="shadow">Shadow</a><a class="ds-link" href="../components/motion.html" data-name="motion">Motion</a><div class="ds-group">Components</div><a class="ds-link" href="../components/buttons.html" data-name="buttons">Buttons</a><a class="ds-link" href="../components/form-inputs.html" data-name="form inputs">Form inputs</a><a class="ds-link" href="../components/inputs.html" data-name="search &amp; pickers">Search &amp; pickers</a><a class="ds-link" href="../components/data-table.html" data-name="table">Table</a><a class="ds-link" href="../components/modal.html" data-name="modal">Modal</a><a class="ds-link" href="../components/menu.html" data-name="dropdown menu">Dropdown menu</a><a class="ds-link" href="../components/tabs.html" data-name="tabs">Tabs</a><a class="ds-link" href="../components/segmented.html" data-name="segmented control">Segmented control</a><a class="ds-link" href="../components/btn-group.html" data-name="button group">Button group</a><a class="ds-link" href="../components/toasts.html" data-name="toasts">Toasts</a><a class="ds-link" href="../components/alerts.html" data-name="alerts">Alerts</a><a class="ds-link" href="../components/stats.html" data-name="stat card">Stat card</a><a class="ds-link" href="../components/pills.html" data-name="status pills">Status pills</a><a class="ds-link" href="../components/badges.html" data-name="strength badges">Strength badges</a><a class="ds-link" href="../components/avatars.html" data-name="avatars">Avatars</a><a class="ds-link" href="../components/tooltips.html" data-name="tooltips">Tooltips</a><a class="ds-link" href="../components/toggles.html" data-name="switch / checkbox / radio">Switch / checkbox / radio</a><a class="ds-link" href="../components/crumbs.html" data-name="breadcrumbs">Breadcrumbs</a><a class="ds-link" href="../components/pager.html" data-name="pagination">Pagination</a><a class="ds-link" href="../components/activity.html" data-name="activity feed">Activity feed</a><a class="ds-link" href="../components/sheet.html" data-name="sheet / drawer">Sheet / drawer</a><a class="ds-link" href="../components/empty.html" data-name="empty state">Empty state</a><a class="ds-link" href="../components/focus.html" data-name="focus card">Focus card</a><a class="ds-link" href="../components/live.html" data-name="live indicator">Live indicator</a><a class="ds-link is-active" href="../components/loaders.html" data-name="loaders skeleton spinner progress">Loaders</a><a class="ds-link" href="../components/category.html" data-name="category pills">Category pills</a><div class="ds-group">Combos</div><a class="ds-link" href="../components/header.html" data-name="page header combo title description breadcrumb">Page header</a></nav></aside><main class="ds-main"><div class="ds-page-head"><div class="ds-eyebrow">Components</div><h1 class="ds-h1">Loaders</h1></div><section class="block" id="loaders">
       <div class="head">
         <h2>Loaders</h2>
         <span class="desc">One family for every wait — pick by what you know about the load</span>
@@ -173,7 +186,66 @@
       </div>
     </section>
 
-    <!-- BUTTON GROUP / SPLIT --><section class="block pg-block" id="playground"><div class="head"><span class="num">PG</span><h2>Playground</h2><span class="desc">Interactive props · placeholder for front-end adoption</span></div><div class="pg-placeholder"><div class="pg-ph-badge">Coming soon</div><p>Live, editable component props (variant · size · state) will render here, adopted from the front-end UI Kit. Placed below the spec above by design.</p></div></section></main></div>
+    <!-- BUTTON GROUP / SPLIT --><section class="block" id="page-loaders"><div class="head"><h2>Page loaders</h2><span class="desc">The same atoms applied to a whole view — pick by the kind of navigation</span></div>
+      <div class="pg-frames">
+
+        <div class="pg-fr">
+          <div class="pg-frame">
+            <div class="mt-progress is-indeterminate is-top"><div class="mt-progress-bar"></div></div>
+            <div class="pg-frame-bar"><div class="pg-frame-mark"></div><div class="pg-navpill" style="width:46px;"></div><div class="pg-navpill" style="width:32px;"></div><div class="pg-navpill" style="width:32px;"></div></div>
+            <div class="pg-frame-body" style="justify-content:flex-start; align-items:stretch;">
+              <div class="pg-ghost" style="opacity:.4;">
+                <span class="mt-skeleton is-title" style="width:52%; animation:none; background:var(--ink-150);"></span>
+                <span class="mt-skeleton is-text" style="width:90%; animation:none; background:var(--ink-150);"></span>
+                <span class="mt-skeleton is-text" style="width:82%; animation:none; background:var(--ink-150);"></span>
+                <span class="mt-skeleton is-card" style="margin-top:6px; animation:none; background:var(--ink-150);"></span>
+              </div>
+            </div>
+          </div>
+          <div class="pg-fr-cap"><b>Top bar · route change</b><span>Keep the current view on screen and slide a 3px bar at the very top — the page never blanks, so it feels instant. <b style="color:var(--brand-700);">Recommended default.</b></span></div>
+        </div>
+
+        <div class="pg-fr">
+          <div class="pg-frame">
+            <div class="pg-frame-bar"><div class="pg-frame-mark"></div><div class="pg-navpill" style="width:46px;"></div><div class="pg-navpill" style="width:32px;"></div></div>
+            <div class="pg-frame-body"><span class="mt-spinner is-lg"></span><span class="pg-hint">Loading…</span></div>
+          </div>
+          <div class="pg-fr-cap"><b>Centered spinner · first load</b><span>Cold start or hard navigation — nothing to keep yet, so center a spinner so the empty view reads as loading, not broken.</span></div>
+        </div>
+
+        <div class="pg-fr">
+          <div class="pg-frame">
+            <div class="pg-frame-bar"><div class="pg-frame-mark"></div><div class="pg-navpill" style="width:46px;"></div><div class="pg-navpill" style="width:32px;"></div></div>
+            <div class="pg-frame-body" style="justify-content:flex-start; align-items:stretch; gap:11px;">
+              <span class="mt-skeleton is-title" style="width:50%;"></span>
+              <span class="mt-skeleton is-text" style="width:92%;"></span>
+              <span class="mt-skeleton is-text" style="width:84%;"></span>
+              <div style="display:flex; gap:10px; margin-top:6px;"><span class="mt-skeleton is-card" style="flex:1;"></span><span class="mt-skeleton is-card" style="flex:1;"></span></div>
+            </div>
+          </div>
+          <div class="pg-fr-cap"><b>Skeleton · known layout</b><span>When you know the shape of what's coming, hold the layout with shimmer placeholders so the load feels shorter.</span></div>
+        </div>
+
+        <div class="pg-fr">
+          <div class="pg-frame">
+            <div class="pg-frame-bar"><div class="pg-frame-mark"></div><div class="pg-navpill" style="width:46px;"></div><div class="pg-navpill" style="width:32px;"></div></div>
+            <div class="pg-frame-body">
+              <div class="mt-loader" style="flex-direction:column; gap:14px;">
+                <span class="mt-spinner is-lg"></span>
+                <div class="mt-loader-msg" role="status" aria-live="polite" style="min-width:0; width:210px;">
+                  <span style="justify-content:center;">Crunching the latest comps…</span>
+                  <span style="justify-content:center;">Pulling your pipeline…</span>
+                  <span style="justify-content:center;">Formatting the proposal…</span>
+                  <span style="justify-content:center;">Almost there…</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="pg-fr-cap"><b>Status lines · long async</b><span>Data-heavy loads that outlast a bare spinner — cycle short reassuring lines so the wait reads as intentional.</span></div>
+        </div>
+
+      </div>
+    </section></main></div>
 
 <!-- ============ Live overlay demos ============ -->
 <div class="mt-backdrop" data-overlay-backdrop=""></div>
