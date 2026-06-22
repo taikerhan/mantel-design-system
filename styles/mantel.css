@@ -567,8 +567,8 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
   transition: transform var(--dur) var(--ease-snap);
 }
 .mt-switch:hover input:not(:disabled):not(:checked) + .mt-switch-track {
-  background: var(--ink-400);
-  border-color: var(--ink-500);
+  background: var(--ink-500);
+  border-color: color-mix(in srgb, var(--ink-600) 48%, var(--brand-600));
 }
 .mt-switch input:checked + .mt-switch-track { background: var(--brand-600); border-color: var(--brand-600); }
 .mt-switch:hover input:checked:not(:disabled) + .mt-switch-track { background: var(--brand-700); border-color: var(--brand-700); }
