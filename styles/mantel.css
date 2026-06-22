@@ -548,9 +548,10 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
 .mt-switch input { position: absolute; opacity: 0; width: 0; height: 0; }
 .mt-switch .mt-switch-track {
   width: 36px; height: 20px;
-  background: var(--ink-300);
-  border: 1px solid var(--ink-400);
+  background: var(--ink-400);
+  border: 1px solid color-mix(in srgb, var(--ink-500) 48%, var(--brand-600));
   border-radius: var(--radius-full);
+  box-shadow: inset 0 1px 3px rgba(15, 14, 13, 0.18);
   position: relative;
   transition: background-color var(--dur) var(--ease), border-color var(--dur) var(--ease);
   flex-shrink: 0;
@@ -572,8 +573,10 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
 .mt-switch input:checked + .mt-switch-track { background: var(--brand-600); border-color: var(--brand-600); }
 .mt-switch:hover input:checked:not(:disabled) + .mt-switch-track { background: var(--brand-700); border-color: var(--brand-700); }
 .mt-switch input:checked + .mt-switch-track::after { transform: translateX(16px); }
-.mt-switch input:focus-visible + .mt-switch-track { box-shadow: var(--shadow-focus); }
-.mt-switch input:disabled + .mt-switch-track { opacity: 0.5; cursor: not-allowed; }
+.mt-switch input:focus-visible + .mt-switch-track { box-shadow: var(--shadow-focus), inset 0 1px 3px rgba(15, 14, 13, 0.18); }
+.mt-switch input:disabled + .mt-switch-track { opacity: 0.4; cursor: not-allowed; border-color: var(--ink-400); box-shadow: none; }
+.mt-switch input:disabled + .mt-switch-track::after { background: var(--ink-300); box-shadow: none; }
+.mt-switch input:disabled:checked + .mt-switch-track { background: var(--brand-300); border-color: var(--brand-300); }
 .mt-switch .mt-switch-label { font-size: 14px; color: var(--ink-800); }
 
 /* ----- Switch variant: high-contrast (option 2) ----- */
@@ -700,7 +703,9 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
 .mt-check input:checked + .mt-check-box svg,
 .mt-check input:indeterminate + .mt-check-box svg { opacity: 1; }
 .mt-check input:focus-visible + .mt-check-box { box-shadow: var(--shadow-focus); }
-.mt-check input:disabled + .mt-check-box { opacity: 0.5; cursor: not-allowed; }
+.mt-check input:disabled + .mt-check-box { background: var(--ink-300); border-color: var(--ink-400); cursor: not-allowed; }
+.mt-check input:disabled:checked + .mt-check-box,
+.mt-check input:disabled:indeterminate + .mt-check-box { background: var(--ink-400); border-color: var(--ink-400); }
 .mt-check:hover input:not(:disabled) + .mt-check-box { border-color: var(--ink-500); }
 .mt-check:hover input:checked:not(:disabled) + .mt-check-box,
 .mt-check:hover input:indeterminate:not(:disabled) + .mt-check-box {
@@ -742,7 +747,9 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
 .mt-radio input:checked + .mt-radio-dot { border-color: var(--brand-600); }
 .mt-radio input:checked + .mt-radio-dot::after { transform: scale(1); }
 .mt-radio input:focus-visible + .mt-radio-dot { box-shadow: var(--shadow-focus); }
-.mt-radio input:disabled + .mt-radio-dot { opacity: 0.5; cursor: not-allowed; }
+.mt-radio input:disabled + .mt-radio-dot { background: var(--ink-300); border-color: var(--ink-400); cursor: not-allowed; }
+.mt-radio input:disabled:checked + .mt-radio-dot { background: var(--ink-300); border-color: var(--ink-400); }
+.mt-radio input:disabled:checked + .mt-radio-dot::after { background: var(--ink-500); }
 .mt-radio:hover input:not(:disabled) + .mt-radio-dot { border-color: var(--ink-500); }
 .mt-radio:hover input:checked:not(:disabled) + .mt-radio-dot { border-color: var(--brand-700); }
 .mt-radio:hover input:checked:not(:disabled) + .mt-radio-dot::after { background: var(--brand-700); }
