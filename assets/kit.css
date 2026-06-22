@@ -627,15 +627,16 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
   transition: transform var(--dur) var(--ease-snap);
 }
 .mt-switch:hover input:not(:disabled):not(:checked) + .mt-switch-track {
-  background: var(--ink-400);
-  border-color: var(--ink-500);
+  background: var(--ink-500);
+  border-color: color-mix(in srgb, var(--ink-600) 48%, var(--brand-600));
 }
 .mt-switch input:checked + .mt-switch-track { background: var(--brand-600); border-color: var(--brand-600); }
 .mt-switch:hover input:checked:not(:disabled) + .mt-switch-track { background: var(--brand-700); border-color: var(--brand-700); }
 .mt-switch input:checked + .mt-switch-track::after { transform: translateX(16px); }
 .mt-switch input:focus-visible + .mt-switch-track { box-shadow: var(--shadow-focus), inset 0 1px 3px rgba(15, 14, 13, 0.18); }
-.mt-switch input:disabled + .mt-switch-track { opacity: 0.4; cursor: not-allowed; border-color: var(--ink-400); box-shadow: none; }
-.mt-switch input:disabled + .mt-switch-track::after { background: var(--ink-300); box-shadow: none; }
+.mt-switch input:disabled + .mt-switch-track { background: var(--ink-150); border-color: var(--ink-150); cursor: not-allowed; box-shadow: none; }
+.mt-switch input:disabled + .mt-switch-track::after { background: #fff; box-shadow: 0 1px 2px rgba(15, 14, 13, 0.1); }
+.mt-switch input:disabled:checked + .mt-switch-track { background: var(--brand-300); border-color: var(--brand-300); }
 .mt-switch .mt-switch-label { font-size: 14px; color: var(--ink-800); }
 
 /* ----- Switch variant: high-contrast (option 2) ----- */
@@ -762,7 +763,9 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
 .mt-check input:checked + .mt-check-box svg,
 .mt-check input:indeterminate + .mt-check-box svg { opacity: 1; }
 .mt-check input:focus-visible + .mt-check-box { box-shadow: var(--shadow-focus); }
-.mt-check input:disabled + .mt-check-box { opacity: 0.5; cursor: not-allowed; }
+.mt-check input:disabled + .mt-check-box { background: var(--ink-150); border-color: var(--ink-300); cursor: not-allowed; }
+.mt-check input:disabled:checked + .mt-check-box,
+.mt-check input:disabled:indeterminate + .mt-check-box { background: var(--ink-300); border-color: var(--ink-300); }
 .mt-check:hover input:not(:disabled) + .mt-check-box { border-color: var(--ink-500); }
 .mt-check:hover input:checked:not(:disabled) + .mt-check-box,
 .mt-check:hover input:indeterminate:not(:disabled) + .mt-check-box {
@@ -804,7 +807,9 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
 .mt-radio input:checked + .mt-radio-dot { border-color: var(--brand-600); }
 .mt-radio input:checked + .mt-radio-dot::after { transform: scale(1); }
 .mt-radio input:focus-visible + .mt-radio-dot { box-shadow: var(--shadow-focus); }
-.mt-radio input:disabled + .mt-radio-dot { opacity: 0.5; cursor: not-allowed; }
+.mt-radio input:disabled + .mt-radio-dot { background: var(--ink-150); border-color: var(--ink-300); cursor: not-allowed; }
+.mt-radio input:disabled:checked + .mt-radio-dot { background: var(--ink-150); border-color: var(--ink-300); }
+.mt-radio input:disabled:checked + .mt-radio-dot::after { background: var(--ink-400); }
 .mt-radio:hover input:not(:disabled) + .mt-radio-dot { border-color: var(--ink-500); }
 .mt-radio:hover input:checked:not(:disabled) + .mt-radio-dot { border-color: var(--brand-700); }
 .mt-radio:hover input:checked:not(:disabled) + .mt-radio-dot::after { background: var(--brand-700); }
@@ -960,6 +965,10 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
   box-shadow: var(--shadow-pop);
   animation: mt-toast-in var(--dur-drawer-in) var(--ease-snap);
 }
+/* Semantic surface — the whole toast takes a saturated tone fill.
+   Success → green, error → red; neutral keeps ink-900. */
+.mt-toast.is-success { background: var(--accent-green); }
+.mt-toast.is-danger  { background: var(--accent-red); }
 .mt-toast.is-closing { animation: mt-toast-out var(--dur-drawer-out) var(--ease-in) forwards; }
 .mt-toast .mt-toast-icon {
   width: 18px; height: 18px;
@@ -998,9 +1007,9 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
 }
 .mt-toast .mt-toast-close:hover { opacity: 1; background: rgba(255, 255, 255, 0.08); color: #fff; }
 
-.mt-toast.is-success .mt-toast-icon { color: var(--accent-green); }
-.mt-toast.is-warning .mt-toast-icon { color: var(--accent-amber); }
-.mt-toast.is-danger  .mt-toast-icon { color: var(--accent-red); }
+/* On a saturated tone surface the icon reads white, not the tone color. */
+.mt-toast.is-success .mt-toast-icon,
+.mt-toast.is-danger  .mt-toast-icon { color: #fff; }
 
 /* is-inverse is retained as an explicit alias — the dark surface is now the
    default for every toast, so this matches the base. */

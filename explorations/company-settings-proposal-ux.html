@@ -45,6 +45,7 @@
     box-shadow: var(--shadow-pop);
   }
   .vx-switch-brand { display: none; }
+  .vx-switch-dev { right: auto; left: 22px; }
   .vx-switch-dot { display: none; }
   .vx-seg { display: inline-flex; background: transparent; border-radius: 10px; padding: 0; gap: 2px; }
   .vx-seg button {
@@ -63,6 +64,7 @@
   .vx-dev button { padding: 0 9px; }
   .vx-dev button svg { width: 16px; height: 16px; }
   .vx-seg-div { width: 1px; align-self: stretch; margin: 5px 6px; background: rgba(255,255,255,.16); }
+  .vx-seg-label { font-family: var(--font-sans); font-size: 11px; font-weight: 600; text-transform: uppercase; color: rgba(255,255,255,.5); padding: 0 9px 0 12px; letter-spacing: .08em; white-space: nowrap; }
 
   /* viewport overlay — loads the page in an iframe at the real device width so @media fires */
   .vx-vp { position: fixed; inset: 0; z-index: 80; display: none; align-items: center; justify-content: center; background: rgba(14, 16, 20, 0.42); backdrop-filter: blur(5px); }
@@ -226,6 +228,10 @@
   }
   .stage-a .vx-main-head.is-stuck,
   .stage-c .vx-main-head.is-stuck { border-bottom-color: var(--vx-line); box-shadow: var(--shadow-hover); }
+  .stage-a .vx-main-head .vx-lede,
+  .stage-c .vx-main-head .vx-lede { transition: max-height .32s var(--ease), opacity .22s var(--ease), margin-top .32s var(--ease); max-height: 80px; overflow: hidden; }
+  .stage-a .vx-main-head.is-stuck .vx-lede,
+  .stage-c .vx-main-head.is-stuck .vx-lede { max-height: 0; opacity: 0; margin-top: 0; }
   .stage-a .vx-head-text,
   .stage-c .vx-head-text { min-width: 0; }
   .vx-stick-sentinel { display: block; height: 1px; }
@@ -317,16 +323,20 @@
 </a>
 
 <!-- ===== Version switcher ===== -->
-<header class="vx-switch">
-  <div class="vx-switch-brand"><span class="vx-switch-dot"></span> <span><b>Proposal settings</b> · UX exploration</span></div>
+<header class="vx-switch vx-switch-dev">
+  <span class="vx-seg-label">Preview</span>
   <div class="vx-seg vx-dev" role="group" aria-label="Preview device">
     <button data-dev="desktop" class="is-active" title="Desktop view" aria-label="Desktop view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg></button>
     <button data-dev="pad" title="iPad view" aria-label="iPad view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg></button>
     <button data-dev="mobile" title="Mobile view" aria-label="Mobile view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2.5"/><path d="M11 18h2"/></svg></button>
   </div>
-  <div class="vx-seg-div" aria-hidden="true"></div>
-  <div class="vx-seg" role="tablist">
-    <button data-go="c" class="is-active"><span class="k">C</span> Reorganized + Save</button>
+</header>
+
+<header class="vx-switch">
+  <span class="vx-seg-label">Switch</span>
+  <div class="vx-seg vx-variant" role="group" aria-label="Switch style — for team review">
+    <button data-variant="default" class="is-active">Default</button>
+    <button data-variant="iconized">Iconized</button>
   </div>
 </header>
 
@@ -438,9 +448,6 @@
           </div>
         </div>
       </section>
-      <div class="vx-page-foot">
-        <button class="vx-reset" type="button" data-reset><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg> Reset all changes to default</button>
-      </div>
     </main>
   </div>
 
@@ -524,9 +531,6 @@
           </div>
         </div>
       </section>
-      <div class="vx-page-foot">
-        <button class="vx-reset" type="button" data-reset><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg> Reset all changes to default</button>
-      </div>
     </main>
   </div>
 </section>
@@ -605,7 +609,7 @@
   const IS_EMBED = VP_PARAMS.get('embed') === '1';
   const stages = document.querySelectorAll('.vx-stage');
   const showStage = v => stages.forEach(s => s.hidden = s.dataset.stage !== v);
-  if (IS_EMBED) { document.body.classList.add('is-embed'); showStage(VP_PARAMS.get('v') || 'a'); }
+  if (IS_EMBED) { document.body.classList.add('is-embed'); showStage(VP_PARAMS.get('v') || 'a'); applyVariant(VP_PARAMS.get('sw') || 'default'); }
 
   // ---- version switcher ----
   document.querySelectorAll('[data-go]').forEach(btn => {
@@ -617,6 +621,16 @@
     });
   });
 
+  // ---- switch-style variant toggle (team review: default track vs icon-in-thumb) ----
+  function activeVariant() { const b = document.querySelector('[data-variant].is-active'); return b ? b.dataset.variant : 'default'; }
+  function applyVariant(v) {
+    document.querySelectorAll('label.mt-switch').forEach(s => s.classList.toggle('is-iconized-thumb', v === 'iconized'));
+    document.querySelectorAll('[data-variant]').forEach(b => b.classList.toggle('is-active', b.dataset.variant === v));
+  }
+  document.querySelectorAll('[data-variant]').forEach(btn => {
+    btn.addEventListener('click', () => { applyVariant(btn.dataset.variant); if (vpOpen) loadVP(); });
+  });
+
   // ---- device preview: load the page in an iframe at the true device width ----
   const DEVICES = { pad: { name: 'iPad', w: 834, h: 1112, pad: 32 }, mobile: { name: 'Mobile', w: 390, h: 844, pad: 24 } };
   const vp = document.getElementById('vx-vp');
@@ -625,10 +639,10 @@
   const vpName = document.getElementById('vx-vp-name');
   const vpSize = document.getElementById('vx-vp-size');
   let vpOpen = false, vpMode = 'mobile';
-  const activeVersion = () => { const b = document.querySelector('[data-go].is-active'); return b ? b.dataset.go : 'a'; };
+  const activeVersion = () => { const s = document.querySelector('.vx-stage:not([hidden])'); return s ? s.dataset.stage : 'c'; };
   const baseURL = () => location.href.split('#')[0].split('?')[0];
   const setDev = mode => document.querySelectorAll('[data-dev]').forEach(b => b.classList.toggle('is-active', b.dataset.dev === mode));
-  function loadVP() { vpIframe.src = baseURL() + '?embed=1&v=' + activeVersion(); }
+  function loadVP() { vpIframe.src = baseURL() + '?embed=1&v=' + activeVersion() + '&sw=' + activeVariant(); }
   function fitVP() {
     if (!vpOpen) return;
     const d = DEVICES[vpMode], fw = d.w + d.pad, fh = d.h + d.pad;
@@ -701,12 +715,6 @@
         status.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12l5 5 9-11"/></svg> All changes saved';
         toast.classList.add('is-show'); clearTimeout(tt); tt = setTimeout(() => toast.classList.remove('is-show'), 1800);
       }, 650);
-    });
-    const resetBtn = stage.querySelector('[data-reset]');
-    resetBtn.addEventListener('click', () => {
-      stage.querySelectorAll('input[type=checkbox]').forEach(cb => cb.checked = cb.defaultChecked);
-      stage.querySelectorAll('input[type=number]').forEach(n => n.value = n.defaultValue);
-      stage.querySelectorAll('input').forEach(i => i.dispatchEvent(new Event('change', { bubbles: true })));
     });
     const sentinel = stage.querySelector('.vx-stick-sentinel');
     new IntersectionObserver(([e]) => head.classList.toggle('is-stuck', !e.isIntersecting), { rootMargin: '-1px 0px 0px 0px', threshold: 0 }).observe(sentinel);
@@ -787,16 +795,6 @@
     if (!IS_EMBED) window.addEventListener('beforeunload', e => {
       if (stage.classList.contains('is-dirty')) { e.preventDefault(); e.returnValue = ''; }
     });
-    // Reset → restore factory defaults (this is a real change vs the saved state, so Save may light up)
-    const resetBtn = stage.querySelector('[data-reset]');
-    if (resetBtn) resetBtn.addEventListener('click', () => {
-      stage.querySelectorAll('input[type=checkbox]').forEach(cb => cb.checked = cb.defaultChecked);
-      stage.querySelectorAll('input[type=number]').forEach(n => n.value = n.defaultValue);
-      setActiveChip(defaultChipId);
-      stage.querySelectorAll('input').forEach(i => i.dispatchEvent(new Event('change', { bubbles: true })));
-      recompute();
-    });
-
     // sticky-header shadow when the head pins to the top
     const sentinel = stage.querySelector('.vx-stick-sentinel');
     if (sentinel) new IntersectionObserver(([e]) => head.classList.toggle('is-stuck', !e.isIntersecting), { rootMargin: '-1px 0px 0px 0px', threshold: 0 }).observe(sentinel);

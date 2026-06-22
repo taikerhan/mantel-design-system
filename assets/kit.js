@@ -81,7 +81,7 @@
     var TONES = {
       success: {
         cls: 'is-success',
-        icon: '<svg class="mt-toast-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>',
+        icon: '<svg class="mt-toast-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
         title: 'Proposal sent',
         desc: 'Robert &amp; Linda will be notified.'
       },
@@ -96,15 +96,9 @@
         bare: true,
         msg: 'Link copied to clipboard'
       },
-      warning: {
-        cls: 'is-warning',
-        icon: '<svg class="mt-toast-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>',
-        title: 'Credit hold flagged',
-        desc: '2 proposals need lender review.'
-      },
       danger: {
         cls: 'is-danger',
-        icon: '<svg class="mt-toast-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>',
+        icon: '<svg class="mt-toast-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>',
         title: 'Lender declined',
         desc: 'Re-route by Friday to keep the deal active.'
       },
@@ -116,14 +110,14 @@
       },
       'cta-success': {
         cls: 'is-success',
-        icon: '<svg class="mt-toast-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>',
+        icon: '<svg class="mt-toast-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
         title: 'Proposal sent to Robert &amp; Linda',
         desc: 'They\'ll get an email and a tracked secure link.',
         actions: [{ label: 'View seller' }, { label: 'Undo', muted: true }]
       },
       'cta-danger': {
         cls: 'is-danger',
-        icon: '<svg class="mt-toast-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>',
+        icon: '<svg class="mt-toast-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>',
         title: 'Lender declined',
         desc: 'Re-route by Friday to keep the deal active.',
         actions: [{ label: 'Re-route lender' }]
@@ -338,6 +332,21 @@
       window.addEventListener('resize', function () { place(activeTab()); });
     }
     document.querySelectorAll('[data-mt-tabs]').forEach(initTabs);
+  })();
+
+  // Mobile tab bar (.mt-tabbar.is-scroll) — drop the right-edge fade once
+  // scrolled to the end so it doesn't sit over the last tab's label.
+  (function () {
+    function sync(bar) {
+      var fade = bar.closest('.mt-scroll-fade');
+      if (!fade) return;
+      fade.classList.toggle('is-end', bar.scrollLeft + bar.clientWidth >= bar.scrollWidth - 1);
+    }
+    document.querySelectorAll('.mt-tabbar.is-scroll').forEach(function (bar) {
+      bar.addEventListener('scroll', function () { sync(bar); }, { passive: true });
+      window.addEventListener('resize', function () { sync(bar); });
+      sync(bar);
+    });
   })();
 
 ;

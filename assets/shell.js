@@ -62,6 +62,28 @@
         + '<div class="mt-alert-body"><div class="mt-alert-title">' + esc(s.title || ' ') + '</div>' + (s.desc ? '<div class="mt-alert-desc">' + esc(s.desc) + '</div>' : '') + '</div>'
         + (s.closable ? '<button class="mt-alert-close" aria-label="Dismiss">' + X_SVG + '</button>' : '');
     },
+    toast: function (el, s) {
+      var TOAST_ICONS = {
+        success: '<path d="M20 6 9 17l-5-5"></path>',
+        danger: '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path>',
+        neutral: '<circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path>'
+      };
+      var v = s.variant || 'success';
+      // neutral keeps the bare dark surface (is-inverse = white icon/text alias)
+      el.className = 'mt-toast ' + (v === 'neutral' ? 'is-inverse' : 'is-' + v);
+      el.style.gridTemplateColumns = (s.icon ? '18px ' : '') + '1fr' + (s.dismiss ? ' auto' : '');
+      var icon = s.icon ? '<svg class="mt-toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + (TOAST_ICONS[v] || TOAST_ICONS.success) + '</svg>' : '';
+      var body = '<div class="mt-toast-body">';
+      if (s.title) {
+        body += '<div class="mt-toast-title">Proposal sent</div><div class="mt-toast-desc">Robert &amp; Linda will be notified.</div>';
+      } else {
+        body += '<div class="mt-toast-title">Robert &amp; Linda will be notified.</div>';
+      }
+      if (s.cta) body += '<div class="mt-toast-actions"><button class="mt-toast-action">View seller</button><button class="mt-toast-action is-muted">Undo</button></div>';
+      body += '</div>';
+      var close = s.dismiss ? '<button class="mt-toast-close" aria-label="Dismiss">' + X_SVG + '</button>' : '';
+      el.innerHTML = icon + body + close;
+    },
     toggle: function (el, s) {
       var kind = s.kind || 'switch';
       var attrs = (s.checked ? ' checked' : '') + (s.disabled ? ' disabled' : '');
