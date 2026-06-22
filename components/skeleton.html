@@ -1,9 +1,71 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Skeleton · Mantel</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="../assets/kit.css"><link rel="stylesheet" href="../assets/shell.css"></head><body class="ds-body"><aside class="ds-nav"><div class="ds-brand"><a class="ds-logo" href="../index.html" aria-label="Mantel — UI Kit home"><img src="../assets/mantel-logo.svg" alt="Mantel"></a><span class="ds-ver">UI Kit · v2.3</span></div><input class="ds-search" type="search" placeholder="Search…" aria-label="Search components"><nav class="ds-links"><a class="ds-link" href="../index.html" data-name="home dashboard overview">Overview</a><a class="ds-link" href="../changelog.html" data-name="changelog releases versions history">Changelog</a><div class="ds-group">Design review</div><a class="ds-link" href="../review.html" data-name="review queue">Review queue<span class="ds-wip" title="Items awaiting review">1</span></a><div class="ds-group">Foundations</div><a class="ds-link" href="../components/type.html" data-name="typography">Typography</a><a class="ds-link" href="../components/color.html" data-name="color">Color</a><a class="ds-link" href="../components/spacing.html" data-name="spacing">Spacing</a><a class="ds-link" href="../components/radius.html" data-name="radius">Radius</a><a class="ds-link" href="../components/shadow.html" data-name="shadow">Shadow</a><a class="ds-link" href="../components/motion.html" data-name="motion">Motion</a><div class="ds-group">Components</div><a class="ds-link" href="../components/buttons.html" data-name="buttons">Buttons</a><a class="ds-link" href="../components/form-inputs.html" data-name="form inputs">Form inputs</a><a class="ds-link" href="../components/inputs.html" data-name="search &amp; pickers">Search &amp; pickers</a><a class="ds-link" href="../components/data-table.html" data-name="table">Table</a><a class="ds-link" href="../components/modal.html" data-name="modal">Modal</a><a class="ds-link" href="../components/menu.html" data-name="dropdown menu">Dropdown menu</a><a class="ds-link" href="../components/tabs.html" data-name="tabs">Tabs</a><a class="ds-link" href="../components/segmented.html" data-name="segmented control">Segmented control</a><a class="ds-link" href="../components/btn-group.html" data-name="button group">Button group</a><a class="ds-link" href="../components/toasts.html" data-name="toasts">Toasts</a><a class="ds-link" href="../components/alerts.html" data-name="alerts">Alerts</a><a class="ds-link" href="../components/stats.html" data-name="stat card">Stat card</a><a class="ds-link" href="../components/pills.html" data-name="status pills">Status pills</a><a class="ds-link" href="../components/badges.html" data-name="strength badges">Strength badges</a><a class="ds-link" href="../components/avatars.html" data-name="avatars">Avatars</a><a class="ds-link" href="../components/tooltips.html" data-name="tooltips">Tooltips</a><a class="ds-link" href="../components/toggles.html" data-name="switch / checkbox / radio">Switch / checkbox / radio</a><a class="ds-link" href="../components/crumbs.html" data-name="breadcrumbs">Breadcrumbs</a><a class="ds-link" href="../components/pager.html" data-name="pagination">Pagination</a><a class="ds-link" href="../components/activity.html" data-name="activity feed">Activity feed</a><a class="ds-link" href="../components/sheet.html" data-name="sheet / drawer">Sheet / drawer</a><a class="ds-link" href="../components/empty.html" data-name="empty state">Empty state</a><a class="ds-link" href="../components/focus.html" data-name="focus card">Focus card</a><a class="ds-link" href="../components/live.html" data-name="live indicator">Live indicator</a><a class="ds-link is-active" href="../components/skeleton.html" data-name="skeleton">Skeleton</a><a class="ds-link" href="../components/category.html" data-name="category pills">Category pills</a><div class="ds-group">Combos</div><a class="ds-link" href="../components/header.html" data-name="page header combo title description breadcrumb">Page header</a></nav></aside><main class="ds-main"><div class="ds-page-head"><div class="ds-eyebrow">Components</div><h1 class="ds-h1">Skeleton</h1></div><section class="block" id="skeleton">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Loaders · Mantel</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="../assets/kit.css"><link rel="stylesheet" href="../assets/shell.css"></head><body class="ds-body"><aside class="ds-nav"><div class="ds-brand"><a class="ds-logo" href="../index.html" aria-label="Mantel — UI Kit home"><img src="../assets/mantel-logo.svg" alt="Mantel"></a><span class="ds-ver">UI Kit · v2.3</span></div><input class="ds-search" type="search" placeholder="Search…" aria-label="Search components"><nav class="ds-links"><a class="ds-link" href="../index.html" data-name="home dashboard overview">Overview</a><a class="ds-link" href="../changelog.html" data-name="changelog releases versions history">Changelog</a><div class="ds-group">Design review</div><a class="ds-link" href="../review.html" data-name="review queue">Review queue<span class="ds-wip" title="Items awaiting review">1</span></a><div class="ds-group">Foundations</div><a class="ds-link" href="../components/type.html" data-name="typography">Typography</a><a class="ds-link" href="../components/color.html" data-name="color">Color</a><a class="ds-link" href="../components/spacing.html" data-name="spacing">Spacing</a><a class="ds-link" href="../components/radius.html" data-name="radius">Radius</a><a class="ds-link" href="../components/shadow.html" data-name="shadow">Shadow</a><a class="ds-link" href="../components/motion.html" data-name="motion">Motion</a><div class="ds-group">Components</div><a class="ds-link" href="../components/buttons.html" data-name="buttons">Buttons</a><a class="ds-link" href="../components/form-inputs.html" data-name="form inputs">Form inputs</a><a class="ds-link" href="../components/inputs.html" data-name="search &amp; pickers">Search &amp; pickers</a><a class="ds-link" href="../components/data-table.html" data-name="table">Table</a><a class="ds-link" href="../components/modal.html" data-name="modal">Modal</a><a class="ds-link" href="../components/menu.html" data-name="dropdown menu">Dropdown menu</a><a class="ds-link" href="../components/tabs.html" data-name="tabs">Tabs</a><a class="ds-link" href="../components/segmented.html" data-name="segmented control">Segmented control</a><a class="ds-link" href="../components/btn-group.html" data-name="button group">Button group</a><a class="ds-link" href="../components/toasts.html" data-name="toasts">Toasts</a><a class="ds-link" href="../components/alerts.html" data-name="alerts">Alerts</a><a class="ds-link" href="../components/stats.html" data-name="stat card">Stat card</a><a class="ds-link" href="../components/pills.html" data-name="status pills">Status pills</a><a class="ds-link" href="../components/badges.html" data-name="strength badges">Strength badges</a><a class="ds-link" href="../components/avatars.html" data-name="avatars">Avatars</a><a class="ds-link" href="../components/tooltips.html" data-name="tooltips">Tooltips</a><a class="ds-link" href="../components/toggles.html" data-name="switch / checkbox / radio">Switch / checkbox / radio</a><a class="ds-link" href="../components/crumbs.html" data-name="breadcrumbs">Breadcrumbs</a><a class="ds-link" href="../components/pager.html" data-name="pagination">Pagination</a><a class="ds-link" href="../components/activity.html" data-name="activity feed">Activity feed</a><a class="ds-link" href="../components/sheet.html" data-name="sheet / drawer">Sheet / drawer</a><a class="ds-link" href="../components/empty.html" data-name="empty state">Empty state</a><a class="ds-link" href="../components/focus.html" data-name="focus card">Focus card</a><a class="ds-link" href="../components/live.html" data-name="live indicator">Live indicator</a><a class="ds-link is-active" href="../components/skeleton.html" data-name="loaders skeleton spinner progress">Loaders</a><a class="ds-link" href="../components/category.html" data-name="category pills">Category pills</a><div class="ds-group">Combos</div><a class="ds-link" href="../components/header.html" data-name="page header combo title description breadcrumb">Page header</a></nav></aside><main class="ds-main"><div class="ds-page-head"><div class="ds-eyebrow">Components</div><h1 class="ds-h1">Loaders</h1></div><section class="block" id="loaders">
       <div class="head">
-        <h2>Skeleton</h2>
-        <span class="desc">Shimmer placeholders during load</span>
+        <h2>Loaders</h2>
+        <span class="desc">One family for every wait — pick by what you know about the load</span>
       </div>
-      <div class="two">
+
+      <div class="sub">
+        <div class="sub-title"><h3>Spinner</h3><span class="token">.mt-spinner</span><span class="note">Short indeterminate waits · inline &amp; in buttons</span></div>
+        <div class="spec">
+          <div class="stage" style="gap: 30px; align-items: center; flex-wrap: wrap;">
+            <span class="mt-spinner is-sm" role="status" aria-label="Loading"></span>
+            <span class="mt-spinner" role="status" aria-label="Loading"></span>
+            <span class="mt-spinner is-lg" role="status" aria-label="Loading"></span>
+            <span class="mt-spinner is-muted" role="status" aria-label="Loading"></span>
+            <span style="display:inline-flex;align-items:center;gap:9px;font-size:14px;color:var(--ink-600);"><span class="mt-spinner is-sm"></span>Loading…</span>
+            <button class="btn btn-default" disabled="" style="display:inline-flex;align-items:center;gap:8px;"><span class="mt-spinner is-sm" style="border-color:rgba(255,255,255,.38);border-top-color:#fff;"></span>Sending…</button>
+          </div>
+          <div class="cap"><span>14 / 18 / 28px plus a muted grey for neutral surfaces. Spins at a constant <code>0.7s</code> linear — steady speed reads as "working". Use for waits a bare spinner can carry (under ~4s).</span><span class="right">.is-sm / .is-lg / .is-muted</span></div>
+        </div>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>Loading dots</h3><span class="token">.mt-dots</span><span class="note">Inline "thinking" / streaming — lighter than a spinner</span></div>
+        <div class="spec">
+          <div class="stage" style="gap: 32px; align-items: center; flex-wrap: wrap;">
+            <span class="mt-dots" role="status" aria-label="Loading"><span></span><span></span><span></span></span>
+            <span class="mt-dots is-lg" role="status" aria-label="Loading"><span></span><span></span><span></span></span>
+            <span class="mt-dots is-muted" role="status" aria-label="Loading"><span></span><span></span><span></span></span>
+            <span style="display:inline-flex;align-items:center;gap:10px;font-size:14px;color:var(--ink-700);">Assistant is typing <span class="mt-dots"><span></span><span></span><span></span></span></span>
+          </div>
+          <div class="cap"><span>Three dots pulse in sequence — scale, not a flash, so they stay visible. For chat, AI streaming, or any inline spot where a spinner would feel heavy.</span><span class="right">.is-lg / .is-muted</span></div>
+        </div>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>Linear progress</h3><span class="token">.mt-progress</span><span class="note">Determinate when you can measure it · indeterminate when you can't</span></div>
+        <div class="spec">
+          <div class="stage col">
+            <div style="padding: 26px 24px; display:flex; flex-direction:column; gap: 22px;">
+              <div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:13px; color:var(--ink-600);"><span>Uploading 3 files</span><span style="font-variant-numeric:tabular-nums; color:var(--ink-800); font-weight:600;">72%</span></div>
+                <div class="mt-progress"><div class="mt-progress-bar" style="width:72%;"></div></div>
+              </div>
+              <div>
+                <div style="margin-bottom:8px; font-size:13px; color:var(--ink-600);">Syncing — time unknown</div>
+                <div class="mt-progress is-indeterminate"><div class="mt-progress-bar"></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="cap"><span><b>Determinate</b> fills to a known percent with a tabular-nums label. <b>Indeterminate</b> (<code>.is-indeterminate</code>) slides a segment for background work with no measurable end.</span><span class="right">.mt-progress-bar · .is-indeterminate</span></div>
+        </div>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>Circular progress</h3><span class="token">.mt-ring</span><span class="note">Determinate in a compact footprint — tiles, stats</span></div>
+        <div class="spec">
+          <div class="stage" style="gap: 36px; align-items: center; flex-wrap: wrap;">
+            <span class="mt-ring"><svg width="56" height="56" viewBox="0 0 36 36"><circle class="mt-ring-track" cx="18" cy="18" r="16"></circle><circle class="mt-ring-fill" cx="18" cy="18" r="16" pathLength="100" style="stroke-dasharray:100; stroke-dashoffset:32;"></circle></svg><span class="mt-ring-label">68%</span></span>
+            <span class="mt-ring"><svg width="44" height="44" viewBox="0 0 36 36"><circle class="mt-ring-track" cx="18" cy="18" r="16"></circle><circle class="mt-ring-fill" cx="18" cy="18" r="16" pathLength="100" style="stroke-dasharray:100; stroke-dashoffset:76;"></circle></svg><span class="mt-ring-label" style="font-size:11px;">24%</span></span>
+            <span class="mt-ring"><svg width="56" height="56" viewBox="0 0 36 36"><circle class="mt-ring-track" cx="18" cy="18" r="16"></circle><circle class="mt-ring-fill" cx="18" cy="18" r="16" pathLength="100" style="stroke-dasharray:100; stroke-dashoffset:5;"></circle></svg><span class="mt-ring-label">95%</span></span>
+          </div>
+          <div class="cap"><span>SVG ring — a rounded brand stroke on an <code>ink-150</code> track, percent centered in tabular-nums. Drive it by setting <code>stroke-dashoffset</code> to <code>100 − percent</code>.</span><span class="right">.mt-ring-track / .mt-ring-fill / .mt-ring-label</span></div>
+        </div>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>Skeleton</h3><span class="token">.mt-skeleton</span><span class="note">Content-shaped shimmer when you know the layout</span></div>
+        <div class="two">
         <div class="spec">
           <div class="stage col">
             <div style="padding: 24px; display: flex; flex-direction: column; gap: 10px;">
@@ -47,6 +109,7 @@
           <div class="cap"><span>Table-row loading state — circle avatar + two text lines + right-aligned chip</span><span class="right">.is-circle / .is-text</span></div>
         </div>
       </div>
+      </div>
 
       <div class="sub">
         <div class="sub-title"><h3>Rotating messages</h3><span class="token">.mt-loader · .mt-loader-msg</span><span class="note">Long async loads — cycle reassuring status lines</span></div>
@@ -65,6 +128,47 @@
             </div>
           </div>
           <div class="cap"><span>For loads longer than a bare spinner can carry, rotate short status lines so the wait reads as intentional. Each line crossfades + slides every ~2.5s — pure CSS, no JS — and honors <b>prefers-reduced-motion</b>. Pair with a shimmer skeleton for the incoming content.</span><span class="right">.mt-loader · ~2.5s</span></div>
+        </div>
+      </div>
+
+      <div class="sub">
+        <div class="sub-title"><h3>When to use</h3><span class="note">Match the loader to what you know about the wait</span></div>
+        <div class="spec">
+          <div class="stage col">
+            <table style="width: 100%; border-collapse: collapse;">
+              <thead><tr>
+                <th style="text-align:left; padding:14px 24px; font-family:var(--font-mono); font-size:13px; letter-spacing:0.07em; text-transform:uppercase; color:var(--ink-600); font-weight:600; border-bottom:1px solid var(--ink-150); width:32%;">Loader</th>
+                <th style="text-align:left; padding:14px 24px 14px 16px; font-family:var(--font-mono); font-size:13px; letter-spacing:0.07em; text-transform:uppercase; color:var(--ink-600); font-weight:600; border-bottom:1px solid var(--ink-150);">Reach for it when</th>
+              </tr></thead>
+              <tbody>
+                <tr>
+                  <td style="padding:16px 24px; font-size:14px; color:var(--ink-900); font-weight:600; vertical-align:top;">Spinner</td>
+                  <td style="padding:16px 24px 16px 16px; font-size:13px; color:var(--ink-600); line-height:1.55;">A short, indeterminate wait (under ~4s) — inline, or inside a button while an action commits.</td>
+                </tr>
+                <tr style="border-top:1px solid var(--ink-150);">
+                  <td style="padding:16px 24px; font-size:14px; color:var(--ink-900); font-weight:600; vertical-align:top;">Loading dots</td>
+                  <td style="padding:16px 24px 16px 16px; font-size:13px; color:var(--ink-600); line-height:1.55;">An inline "thinking" or streaming state — chat, AI responses — where a spinner would feel heavy.</td>
+                </tr>
+                <tr style="border-top:1px solid var(--ink-150);">
+                  <td style="padding:16px 24px; font-size:14px; color:var(--ink-900); font-weight:600; vertical-align:top;">Linear progress</td>
+                  <td style="padding:16px 24px 16px 16px; font-size:13px; color:var(--ink-600); line-height:1.55;">You can <em>measure</em> the task — uploads, multi-step jobs — so show the percent. Switch to <code>.is-indeterminate</code> for background work with no measurable end.</td>
+                </tr>
+                <tr style="border-top:1px solid var(--ink-150);">
+                  <td style="padding:16px 24px; font-size:14px; color:var(--ink-900); font-weight:600; vertical-align:top;">Circular progress</td>
+                  <td style="padding:16px 24px 16px 16px; font-size:13px; color:var(--ink-600); line-height:1.55;">A determinate value in a compact footprint — a tile, a stat, a card corner — where a full-width bar won't fit.</td>
+                </tr>
+                <tr style="border-top:1px solid var(--ink-150);">
+                  <td style="padding:16px 24px; font-size:14px; color:var(--ink-900); font-weight:600; vertical-align:top;">Skeleton</td>
+                  <td style="padding:16px 24px 16px 16px; font-size:13px; color:var(--ink-600); line-height:1.55;">You know the <em>shape</em> of what's loading — lists, cards, table rows — so hold the layout with shimmer placeholders.</td>
+                </tr>
+                <tr style="border-top:1px solid var(--ink-150);">
+                  <td style="padding:16px 24px; font-size:14px; color:var(--ink-900); font-weight:600; vertical-align:top;">Rotating messages</td>
+                  <td style="padding:16px 24px 16px 16px; font-size:13px; color:var(--ink-600); line-height:1.55;">A long async load that would outlast a bare spinner — reassure with short status lines that cycle.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="cap"><span>The deciding question is always the same: do you know <b>how long</b>, and do you know the <b>shape</b> of what's coming?</span></div>
         </div>
       </div>
     </section>
