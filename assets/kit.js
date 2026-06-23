@@ -73,8 +73,10 @@
 
   (function () {
     // Set the indeterminate checkbox state
-    var indet = document.querySelector('#mt-check-indet input');
-    if (indet) indet.indeterminate = true;
+    ['#mt-check-indet input', '#mt-check-indet-lg input'].forEach(function (s) {
+      var indet = document.querySelector(s);
+      if (indet) indet.indeterminate = true;
+    });
 
     // Toast spawner
     var viewport = document.getElementById('mt-toast-viewport');

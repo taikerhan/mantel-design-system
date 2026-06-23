@@ -728,6 +728,16 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
   background-size: 11px 11px;
 }
 
+/* ----- Switch size: large — bigger, mobile-friendly tap target (settings) ----- */
+.mt-switch.is-lg { min-height: 44px; }
+.mt-switch.is-lg .mt-switch-track { width: 48px; height: 26px; }
+.mt-switch.is-lg .mt-switch-track::after { width: 22px; height: 22px; }
+.mt-switch.is-lg input:checked + .mt-switch-track::after { transform: translateX(22px); }
+.mt-switch.is-lg .mt-switch-label { font-size: 15px; }
+.mt-switch.is-lg.is-iconized-thumb .mt-switch-track { width: 52px; height: 28px; }
+.mt-switch.is-lg.is-iconized-thumb .mt-switch-track::after { width: 24px; height: 24px; background-size: 13px 13px; }
+.mt-switch.is-lg.is-iconized-thumb input:checked + .mt-switch-track::after { transform: translateX(24px); background-size: 14px 14px; }
+
 /* ---------- Checkbox ---------- */
 .mt-check {
   position: relative;
@@ -739,7 +749,7 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
 }
 .mt-check input { position: absolute; opacity: 0; width: 0; height: 0; }
 .mt-check .mt-check-box {
-  width: 16px; height: 16px;
+  width: 20px; height: 20px;
   background: #fff;
   border: 1px solid var(--ink-300);
   border-radius: 4px;
@@ -750,7 +760,7 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
   transition: background-color var(--dur) var(--ease), border-color var(--dur) var(--ease);
 }
 .mt-check .mt-check-box svg {
-  width: 12px; height: 12px;
+  width: 14px; height: 14px;
   color: #fff;
   opacity: 0;
   transition: opacity var(--dur-fast) var(--ease);
@@ -785,7 +795,7 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
 }
 .mt-radio input { position: absolute; opacity: 0; width: 0; height: 0; }
 .mt-radio .mt-radio-dot {
-  width: 16px; height: 16px;
+  width: 20px; height: 20px;
   background: #fff;
   border: 1px solid var(--ink-300);
   border-radius: 50%;
@@ -798,7 +808,7 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
   position: absolute;
   inset: 0;
   margin: auto;
-  width: 6px; height: 6px;
+  width: 8px; height: 8px;
   border-radius: 50%;
   background: var(--brand-600);
   transform: scale(0);
@@ -817,12 +827,12 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
 
 /* ---------- Large variant (checkbox + radio) ---------- */
 .mt-check.is-lg { gap: 12px; }
-.mt-check.is-lg .mt-check-box { width: 20px; height: 20px; border-radius: 5px; }
-.mt-check.is-lg .mt-check-box svg { width: 14px; height: 14px; }
+.mt-check.is-lg .mt-check-box { width: 24px; height: 24px; border-radius: 6px; }
+.mt-check.is-lg .mt-check-box svg { width: 16px; height: 16px; }
 .mt-check.is-lg .mt-check-label { font-size: 15px; }
 .mt-radio.is-lg { gap: 12px; }
-.mt-radio.is-lg .mt-radio-dot { width: 20px; height: 20px; }
-.mt-radio.is-lg .mt-radio-dot::after { width: 8px; height: 8px; }
+.mt-radio.is-lg .mt-radio-dot { width: 24px; height: 24px; }
+.mt-radio.is-lg .mt-radio-dot::after { width: 10px; height: 10px; }
 .mt-radio.is-lg .mt-radio-label { font-size: 15px; }
 
 /* =========================================================================

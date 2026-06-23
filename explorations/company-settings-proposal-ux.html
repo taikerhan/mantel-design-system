@@ -20,7 +20,7 @@
   structure is fresh.
 -->
 
-<link rel="stylesheet" href="../styles/mantel.css">
+<link rel="stylesheet" href="../assets/kit.css">
 <style>
   :root {
     --vx-bg: var(--ink-50);
@@ -88,6 +88,8 @@
 
   /* embedded (inside the device iframe): hide chrome, fit content */
   body.is-embed .vx-switch, body.is-embed .vx-vp { display: none !important; }
+  /* device preview: the iframe IS the device width, so fill it. Never apply the 760px desktop reading cap, the auto-centring margin, or the two-column nav grid inside the embed — those are exactly what left the content floating in wide side gutters when the mobile @media didn't take. (0,3,0) beats the base + media rules regardless of which viewport the iframe reports. */
+  body.is-embed .stage-c .vx-app { max-width: none; margin-left: 0; margin-right: 0; grid-template-columns: 1fr; padding-left: 16px; padding-right: 16px; padding-top: 8px; }
 
   /* ===== Shared building blocks ===== */
   .vx-stage[hidden] { display: none; }
@@ -113,8 +115,9 @@
   .vx-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; padding: 16px 0; border-bottom: 1px solid var(--ink-100); }
   .vx-row:last-child { border-bottom: 0; }
   .vx-row-text { min-width: 0; }
-  .vx-row-label { font-size: 14px; font-weight: 500; color: var(--ink-900); display: flex; align-items: center; gap: 8px; }
-  .vx-row-desc { font-size: 13px; color: var(--ink-500); margin-top: 3px; line-height: 1.5; max-width: 60ch; }
+  .vx-row-label { font-size: 16px; font-weight: 500; color: var(--ink-900); display: flex; align-items: center; gap: 8px; }
+  .vx-row-desc { font-size: 14px; color: var(--ink-500); margin-top: 3px; line-height: 1.5; max-width: 60ch; }
+  .vx-sub-inner .vx-row-label { font-size: 14px; }
   .vx-row-control { flex-shrink: 0; padding-top: 1px; }
   .vx-gov { font-size: var(--fs-xs); font-weight: 600; color: var(--ink-500); background: var(--ink-100); border-radius: 4px; padding: 2px 7px; display: inline-flex; align-items: center; gap: 4px; }
   .vx-gov svg { width: 11px; height: 11px; }
@@ -131,11 +134,11 @@
   .vx-detail .vx-row:last-child { border-bottom: 0; }
   /* toggle chips — short related sub-flags shown together (efficiency ratings) */
   .vx-chipset { display: inline-flex; flex-wrap: wrap; gap: 8px; }
-  .vx-toggle-chip { font-family: var(--font-sans); cursor: pointer; user-select: none; position: relative; display: inline-flex; align-items: center; gap: 7px; height: 32px; padding: 0 13px 0 11px; border-radius: var(--radius-md); border: 1px solid var(--ink-200); background: #fff; color: var(--ink-600); font-size: 13px; font-weight: 500; transition: all .15s var(--ease); }
+  .vx-toggle-chip { font-family: var(--font-sans); cursor: pointer; user-select: none; position: relative; display: inline-flex; align-items: center; gap: 9px; height: 40px; padding: 0 15px 0 13px; border-radius: var(--radius-md); border: 1px solid var(--ink-200); background: #fff; color: var(--ink-600); font-size: 14px; font-weight: 500; transition: all .15s var(--ease); }
   .vx-toggle-chip:hover { border-color: var(--ink-400); }
   .vx-toggle-chip input { position: absolute; opacity: 0; width: 0; height: 0; }
-  .vx-toggle-chip .tick { width: 15px; height: 15px; border-radius: 4px; border: 1.5px solid var(--ink-300); display: inline-flex; align-items: center; justify-content: center; transition: all .15s var(--ease); }
-  .vx-toggle-chip .tick svg { width: 10px; height: 10px; color: #fff; opacity: 0; }
+  .vx-toggle-chip .tick { width: 24px; height: 24px; border-radius: 6px; border: 2px solid var(--ink-300); display: inline-flex; align-items: center; justify-content: center; transition: all .15s var(--ease); }
+  .vx-toggle-chip .tick svg { width: 15px; height: 15px; color: #fff; opacity: 0; }
   .vx-toggle-chip.is-on { border-color: var(--brand-600); background: var(--brand-50); color: var(--brand-700); }
   .vx-toggle-chip.is-on .tick { background: var(--brand-600); border-color: var(--brand-600); }
   .vx-toggle-chip.is-on .tick svg { opacity: 1; }
@@ -162,7 +165,7 @@
   .vx-input-sm::-webkit-outer-spin-button, .vx-input-sm::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
   /* buttons */
-  .vx-btn { font-family: var(--font-sans); height: 40px; padding: 0 20px; border-radius: var(--radius-md); font-size: 14px; font-weight: 600; cursor: pointer; border: 0; display: inline-flex; align-items: center; gap: 8px; transition: all .18s var(--ease); }
+  .vx-btn { font-family: var(--font-sans); height: 40px; padding: 0 20px; border-radius: var(--radius-md); font-size: 14px; font-weight: 600; cursor: pointer; border: 0; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; transition: all .18s var(--ease); }
   .vx-btn-primary { color: #fff; background: var(--brand-600); box-shadow: var(--shadow-button); }
   .vx-btn-primary:hover { background: var(--brand-700); }
   .vx-btn-ghost { background: transparent; color: var(--ink-600); }
@@ -196,7 +199,7 @@
     display: grid; grid-template-columns: 232px minmax(0,1fr);
     gap: 40px; max-width: 1120px; margin: 0 auto; padding: 36px 28px 140px;
   }
-  .stage-c .vx-app { grid-template-columns: minmax(0,1fr); max-width: 760px; padding-bottom: 90px; }
+  .stage-c .vx-app { grid-template-columns: minmax(0,1fr); max-width: 760px; padding-top: 8px; padding-bottom: 90px; }
   .vx-nav { position: sticky; top: 24px; align-self: start; }
   .vx-nav-title { font-size: var(--fs-xs); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-400); padding: 0 12px 10px; }
   .vx-nav a { display: flex; align-items: center; gap: 10px; height: 38px; padding: 0 12px; border-radius: var(--radius-md); font-size: 14px; font-weight: 500; color: var(--ink-800); text-decoration: none; transition: all .15s var(--ease); }
@@ -213,7 +216,8 @@
   .vx-reset svg { width: 15px; height: 15px; }
   .vx-page-foot { margin-top: 26px; padding-top: 22px; border-top: 1px solid var(--vx-line); display: flex; }
   .vx-page-foot .vx-reset:hover { border-color: var(--accent-red); color: var(--accent-red); }
-  .vx-main { min-width: 0; }
+  /* reset the bare `main { padding: 48px 56px 80px; max-width: 1200px }` rule that kit.css applies to every <main> — it was squeezing the card to 246px and adding 48px of dead space above the header */
+  .vx-main { min-width: 0; padding: 0; max-width: none; }
   .vx-main-head { margin-bottom: 24px; }
 
   /* save controls live inline in the (sticky) page header — light, not a black bar */
@@ -291,8 +295,8 @@
   /* right-aligned checkbox (option C equipment) */
   .vx-check { cursor: pointer; display: inline-flex; align-items: center; }
   .vx-check input { position: absolute; opacity: 0; width: 0; height: 0; }
-  .vx-check .vx-check-box { width: 20px; height: 20px; border-radius: 4px; border: 1.5px solid var(--ink-300); background: #fff; display: inline-flex; align-items: center; justify-content: center; transition: all .15s var(--ease); }
-  .vx-check .vx-check-box svg { width: 13px; height: 13px; color: #fff; opacity: 0; transition: opacity .12s var(--ease); }
+  .vx-check .vx-check-box { width: 24px; height: 24px; border-radius: 6px; border: 2px solid var(--ink-300); background: #fff; display: inline-flex; align-items: center; justify-content: center; transition: all .15s var(--ease); }
+  .vx-check .vx-check-box svg { width: 15px; height: 15px; color: #fff; opacity: 0; transition: opacity .12s var(--ease); }
   .vx-check:hover .vx-check-box { border-color: var(--ink-400); }
   .vx-check input:checked + .vx-check-box { background: var(--brand-600); border-color: var(--brand-600); }
   .vx-check input:checked + .vx-check-box svg { opacity: 1; }
@@ -300,6 +304,8 @@
 
   @media (max-width: 900px) {
     .stage-a .vx-app, .stage-c .vx-app { grid-template-columns: 1fr; }
+    /* tablet/phone: drop the 760px reading cap + centring so the content fills the width instead of floating in wide side gutters */
+    .stage-c .vx-app { max-width: none; padding-left: 22px; padding-right: 22px; }
     .vx-nav { display: none; }
     .vx-panes { grid-template-columns: 1fr; }
     .vx-preview { position: static; }
@@ -311,6 +317,14 @@
   @media (max-width: 560px) {
     /* governed-by badge drops under the label instead of crowding the wrapped title */
     .vx-row-label { flex-direction: column; align-items: flex-start; gap: 6px; }
+    /* header: stack the title above the Save (natural width, left-aligned) so neither gets crushed at phone width */
+    .stage-c .vx-head-row { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .stage-c .vx-save-cluster { width: auto; gap: 10px; }
+    .vx-h1 { font-size: 26px; line-height: 1.12; }
+    /* tighten the row so the label keeps its line instead of wrapping behind the control */
+    .vx-row { gap: 14px; }
+    .vx-lede { font-size: 14px; }
+    .stage-c .vx-app { padding-left: 16px; padding-right: 16px; }
   }
 </style>
 </head>
@@ -335,8 +349,8 @@
 <header class="vx-switch">
   <span class="vx-seg-label">Switch</span>
   <div class="vx-seg vx-variant" role="group" aria-label="Switch style — for team review">
-    <button data-variant="default" class="is-active">Default</button>
-    <button data-variant="iconized">Iconized</button>
+    <button data-variant="default">Default</button>
+    <button data-variant="iconized" class="is-active">Iconized</button>
   </div>
 </header>
 
@@ -385,19 +399,19 @@
         <div class="vx-card-body">
           <div class="vx-row">
             <div class="vx-row-text"><div class="vx-row-label">Line-item pricing</div><div class="vx-row-desc">Break out individual equipment and labor costs instead of one option price.</div></div>
-            <label class="mt-switch vx-row-control"><input type="checkbox"><span class="mt-switch-track"></span></label>
+            <label class="mt-switch is-lg is-iconized-thumb vx-row-control"><input type="checkbox"><span class="mt-switch-track"></span></label>
           </div>
           <div class="vx-row">
             <div class="vx-row-text"><div class="vx-row-label">Discount total</div><div class="vx-row-desc">Show the combined savings beneath each option's price.</div></div>
-            <label class="mt-switch vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label>
+            <label class="mt-switch is-lg is-iconized-thumb vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label>
           </div>
           <div class="vx-row">
             <div class="vx-row-text"><div class="vx-row-label">Price range on cover <span class="vx-gov"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Governed by MAN-5069</span></div><div class="vx-row-desc">Display the low–high estimate on the cover before the homeowner opens the detail.</div></div>
-            <label class="mt-switch vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label>
+            <label class="mt-switch is-lg is-iconized-thumb vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label>
           </div>
           <div class="vx-row">
             <div class="vx-row-text"><div class="vx-row-label">Evaporator coils</div><div class="vx-row-desc">List the matched coil for each system on the proposal and contract.</div></div>
-            <label class="mt-switch vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label>
+            <label class="mt-switch is-lg is-iconized-thumb vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label>
           </div>
         </div>
       </section>
@@ -408,7 +422,7 @@
         <div class="vx-card-body">
           <div class="vx-row">
             <div class="vx-row-text"><div class="vx-row-label">Require email to view</div><div class="vx-row-desc">Homeowners must enter their email before the proposal opens. Helps confirm who's viewing.</div></div>
-            <label class="mt-switch vx-row-control"><input type="checkbox"><span class="mt-switch-track"></span></label>
+            <label class="mt-switch is-lg is-iconized-thumb vx-row-control"><input type="checkbox"><span class="mt-switch-track"></span></label>
           </div>
         </div>
       </section>
@@ -421,7 +435,7 @@
         <div class="vx-card-body">
           <div class="vx-row" style="align-items:center;">
             <div class="vx-row-text"><div class="vx-row-label">Show Efficiency ratings</div><div class="vx-row-desc">Select the ratings you'd like to show on each option card.</div></div>
-            <label class="mt-switch vx-row-control"><input type="checkbox" data-master="a-eff" checked><span class="mt-switch-track"></span></label>
+            <label class="mt-switch is-lg is-iconized-thumb vx-row-control"><input type="checkbox" data-master="a-eff" checked><span class="mt-switch-track"></span></label>
           </div>
           <div class="vx-sub is-open" id="a-eff"><div class="vx-sub-inner"><div style="padding:0 0 16px;">
             <div class="vx-chipset">
@@ -431,8 +445,8 @@
               <label class="vx-toggle-chip"><input type="checkbox" checked><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg></span>AFUE</label>
             </div>
           </div></div></div>
-          <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Show equipment model numbers</div></div><label class="mt-switch vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
-          <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Show equipment sizing</div></div><label class="mt-switch vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
+          <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Show equipment model numbers</div></div><label class="mt-switch is-lg is-iconized-thumb vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
+          <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Show equipment sizing</div></div><label class="mt-switch is-lg is-iconized-thumb vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
         </div>
       </section>
 
@@ -480,26 +494,26 @@
       <h2 class="vx-section-title" id="c-pricing">Pricing</h2>
       <section class="vx-card">
         <div class="vx-card-body">
-          <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Line item prices</div><div class="vx-row-desc">Break out equipment and labor instead of a single option price.</div></div><label class="mt-switch vx-row-control"><input type="checkbox"><span class="mt-switch-track"></span></label></div>
-          <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Total discounts</div><div class="vx-row-desc">Show the combined savings beneath each option's price.</div></div><label class="mt-switch vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
-          <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Price range on title page <span class="vx-gov"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Governed by MAN-5069</span></div><div class="vx-row-desc">Display the low–high estimate on the cover page.</div></div><label class="mt-switch vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
+          <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Line item prices</div><div class="vx-row-desc">Break out equipment and labor instead of a single option price.</div></div><label class="mt-switch is-lg is-iconized-thumb vx-row-control"><input type="checkbox"><span class="mt-switch-track"></span></label></div>
+          <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Total discounts</div><div class="vx-row-desc">Show the combined savings beneath each option's price.</div></div><label class="mt-switch is-lg is-iconized-thumb vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
+          <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Price range on title page <span class="vx-gov"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Governed by MAN-5069</span></div><div class="vx-row-desc">Display the low–high estimate on the cover page.</div></div><label class="mt-switch is-lg is-iconized-thumb vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
         </div>
       </section>
 
       <h2 class="vx-section-title" id="c-access">Access</h2>
       <section class="vx-card">
         <div class="vx-card-body">
-          <div class="vx-row" style="border-bottom:0;"><div class="vx-row-text"><div class="vx-row-label">Require email to view</div><div class="vx-row-desc">Homeowners enter their email before the proposal opens.</div></div><label class="mt-switch vx-row-control"><input type="checkbox"><span class="mt-switch-track"></span></label></div>
+          <div class="vx-row" style="border-bottom:0;"><div class="vx-row-text"><div class="vx-row-label">Require email to view</div><div class="vx-row-desc">Homeowners enter their email before the proposal opens.</div></div><label class="mt-switch is-lg is-iconized-thumb vx-row-control"><input type="checkbox"><span class="mt-switch-track"></span></label></div>
         </div>
       </section>
 
       <h2 class="vx-section-title" id="c-equipment">Equipment</h2>
       <section class="vx-card">
         <div class="vx-card-body">
-          <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Evaporator coils</div><div class="vx-row-desc">List the matched coil for each system on the proposal and contract.</div></div><label class="mt-switch vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
+          <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Evaporator coils</div><div class="vx-row-desc">List the matched coil for each system on the proposal and contract.</div></div><label class="mt-switch is-lg is-iconized-thumb vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
           <div class="vx-row" style="border-bottom:0;align-items:center;">
             <div class="vx-row-text"><div class="vx-row-label">Efficiency ratings &amp; specs</div><div class="vx-row-desc">Master switch for the equipment detail shown on option cards.</div></div>
-            <label class="mt-switch vx-row-control"><input type="checkbox" data-master="c-hvac" checked><span class="mt-switch-track"></span></label>
+            <label class="mt-switch is-lg is-iconized-thumb vx-row-control"><input type="checkbox" data-master="c-hvac" checked><span class="mt-switch-track"></span></label>
           </div>
           <div class="vx-sub is-open" id="c-hvac"><div class="vx-sub-inner">
             <div class="vx-detail">
@@ -552,11 +566,11 @@
     <section class="vx-card">
       <div class="vx-card-head"><div><div class="vx-card-title">Proposal display</div><div class="vx-card-desc">What appears on the proposal and title page.</div></div></div>
       <div class="vx-card-body">
-        <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Show line item prices</div><div class="vx-state">Off</div></div><label class="mt-switch vx-row-control"><input type="checkbox"><span class="mt-switch-track"></span></label></div>
-        <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Show total discounts below Option price</div><div class="vx-state">Off</div></div><label class="mt-switch vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
-        <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Should access proposal require email</div><div class="vx-state">Off</div></div><label class="mt-switch vx-row-control"><input type="checkbox"><span class="mt-switch-track"></span></label></div>
-        <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Show Price Range on Title Page <span class="vx-gov"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Governed by MAN-5069</span></div><div class="vx-state">Off</div></div><label class="mt-switch vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
-        <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Display evaporator coils on Proposal and Contract</div><div class="vx-state">Off</div></div><label class="mt-switch vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
+        <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Show line item prices</div><div class="vx-state">Off</div></div><label class="mt-switch is-lg is-iconized-thumb vx-row-control"><input type="checkbox"><span class="mt-switch-track"></span></label></div>
+        <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Show total discounts below Option price</div><div class="vx-state">Off</div></div><label class="mt-switch is-lg is-iconized-thumb vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
+        <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Should access proposal require email</div><div class="vx-state">Off</div></div><label class="mt-switch is-lg is-iconized-thumb vx-row-control"><input type="checkbox"><span class="mt-switch-track"></span></label></div>
+        <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Show Price Range on Title Page <span class="vx-gov"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Governed by MAN-5069</span></div><div class="vx-state">Off</div></div><label class="mt-switch is-lg is-iconized-thumb vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
+        <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Display evaporator coils on Proposal and Contract</div><div class="vx-state">Off</div></div><label class="mt-switch is-lg is-iconized-thumb vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
       </div>
     </section>
 
@@ -574,15 +588,15 @@
     <section class="vx-card">
       <div class="vx-card-head">
         <div><div class="vx-card-title">Advanced HVAC settings</div><div class="vx-state">Off</div></div>
-        <label class="mt-switch vx-row-control"><input type="checkbox" data-master="d-hvac" checked><span class="mt-switch-track"></span></label>
+        <label class="mt-switch is-lg is-iconized-thumb vx-row-control"><input type="checkbox" data-master="d-hvac" checked><span class="mt-switch-track"></span></label>
       </div>
       <div class="vx-sub is-open" id="d-hvac"><div class="vx-sub-inner"><div class="vx-card-body vx-sub-pad">
-        <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Option card show SEER2</div><div class="vx-state">Off</div></div><label class="mt-switch vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
-        <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Option card show EER2</div><div class="vx-state">Off</div></div><label class="mt-switch vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
-        <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Option card show HSPF2</div><div class="vx-state">Off</div></div><label class="mt-switch vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
-        <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Option card show AFUE</div><div class="vx-state">Off</div></div><label class="mt-switch vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
-        <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Display equipment model numbers</div><div class="vx-state">Off</div></div><label class="mt-switch vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
-        <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Display equipment sizing</div><div class="vx-state">Off</div></div><label class="mt-switch vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
+        <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Option card show SEER2</div><div class="vx-state">Off</div></div><label class="mt-switch is-lg is-iconized-thumb vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
+        <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Option card show EER2</div><div class="vx-state">Off</div></div><label class="mt-switch is-lg is-iconized-thumb vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
+        <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Option card show HSPF2</div><div class="vx-state">Off</div></div><label class="mt-switch is-lg is-iconized-thumb vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
+        <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Option card show AFUE</div><div class="vx-state">Off</div></div><label class="mt-switch is-lg is-iconized-thumb vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
+        <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Display equipment model numbers</div><div class="vx-state">Off</div></div><label class="mt-switch is-lg is-iconized-thumb vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
+        <div class="vx-row"><div class="vx-row-text"><div class="vx-row-label">Display equipment sizing</div><div class="vx-state">Off</div></div><label class="mt-switch is-lg is-iconized-thumb vx-row-control"><input type="checkbox" checked><span class="mt-switch-track"></span></label></div>
       </div></div></div>
     </section>
   </div>
@@ -642,7 +656,7 @@
   const activeVersion = () => { const s = document.querySelector('.vx-stage:not([hidden])'); return s ? s.dataset.stage : 'c'; };
   const baseURL = () => location.href.split('#')[0].split('?')[0];
   const setDev = mode => document.querySelectorAll('[data-dev]').forEach(b => b.classList.toggle('is-active', b.dataset.dev === mode));
-  function loadVP() { vpIframe.src = baseURL() + '?embed=1&v=' + activeVersion() + '&sw=' + activeVariant(); }
+  function loadVP() { vpIframe.src = baseURL() + '?embed=1&v=' + activeVersion() + '&sw=' + activeVariant() + '&t=' + Date.now(); }
   function fitVP() {
     if (!vpOpen) return;
     const d = DEVICES[vpMode], fw = d.w + d.pad, fh = d.h + d.pad;

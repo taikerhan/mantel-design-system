@@ -94,7 +94,7 @@
       if (pg) {
         var v = pg.querySelector('[data-pg-prop="variant"]'), z = pg.querySelector('[data-pg-prop="size"]');
         if (v) v.closest('.pg-ctrl').style.display = kind === 'switch' ? '' : 'none';
-        if (z) z.closest('.pg-ctrl').style.display = kind === 'switch' ? 'none' : '';
+        if (z) z.closest('.pg-ctrl').style.display = '';
       }
       if (kind === 'checkbox') {
         el.className = 'mt-check' + lg;
@@ -103,7 +103,7 @@
         el.className = 'mt-radio' + lg;
         el.innerHTML = '<input type="radio" name="pg-radio"' + attrs + '><span class="mt-radio-dot"></span>' + label;
       } else {
-        el.className = 'mt-switch' + (s.variant ? ' ' + s.variant : '');
+        el.className = 'mt-switch' + (s.variant ? ' ' + s.variant : '') + lg;
         el.innerHTML = '<input type="checkbox"' + attrs + '><span class="mt-switch-track"></span>' + label;
       }
     },
