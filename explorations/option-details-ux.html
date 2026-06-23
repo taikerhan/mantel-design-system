@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Option details — preview · Mantel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/kit.css">
+<!--
+  PREVIEW — Option details page (HVAC proposal viewer, co-branded Sunrise + Mantel).
+  Full-page app preview, built to the hand-drawn wireframe. Back link returns to the Review queue.
+  Two fixes carried over: (1) the proposed-systems switcher is a price-aware OPTION RAIL that scales
+  past 8 options / long vendor names; (2) one filled primary only — Review & sign — with Share /
+  Print / Compare demoted to neutral utilities and Back to a quiet link. Logo lock-up preserved.
+-->
+<style>
+  .od-body, .od-body *, .od-body *::before, .od-body *::after { box-sizing: border-box; }
+  html, body { margin: 0; }
+  .od-body {
+    display: flex; flex-direction: column;
+    height: 100vh; height: 100dvh; overflow: hidden;
+    background: #fff; color: var(--ink-800);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01", "ss03", "cv11";
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+
+  /* ===== Return-to-queue ribbon (preview chrome, not part of the product) ===== */
+  .od-ribbon { flex: none; position: relative; z-index: 90; display: flex; align-items: center; justify-content: space-between; gap: 10px; height: 36px; padding: 0 16px; background: var(--ink-900); color: #fff; font-size: 12.5px; }
+  .od-ribbon a { display: inline-flex; align-items: center; gap: 6px; color: #fff; text-decoration: none; font-weight: 500; opacity: .92; }
+  .od-ribbon a:hover { opacity: 1; text-decoration: none; }
+  .od-ribbon a svg { width: 14px; height: 14px; }
+  .od-ribbon .sep { width: 1px; height: 14px; background: rgba(255,255,255,.22); }
+  .od-ribbon .tag { color: rgba(255,255,255,.55); font-size: 12px; }
+
+  /* ===== co-brand app bar (logo lock-up preserved) ===== */
+  .od-appbar { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 62px; padding: 0 22px; border-bottom: 1px solid var(--ink-150); }
+  .od-cobrand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .od-sunrise { display: flex; align-items: center; gap: 8px; }
+  .od-sun { width: 30px; height: 30px; flex-shrink: 0; }
+  .od-sunrise-wm { display: flex; flex-direction: column; line-height: 1; }
+  .od-sunrise-wm .a { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; color: #C8472A; }
+  .od-sunrise-wm .b { font-size: 7.5px; font-weight: 600; letter-spacing: 0.14em; color: var(--ink-500); margin-top: 2px; }
+  .od-cobrand-plus { color: var(--ink-300); font-size: 18px; }
+  .od-mantel { height: 21px; }
+  .od-appbar-actions { display: flex; align-items: center; gap: 9px; }
+  .od-rep-btn { padding-left: 7px; }
+  .od-rep-avatar { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; background: var(--brand-100); }
+
+  /* ===== toolbar row — Back (left) · Share / Print / Compare (right) ===== */
+  .od-toolbar { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 11px 22px; }
+  .od-back { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 500; color: var(--ink-600); text-decoration: none; padding: 6px 8px 6px 4px; border-radius: var(--radius-md); transition: color .15s var(--ease), background-color .15s var(--ease); }
+  .od-back:hover { color: var(--ink-900); background: var(--ink-100); text-decoration: none; }
+  .od-back svg { width: 17px; height: 17px; }
+  .od-utils { display: flex; align-items: center; gap: 9px; }
+
+  /* ===== option rail (systems switcher) ===== */
+  .od-railzone { flex: none; padding: 4px 16px 14px; border-bottom: 1px solid var(--ink-150); }
+  .od-railzone-head { display: flex; align-items: baseline; justify-content: space-between; padding: 0 6px 9px; }
+  .od-railzone-head .t { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-500); }
+  .od-railzone-head .k { font-size: 12.5px; color: var(--ink-400); }
+  .od-rail-wrap { position: relative; display: flex; align-items: stretch; gap: 6px; }
+  .od-rail { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x proximity; scroll-behavior: smooth; padding: 4px 2px; flex: 1; scrollbar-width: none; -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 18px, #000 calc(100% - 18px), transparent 100%); }
+  .od-rail::-webkit-scrollbar { display: none; }
+  .od-opt { scroll-snap-align: center; flex: 0 0 196px; min-width: 0; display: flex; flex-direction: column; gap: 6px; text-align: left; padding: 11px 13px 12px; background: #fff; border: 1.5px solid var(--ink-200); border-radius: var(--radius-xl); cursor: pointer; transition: border-color .2s var(--ease), background-color .2s var(--ease), box-shadow .2s var(--ease), transform .2s var(--ease); }
+  .od-opt:hover { border-color: var(--brand-300); transform: translateY(-1px); }
+  .od-opt.is-active { border-color: var(--brand-600); background: color-mix(in srgb, var(--brand-50) 72%, #fff); box-shadow: inset 0 0 0 1px var(--brand-600), 0 4px 14px -6px rgba(0,83,167,.34); }
+  .od-opt-rank { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-500); }
+  .od-opt-rank .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .od-opt-rank.is-top { color: var(--accent-green); }
+  .od-opt-rank.is-value { color: var(--accent-amber); }
+  .od-opt.is-active .od-opt-rank { color: var(--brand-600); }
+  .od-opt-rank .chk { width: 13px; height: 13px; display: none; }
+  .od-opt.is-active .od-opt-rank .chk { display: inline-block; }
+  .od-opt.is-active .od-opt-rank .dot { display: none; }
+  .od-opt-name { font-size: 13.5px; font-weight: 600; line-height: 1.25; color: var(--ink-900); letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .od-opt-price { margin-top: 2px; font-size: 15.5px; font-weight: 700; color: var(--ink-900); font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+  .od-opt-price span { font-size: 12px; font-weight: 500; color: var(--ink-600); letter-spacing: 0; }
+  .od-rail-arrow { flex: 0 0 auto; align-self: center; width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; border: 0; background: transparent; color: var(--ink-500); cursor: pointer; transition: background-color .16s var(--ease), color .16s var(--ease), opacity .18s var(--ease); }
+  .od-rail-arrow:hover { background: var(--ink-100); color: var(--ink-900); }
+  .od-rail-arrow svg { width: 18px; height: 18px; }
+  /* hide the prev/next arrow + edge fade when there is nothing more that way */
+  .od-rail-wrap.at-start .od-rail-arrow[data-dir="-1"],
+  .od-rail-wrap.at-end .od-rail-arrow[data-dir="1"] { opacity: 0; pointer-events: none; }
+  .od-rail-wrap.at-start .od-rail { -webkit-mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 18px), transparent 100%); mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 18px), transparent 100%); }
+  .od-rail-wrap.at-end .od-rail { -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 18px, #000 100%); mask-image: linear-gradient(90deg, transparent 0, #000 18px, #000 100%); }
+  .od-rail-wrap.at-start.at-end .od-rail { -webkit-mask-image: none; mask-image: none; }
+  /* touch: swipe the rail with a finger — arrows are a pointer-only affordance */
+  body.is-embed .od-rail-arrow { display: none; }
+  @media (hover: none) and (pointer: coarse) { .od-rail-arrow { display: none; } }
+
+  /* ===== scrollable proposal body ===== */
+  .od-scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; scrollbar-width: thin; }
+  .od-canvas { max-width: 720px; margin: 0 auto; padding: 28px 24px 40px; }
+  .od-proposal-title { text-align: center; font-size: 26px; font-weight: 700; color: var(--ink-900); letter-spacing: -0.02em; margin: 4px 0 24px; }
+
+  /* equipment carousel — big media + side arrows + dots */
+  .od-carousel { display: flex; align-items: center; gap: 6px; }
+  .od-car-arrow { flex: 0 0 auto; width: 38px; height: 38px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; border: 0; background: transparent; color: var(--ink-500); cursor: pointer; transition: background-color .16s var(--ease), color .16s var(--ease); }
+  .od-car-arrow:hover { background: var(--ink-100); color: var(--ink-900); }
+  .od-car-arrow svg { width: 22px; height: 22px; }
+  .od-car-view { flex: 1; overflow: hidden; border-radius: var(--radius-2xl); }
+  .od-car-track { display: flex; transition: transform .4s var(--ease-snap); }
+  .od-slide { flex: 0 0 100%; display: flex; flex-direction: column; align-items: center; gap: 18px; padding: 52px 24px 48px; background: color-mix(in srgb, var(--brand-50) 55%, #fff); }
+  .od-slide-media { width: 168px; height: 168px; border-radius: var(--radius-3xl); background: #fff; border: 1px solid var(--ink-150); display: inline-flex; align-items: center; justify-content: center; color: var(--brand-500); box-shadow: var(--shadow-card); }
+  .od-slide-media svg { width: 64px; height: 64px; }
+  .od-slide-role { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-400); }
+  .od-slide-name { font-size: 17px; font-weight: 600; color: var(--ink-900); letter-spacing: -0.012em; text-align: center; margin-top: -6px; }
+  .od-slide-spec { font-size: 13px; color: var(--ink-500); text-align: center; margin-top: -8px; }
+  .od-dots { display: flex; justify-content: center; gap: 8px; margin: 16px 0 4px; }
+  .od-dots button { width: 7px; height: 7px; padding: 0; border: 0; border-radius: 50%; background: var(--ink-200); cursor: pointer; transition: background-color .2s var(--ease), transform .2s var(--ease); }
+  .od-dots button.is-active { background: var(--brand-600); transform: scale(1.28); }
+
+  .od-divider { height: 1px; background: var(--ink-150); margin: 26px 0; }
+  .od-block-title { font-size: 18px; font-weight: 700; color: var(--ink-900); letter-spacing: -0.014em; margin: 0 0 12px; }
+
+  .od-row { display: flex; align-items: center; gap: 14px; padding: 13px 0; border-bottom: 1px solid var(--ink-150); }
+  .od-row:last-child { border-bottom: 0; }
+  .od-row-ico { width: 34px; height: 34px; flex-shrink: 0; border-radius: 9px; display: inline-flex; align-items: center; justify-content: center; background: var(--ink-100); color: var(--ink-600); }
+  .od-row-ico svg { width: 18px; height: 18px; }
+  .od-row-ico.is-shield { background: var(--accent-green-bg); color: var(--accent-green); }
+  .od-row-main { min-width: 0; flex: 1; }
+  .od-row-label { font-size: 14.5px; font-weight: 500; color: var(--ink-900); }
+  .od-detail-link { font-size: 12.5px; color: var(--brand-600); font-weight: 500; text-decoration: none; }
+  .od-detail-link:hover { color: var(--brand-700); text-decoration: underline; }
+  .od-row-val { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+  .od-row-num { font-size: 14.5px; font-weight: 600; color: var(--ink-900); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .od-meter { display: inline-flex; gap: 3px; }
+  .od-meter i { width: 20px; height: 7px; border-radius: 2px; background: var(--ink-150); }
+  .od-meter.green i.on { background: var(--accent-green); }
+  .od-meter.amber i.on { background: var(--accent-amber); }
+  .od-meter-cap { font-size: 13px; font-weight: 600; color: var(--ink-700); min-width: 56px; text-align: right; }
+
+  .od-sys-toggle { display: flex; justify-content: center; margin-bottom: 18px; }
+  .od-chart { background: color-mix(in srgb, var(--brand-50) 55%, #fff); border: 1px solid var(--ink-150); border-radius: var(--radius-2xl); padding: 22px 20px 18px; }
+  .od-chart svg.chart { width: 100%; height: auto; display: block; }
+  .od-chart-legend { display: flex; justify-content: center; gap: 24px; margin-top: 14px; font-size: 13px; font-weight: 600; color: var(--ink-800); }
+  .od-chart-legend span { display: inline-flex; align-items: center; gap: 7px; }
+  .od-chart-legend i { width: 14px; height: 14px; border-radius: 50%; }
+  .od-chart-cap { text-align: center; font-size: 13px; color: var(--ink-600); margin: 12px auto 0; max-width: 52ch; line-height: 1.5; }
+
+  /* ===== sticky action bar — the ONE primary ===== */
+  .od-actionbar { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 76px; padding: 0 24px; border-top: 1px solid var(--ink-150); box-shadow: 0 -6px 20px -12px rgba(15,14,13,.18); }
+  .od-invest .k { font-size: 12px; color: var(--ink-500); font-weight: 500; }
+  .od-invest .v { font-size: 34px; font-weight: 700; color: var(--ink-900); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+  .od-invest .v .per { font-size: 15px; font-weight: 500; color: var(--ink-600); }
+
+  /* ===== device-preview toggle (lives in the ribbon) ===== */
+  .od-ribbon-r { display: flex; align-items: center; gap: 12px; }
+  .od-dev { display: inline-flex; gap: 2px; background: rgba(255,255,255,.09); border-radius: 9px; padding: 2px; }
+  .od-dev button { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 24px; border: 0; border-radius: 7px; background: transparent; color: rgba(255,255,255,.6); cursor: pointer; transition: color .18s var(--ease), background-color .18s var(--ease); }
+  .od-dev button:hover { color: #fff; }
+  .od-dev button.is-active { background: #fff; color: var(--ink-900); }
+  .od-dev button svg { width: 15px; height: 15px; }
+
+  /* ===== device-preview overlay — iframe at the real device width so @media fires ===== */
+  .od-vp { position: fixed; inset: 0; z-index: 80; display: none; align-items: center; justify-content: center; background: rgba(14,16,20,.5); backdrop-filter: blur(5px); }
+  .od-vp.is-open { display: flex; }
+  .od-vp-scale { transform-origin: center center; }
+  .od-vp-frame { position: relative; background: var(--ink-900); box-shadow: 0 50px 90px -25px rgba(0,0,0,.65); }
+  .od-vp[data-mode="mobile"] .od-vp-frame { border-radius: 46px; padding: 12px; }
+  .od-vp[data-mode="pad"] .od-vp-frame { border-radius: 30px; padding: 16px; }
+  .od-vp-frame iframe { display: block; border: 0; background: #fff; }
+  .od-vp[data-mode="mobile"] iframe { width: 390px; height: 844px; border-radius: 34px; }
+  .od-vp[data-mode="pad"] iframe { width: 834px; height: 1112px; border-radius: 14px; }
+  .od-vp-label { position: absolute; left: 50%; top: -38px; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 8px; color: #fff; font-size: 13px; font-weight: 600; white-space: nowrap; }
+  .od-vp-label .dim { color: rgba(255,255,255,.55); font-variant-numeric: tabular-nums; }
+  .od-vp[data-mode="mobile"] .od-vp-frame::before { content: ""; position: absolute; top: 22px; left: 50%; transform: translateX(-50%); width: 120px; height: 5px; border-radius: var(--radius-full); background: rgba(255,255,255,.22); z-index: 2; }
+  .od-vp-close { position: absolute; right: -2px; top: -40px; width: 30px; height: 30px; border-radius: var(--radius-full); border: 0; cursor: pointer; background: rgba(255,255,255,.14); color: #fff; display: inline-flex; align-items: center; justify-content: center; transition: background-color .15s var(--ease); }
+  .od-vp-close:hover { background: rgba(255,255,255,.26); }
+  .od-vp-close svg { width: 16px; height: 16px; }
+
+  /* embedded inside the device iframe: hide all preview chrome */
+  body.is-embed .od-ribbon, body.is-embed .od-vp { display: none !important; }
+
+  /* ===== responsive — mobile (fires when the iframe reports a phone width) ===== */
+  @media (max-width: 540px) {
+    .od-appbar { height: 56px; padding: 0 14px; gap: 8px; }
+    .od-sunrise-wm .b { display: none; }
+    .od-mantel { height: 18px; }
+    .od-appbar-actions { gap: 6px; }
+    .od-collapsible .lbl { display: none; }
+    .od-collapsible { width: 38px; padding: 0; gap: 0; justify-content: center; }
+    .od-toolbar { padding: 10px 14px; }
+    .od-canvas { padding: 22px 16px 34px; }
+    .od-proposal-title { font-size: 22px; }
+    .od-slide-media { width: 132px; height: 132px; }
+    .od-slide-media svg { width: 52px; height: 52px; }
+    .od-slide-name { font-size: 16px; }
+    .od-invest .v { font-size: 26px; }
+    .od-actionbar { height: 70px; padding: 0 16px; }
+  }
+</style>
+</head>
+<body class="od-body">
+
+  <!-- preview chrome: back to the review queue -->
+  <div class="od-ribbon">
+    <a href="../review.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>Back to Review queue</a>
+    <div class="od-ribbon-r">
+      <span class="tag">Preview · Option details</span>
+      <div class="od-dev" role="group" aria-label="Preview device">
+        <button data-dev="desktop" class="is-active" title="Desktop view" aria-label="Desktop view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg></button>
+        <button data-dev="pad" title="iPad view" aria-label="iPad view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg></button>
+        <button data-dev="mobile" title="Mobile view" aria-label="Mobile view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2.5"/><path d="M11 18h2"/></svg></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- co-brand app bar -->
+  <header class="od-appbar">
+    <div class="od-cobrand">
+      <div class="od-sunrise">
+        <svg class="od-sun" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <circle cx="16" cy="17" r="6.4" fill="#F2A03D"/>
+          <g stroke="#C8472A" stroke-width="2.1" stroke-linecap="round">
+            <path d="M16 3.4v3.2"/><path d="M16 27.4v1.2"/><path d="M5.4 6.4l2.2 2.2"/>
+            <path d="M24.4 6.4l-2.2 2.2"/><path d="M2.6 17h3.2"/><path d="M26.2 17h3.2"/>
+          </g>
+        </svg>
+        <div class="od-sunrise-wm"><span class="a">SUNRISE</span><span class="b">HEATING AND AIR</span></div>
+      </div>
+      <span class="od-cobrand-plus">+</span>
+      <img class="od-mantel" src="../assets/mantel-logo.svg" alt="Mantel">
+    </div>
+    <div class="od-appbar-actions">
+      <button class="btn btn-secondary od-rep-btn od-collapsible" title="Contact Zac">
+        <img class="od-rep-avatar" src="https://i.pravatar.cc/52?img=12" alt="">
+        <span class="lbl">Contact Zac</span>
+      </button>
+      <button class="btn btn-secondary od-collapsible"><i data-lucide="layout-grid"></i><span class="lbl">See options</span></button>
+    </div>
+  </header>
+
+  <!-- toolbar: back + utilities -->
+  <div class="od-toolbar">
+    <a class="btn btn-icon" href="../review.html" title="Back" aria-label="Back"><i data-lucide="arrow-left"></i></a>
+    <div class="od-utils">
+      <button class="btn btn-secondary od-collapsible"><i data-lucide="share-2"></i><span class="lbl">Share</span></button>
+      <button class="btn btn-secondary od-collapsible"><i data-lucide="printer"></i><span class="lbl">Print</span></button>
+      <button class="btn btn-secondary od-collapsible"><i data-lucide="columns-3"></i><span class="lbl">Compare</span></button>
+    </div>
+  </div>
+
+  <!-- scrollable proposal body -->
+  <div class="od-scroll">
+
+  <!-- option rail (in-flow: scrolls away + fades on scroll-up, not pinned) -->
+  <div class="od-railzone">
+    <div class="od-rail-wrap">
+      <button class="od-rail-arrow" data-dir="-1" aria-label="Previous"><i data-lucide="chevron-left"></i></button>
+      <div class="od-rail" id="odRail">
+        <button class="od-opt" data-title="Carrier Infinity Greenspeed Bundle" data-price="689">
+          <span class="od-opt-name">Top Tier Variable-Speed</span>
+          <span class="od-opt-price">$689<span>/mo</span></span>
+        </button>
+        <button class="od-opt" data-title="Trane XV20i TruComfort Package" data-price="664">
+          <span class="od-opt-name">Premium Plus Two-Stage</span>
+          <span class="od-opt-price">$664<span>/mo</span></span>
+        </button>
+        <button class="od-opt" data-title="Superb Premium Variable-Speed System" data-price="612">
+          <span class="od-opt-name">Superior Inverter Comfort</span>
+          <span class="od-opt-price">$612<span>/mo</span></span>
+        </button>
+        <button class="od-opt" data-title="Premium Plus Two-Stage Comfort" data-price="548">
+          <span class="od-opt-name">Enhanced Performance</span>
+          <span class="od-opt-price">$548<span>/mo</span></span>
+        </button>
+        <button class="od-opt" data-title="Midrange Premium Inverter Heat Pump" data-price="497">
+          <span class="od-opt-name">Standard Efficiency</span>
+          <span class="od-opt-price">$497<span>/mo</span></span>
+        </button>
+        <button class="od-opt is-active" data-title="Base Single Stage AC + Furnace" data-price="455">
+          <span class="od-opt-name">Best Value Single-Stage</span>
+          <span class="od-opt-price">$455<span>/mo</span></span>
+        </button>
+        <button class="od-opt" data-title="Economy Plus Plus High-Efficiency" data-price="431">
+          <span class="od-opt-name">Economy High-Efficiency Plus Plus Heat Pump Bundle</span>
+          <span class="od-opt-price">$431<span>/mo</span></span>
+        </button>
+        <button class="od-opt" data-title="Goodman Value Single-Stage Starter" data-price="389">
+          <span class="od-opt-name">Essential Starter</span>
+          <span class="od-opt-price">$389<span>/mo</span></span>
+        </button>
+      </div>
+      <button class="od-rail-arrow" data-dir="1" aria-label="Next"><i data-lucide="chevron-right"></i></button>
+    </div>
+  </div>
+
+    <div class="od-canvas">
+      <h1 class="od-proposal-title">Kevin's <span id="odTitle">Base Single Stage AC + Furnace</span></h1>
+
+      <!-- equipment carousel -->
+      <div class="od-carousel">
+        <button class="od-car-arrow" data-cdir="-1" aria-label="Previous equipment"><i data-lucide="chevron-left"></i></button>
+        <div class="od-car-view">
+          <div class="od-car-track" id="odCarTrack">
+            <div class="od-slide">
+              <div class="od-slide-media"><i data-lucide="wind"></i></div>
+              <div class="od-slide-role">Outdoor unit</div>
+              <div class="od-slide-name">Carrier Comfort Central AC</div>
+              <div class="od-slide-spec">Single stage · SEER2 14 · 24SCA436N003</div>
+            </div>
+            <div class="od-slide">
+              <div class="od-slide-media"><i data-lucide="flame"></i></div>
+              <div class="od-slide-role">Furnace</div>
+              <div class="od-slide-name">Carrier Comfort 80 Gas Furnace</div>
+              <div class="od-slide-spec">Single stage · 80% AFUE · 59SC2C080</div>
+            </div>
+            <div class="od-slide">
+              <div class="od-slide-media"><i data-lucide="snowflake"></i></div>
+              <div class="od-slide-role">Evaporator coil</div>
+              <div class="od-slide-name">Carrier Cased N Coil</div>
+              <div class="od-slide-spec">Aluminium · matched · CNPHP</div>
+            </div>
+            <div class="od-slide">
+              <div class="od-slide-media"><i data-lucide="thermometer"></i></div>
+              <div class="od-slide-role">Thermostat</div>
+              <div class="od-slide-name">Honeywell T6 Pro</div>
+              <div class="od-slide-spec">Programmable · 7-day · TH6220</div>
+            </div>
+          </div>
+        </div>
+        <button class="od-car-arrow" data-cdir="1" aria-label="Next equipment"><i data-lucide="chevron-right"></i></button>
+      </div>
+      <div class="od-dots" id="odDots"></div>
+
+      <div class="od-divider"></div>
+
+      <h2 class="od-block-title">Warranty</h2>
+      <div class="od-row">
+        <span class="od-row-ico is-shield"><i data-lucide="shield-check"></i></span>
+        <div class="od-row-main"><div class="od-row-label">Labor / Parts warranties</div><a class="od-detail-link" href="#">Details</a></div>
+        <div class="od-row-val"><span class="od-row-num">10 / 10 Years</span></div>
+      </div>
+
+      <div class="od-divider"></div>
+
+      <h2 class="od-block-title">Benefits</h2>
+      <div class="od-row">
+        <span class="od-row-ico"><i data-lucide="thermometer"></i></span>
+        <div class="od-row-main"><div class="od-row-label">Temperature control</div><a class="od-detail-link" href="#">Details</a></div>
+        <div class="od-row-val"><span class="od-meter amber"><i class="on"></i><i></i><i></i><i></i><i></i></span><span class="od-meter-cap">Coarse</span></div>
+      </div>
+      <div class="od-row">
+        <span class="od-row-ico"><i data-lucide="droplets"></i></span>
+        <div class="od-row-main"><div class="od-row-label">Humidity control</div><a class="od-detail-link" href="#">Details</a></div>
+        <div class="od-row-val"><span class="od-meter green"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span><span class="od-meter-cap">Decent</span></div>
+      </div>
+      <div class="od-row">
+        <span class="od-row-ico"><i data-lucide="piggy-bank"></i></span>
+        <div class="od-row-main"><div class="od-row-label">Potential utility savings</div><a class="od-detail-link" href="#">Details</a></div>
+        <div class="od-row-val"><span class="od-row-num">$1,420/yr</span></div>
+      </div>
+      <div class="od-row">
+        <span class="od-row-ico"><i data-lucide="volume-2"></i></span>
+        <div class="od-row-main"><div class="od-row-label">Outdoor unit noise</div><a class="od-detail-link" href="#">Details</a></div>
+        <div class="od-row-val"><span class="od-row-num">Moderate · 74 dBa</span></div>
+      </div>
+      <div class="od-row">
+        <span class="od-row-ico"><i data-lucide="leaf"></i></span>
+        <div class="od-row-main"><div class="od-row-label">Carbon emission</div><a class="od-detail-link" href="#">Details</a></div>
+        <div class="od-row-val"><span class="od-row-num">36% less</span></div>
+      </div>
+
+      <div class="od-divider"></div>
+
+      <h2 class="od-block-title">System details</h2>
+      <div class="od-sys-toggle">
+        <div class="mt-segmented" id="odSeg">
+          <span class="mt-segmented-thumb" aria-hidden="true"></span>
+          <button class="mt-segmented-option is-active">Downstairs</button>
+          <button class="mt-segmented-option">Upstairs</button>
+        </div>
+      </div>
+      <div class="od-chart">
+        <svg class="chart" viewBox="0 0 600 200" preserveAspectRatio="none" aria-hidden="true">
+          <g stroke="#9AA4B2" stroke-dasharray="4 5" stroke-width="1">
+            <line x1="40" y1="40" x2="600" y2="40"/><line x1="40" y1="100" x2="600" y2="100"/><line x1="40" y1="160" x2="600" y2="160"/>
+          </g>
+          <g fill="#6A6E75" font-size="13" font-weight="600" font-family="Geist">
+            <text x="6" y="44">75°</text><text x="6" y="104">72°</text><text x="6" y="164">69°</text>
+          </g>
+          <polyline fill="none" stroke="#74C0E8" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"
+            points="56,58 132,150 208,58 284,150 360,58 436,150 512,58 588,150"/>
+          <polyline fill="none" stroke="#C8472A" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"
+            points="56,48 132,140 208,48 284,140 360,48 436,140 512,48 588,140"/>
+        </svg>
+        <div class="od-chart-legend">
+          <span><i style="background:#74C0E8"></i>Single Stage Central AC</span>
+          <span><i style="background:#C8472A"></i>Single Stage Furnace</span>
+        </div>
+        <p class="od-chart-cap">The unit runs at full capacity when on, cycling on and off to hold your target temperature.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- sticky action bar -->
+  <div class="od-actionbar">
+    <div class="od-invest"><div class="k">Monthly investment</div><div class="v">$<span id="odInvest">455</span><span class="per">/month</span></div></div>
+    <button class="btn btn-default btn-lg"><i data-lucide="pen-line"></i>Review &amp; sign</button>
+  </div>
+
+<div class="od-vp" id="odVp" data-mode="mobile" hidden>
+  <div class="od-vp-scale" id="odVpScale">
+    <div class="od-vp-frame">
+      <div class="od-vp-label"><b id="odVpName">Mobile</b> <span class="dim" id="odVpSize">390 × 844</span></div>
+      <button class="od-vp-close" id="odVpClose" title="Exit preview" aria-label="Exit preview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      <iframe id="odVpFrame" title="Device preview"></iframe>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+  if (window.lucide) lucide.createIcons();
+
+  // ---- embed mode (running inside the device-preview iframe) ----
+  const IS_EMBED = new URLSearchParams(location.search).get('embed') === '1';
+  if (IS_EMBED) document.body.classList.add('is-embed');
+
+  // ---- option rail: select + arrow stepping; drives title + monthly price ----
+  const rail = document.getElementById('odRail');
+  const titleEl = document.getElementById('odTitle');
+  const investEl = document.getElementById('odInvest');
+  rail && rail.querySelectorAll('.od-opt').forEach(btn => btn.addEventListener('click', () => {
+    rail.querySelectorAll('.od-opt').forEach(o => o.classList.remove('is-active'));
+    btn.classList.add('is-active');
+    if (btn.dataset.title) titleEl.textContent = btn.dataset.title;
+    if (btn.dataset.price) investEl.textContent = btn.dataset.price;
+    btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  }));
+  document.querySelectorAll('.od-rail-arrow').forEach(a => a.addEventListener('click', () => {
+    a.parentElement.querySelector('.od-rail').scrollBy({ left: 206 * Number(a.dataset.dir), behavior: 'smooth' });
+  }));
+
+  // ---- rail edges: drop the prev/next arrow + fade when there's nothing more that way ----
+  function updateRailEdges(r) {
+    const wrap = r.parentElement;
+    wrap.classList.toggle('at-start', r.scrollLeft <= 1);
+    wrap.classList.toggle('at-end', r.scrollLeft + r.clientWidth >= r.scrollWidth - 1);
+  }
+  if (rail) {
+    rail.addEventListener('scroll', () => updateRailEdges(rail), { passive: true });
+    window.addEventListener('resize', () => updateRailEdges(rail));
+    // center the active option on load, then settle the edge state
+    requestAnimationFrame(() => {
+      const active = rail.querySelector('.od-opt.is-active');
+      if (active) {
+        const r = rail.getBoundingClientRect(), a = active.getBoundingClientRect();
+        rail.scrollLeft += (a.left - r.left) - (r.width - a.width) / 2;
+      }
+      updateRailEdges(rail);
+    });
+  }
+
+  // ---- option rail scrolls away + fades as the page scrolls up (not pinned) ----
+  const odScroll = document.querySelector('.od-scroll');
+  const odRailzone = document.querySelector('.od-railzone');
+  if (odScroll && odRailzone) {
+    odScroll.addEventListener('scroll', () => {
+      const h = odRailzone.offsetHeight || 130;
+      odRailzone.style.opacity = Math.max(0, 1 - odScroll.scrollTop / (h * 0.8));
+    }, { passive: true });
+  }
+
+  // ---- equipment carousel ----
+  const track = document.getElementById('odCarTrack');
+  const dotsWrap = document.getElementById('odDots');
+  const slides = track ? track.children.length : 0;
+  let ci = 0;
+  for (let i = 0; i < slides; i++) {
+    const d = document.createElement('button');
+    d.setAttribute('aria-label', 'Equipment ' + (i + 1));
+    d.addEventListener('click', () => goCar(i));
+    dotsWrap.appendChild(d);
+  }
+  function goCar(i) {
+    ci = (i + slides) % slides;
+    track.style.transform = 'translateX(' + (-ci * 100) + '%)';
+    [...dotsWrap.children].forEach((d, k) => d.classList.toggle('is-active', k === ci));
+  }
+  document.querySelectorAll('.od-car-arrow').forEach(a => a.addEventListener('click', () => goCar(ci + Number(a.dataset.cdir))));
+  if (slides) goCar(0);
+
+  // ---- segmented control (Downstairs / Upstairs) ----
+  (function initSeg(el) {
+    if (!el) return;
+    const thumb = el.querySelector('.mt-segmented-thumb');
+    const opts = [...el.querySelectorAll('.mt-segmented-option')];
+    function move(opt) {
+      thumb.style.width = opt.offsetWidth + 'px';
+      thumb.style.transform = 'translateX(' + opt.offsetLeft + 'px)';
+      opts.forEach(o => o.classList.toggle('is-active', o === opt));
+    }
+    opts.forEach(o => o.addEventListener('click', () => move(o)));
+    move(el.querySelector('.is-active') || opts[0]);
+    requestAnimationFrame(() => el.classList.add('is-ready'));
+  })(document.getElementById('odSeg'));
+
+  // ---- device preview: load this page in an iframe at the real device width ----
+  if (!IS_EMBED) {
+    const DEVICES = { pad: { name: 'iPad', w: 834, h: 1112, pad: 32 }, mobile: { name: 'Mobile', w: 390, h: 844, pad: 24 } };
+    const vp = document.getElementById('odVp');
+    const vpScale = document.getElementById('odVpScale');
+    const vpIframe = document.getElementById('odVpFrame');
+    const vpName = document.getElementById('odVpName');
+    const vpSize = document.getElementById('odVpSize');
+    let vpOpen = false, vpMode = 'mobile';
+    const baseURL = () => location.href.split('#')[0].split('?')[0];
+    const setDev = m => document.querySelectorAll('[data-dev]').forEach(b => b.classList.toggle('is-active', b.dataset.dev === m));
+    function fitVP() {
+      if (!vpOpen) return;
+      const d = DEVICES[vpMode], fw = d.w + d.pad, fh = d.h + d.pad;
+      vpScale.style.transform = 'scale(' + Math.min(1, (window.innerWidth - 80) / fw, (window.innerHeight - 120) / fh) + ')';
+    }
+    function openVP(mode) {
+      vpMode = mode; vpOpen = true;
+      const d = DEVICES[mode];
+      vp.dataset.mode = mode; vpName.textContent = d.name; vpSize.textContent = d.w + ' × ' + d.h;
+      vp.hidden = false; vp.classList.add('is-open');
+      vpIframe.src = baseURL() + '?embed=1&t=' + Date.now();
+      fitVP();
+    }
+    function closeVP() { vpOpen = false; vp.classList.remove('is-open'); vp.hidden = true; vpIframe.src = 'about:blank'; setDev('desktop'); }
+    document.querySelectorAll('[data-dev]').forEach(btn => btn.addEventListener('click', () => {
+      const mode = btn.dataset.dev; setDev(mode);
+      if (mode === 'desktop') closeVP(); else openVP(mode);
+    }));
+    document.getElementById('odVpClose').addEventListener('click', closeVP);
+    vp.addEventListener('click', e => { if (e.target === vp || e.target === vpScale) closeVP(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && vpOpen) closeVP(); });
+    window.addEventListener('resize', fitVP);
+  }
+</script>
+</body>
+</html>
