@@ -505,3 +505,28 @@
     };
     window.MantelStatGraphics(document);
   })();
+
+  /* Stepper — [data-stepper]: the − / + buttons step the value input and
+     disable at min / max. A native <input type=number> holds value + bounds. */
+  (function () {
+    document.querySelectorAll('[data-stepper]').forEach(function (s) {
+      var input = s.querySelector('input');
+      var dec = s.querySelector('[data-step="dec"]');
+      var inc = s.querySelector('[data-step="inc"]');
+      if (!input) return;
+      var min = input.min !== '' ? +input.min : -Infinity;
+      var max = input.max !== '' ? +input.max : Infinity;
+      var step = +input.step || 1;
+      function clamp(v) { return Math.min(max, Math.max(min, v)); }
+      function sync() {
+        var v = clamp(Math.round(+input.value || 0));
+        input.value = v;
+        if (dec) dec.disabled = v <= min;
+        if (inc) inc.disabled = v >= max;
+      }
+      if (dec) dec.addEventListener('click', function () { input.value = clamp((+input.value || 0) - step); sync(); });
+      if (inc) inc.addEventListener('click', function () { input.value = clamp((+input.value || 0) + step); sync(); });
+      input.addEventListener('change', sync);
+      sync();
+    });
+  })();

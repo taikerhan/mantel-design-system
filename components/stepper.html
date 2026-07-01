@@ -1,0 +1,157 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Stepper · Mantel</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="../assets/kit.css"><link rel="stylesheet" href="../assets/shell.css">
+<style>
+  /* Demo scaffolding only (state labels + the mini list card) — not component CSS. */
+  .st-state { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .st-state .l { font-family: var(--font-mono); font-size: 14px; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-500); }
+  .st-list { width: 100%; max-width: 440px; background: #fff; border-radius: var(--radius-2xl); box-shadow: var(--shadow-card); overflow: hidden; }
+  .st-list .mt-stepper-field { padding: 14px 18px; }
+  .st-list .mt-stepper-field + .mt-stepper-field { border-top: 1px solid var(--ink-150); }
+</style></head><body class="ds-body"><aside class="ds-nav"><div class="ds-brand"><a class="ds-logo" href="../index.html" aria-label="Mantel — UI Kit home"><img src="../assets/mantel-logo.svg" alt="Mantel"></a><span class="ds-ver">UI Kit · v2.3.2</span></div><input class="ds-search" type="search" placeholder="Search…" aria-label="Search components"><nav class="ds-links"><a class="ds-link" href="../index.html" data-name="home dashboard overview">Overview</a><a class="ds-link" href="../changelog.html" data-name="changelog releases versions history">Changelog</a><div class="ds-group">Design review</div><a class="ds-link" href="../review.html" data-name="review queue">Review queue<span class="ds-wip" title="Items awaiting review">1</span></a><div class="ds-group">Foundations</div><a class="ds-link" href="../components/type.html" data-name="typography">Typography</a><a class="ds-link" href="../components/color.html" data-name="color">Color</a><a class="ds-link" href="../components/spacing.html" data-name="spacing">Spacing</a><a class="ds-link" href="../components/radius.html" data-name="radius">Radius</a><a class="ds-link" href="../components/shadow.html" data-name="shadow">Shadow</a><a class="ds-link" href="../components/motion.html" data-name="motion">Motion</a><div class="ds-group">Components</div><a class="ds-link" href="../components/buttons.html" data-name="buttons">Buttons</a><a class="ds-link" href="../components/form-inputs.html" data-name="form inputs">Form inputs</a><a class="ds-link is-active" href="../components/stepper.html" data-name="stepper number quantity">Stepper</a><a class="ds-link" href="../components/inputs.html" data-name="search &amp; pickers">Search &amp; pickers</a><a class="ds-link" href="../components/data-table.html" data-name="table">Table</a><a class="ds-link" href="../components/modal.html" data-name="modal">Modal</a><a class="ds-link" href="../components/menu.html" data-name="dropdown menu">Dropdown menu</a><a class="ds-link" href="../components/tabs.html" data-name="tabs">Tabs</a><a class="ds-link" href="../components/segmented.html" data-name="segmented control">Segmented control</a><a class="ds-link" href="../components/btn-group.html" data-name="button group">Button group</a><a class="ds-link" href="../components/toasts.html" data-name="toasts">Toasts</a><a class="ds-link" href="../components/alerts.html" data-name="alerts">Alerts</a><a class="ds-link" href="../components/stats.html" data-name="stat card">Stat card</a><a class="ds-link" href="../components/pills.html" data-name="status pills">Status pills</a><a class="ds-link" href="../components/badges.html" data-name="strength badges">Strength badges</a><a class="ds-link" href="../components/avatars.html" data-name="avatars">Avatars</a><a class="ds-link" href="../components/tooltips.html" data-name="tooltips">Tooltips</a><a class="ds-link" href="../components/toggles.html" data-name="switch / checkbox / radio">Switch / checkbox / radio</a><a class="ds-link" href="../components/crumbs.html" data-name="breadcrumbs">Breadcrumbs</a><a class="ds-link" href="../components/pager.html" data-name="pagination">Pagination</a><a class="ds-link" href="../components/activity.html" data-name="activity feed">Activity feed</a><a class="ds-link" href="../components/sheet.html" data-name="sheet / drawer">Sheet / drawer</a><a class="ds-link" href="../components/empty.html" data-name="empty state">Empty state</a><a class="ds-link" href="../components/focus.html" data-name="focus card">Focus card</a><a class="ds-link" href="../components/live.html" data-name="live indicator">Live indicator</a><a class="ds-link" href="../components/loaders.html" data-name="loaders skeleton spinner progress">Loaders</a><a class="ds-link" href="../components/category.html" data-name="category pills">Category pills</a><div class="ds-group">Combos</div><a class="ds-link" href="../components/header.html" data-name="page header combo title description breadcrumb">Page header</a></nav></aside><main class="ds-main">
+
+<div class="ds-page-head">
+  <div class="ds-eyebrow">Components</div>
+  <h1 class="ds-h1">Stepper</h1>
+</div>
+
+<section class="block" id="stepper">
+  <div class="head">
+    <h2>Stepper</h2>
+    <span class="desc">Value between round primary − / + · disables at a bound · spinbutton semantics</span>
+  </div>
+
+  <div class="sub">
+    <div class="sub-title"><h3>Anatomy &amp; states</h3><span class="token">.mt-stepper</span><span class="note">− / value / + · native input holds the value</span></div>
+    <div class="spec">
+      <div class="stage" style="gap: 56px;">
+        <div class="st-state">
+          <div class="mt-stepper" data-stepper>
+            <button class="mt-stepper-btn" type="button" data-step="dec" aria-label="Decrease"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
+            <input class="mt-stepper-value" type="number" value="2" min="0" max="10" aria-label="Quantity">
+            <button class="mt-stepper-btn" type="button" data-step="inc" aria-label="Increase"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+          </div>
+          <span class="l">Default</span>
+        </div>
+        <div class="st-state">
+          <div class="mt-stepper" data-stepper>
+            <button class="mt-stepper-btn" type="button" data-step="dec" aria-label="Decrease"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
+            <input class="mt-stepper-value" type="number" value="0" min="0" max="10" aria-label="Quantity">
+            <button class="mt-stepper-btn" type="button" data-step="inc" aria-label="Increase"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+          </div>
+          <span class="l">At min — − spent</span>
+        </div>
+        <div class="st-state">
+          <div class="mt-stepper" data-stepper>
+            <button class="mt-stepper-btn" type="button" data-step="dec" aria-label="Decrease"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
+            <input class="mt-stepper-value" type="number" value="10" min="0" max="10" aria-label="Quantity">
+            <button class="mt-stepper-btn" type="button" data-step="inc" aria-label="Increase"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+          </div>
+          <span class="l">At max — + spent</span>
+        </div>
+        <div class="st-state">
+          <div class="mt-stepper">
+            <button class="mt-stepper-btn" type="button" aria-label="Decrease" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
+            <input class="mt-stepper-value" type="number" value="3" aria-label="Quantity" disabled>
+            <button class="mt-stepper-btn" type="button" aria-label="Increase" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+          </div>
+          <span class="l">Disabled</span>
+        </div>
+      </div>
+      <div class="cap"><span>Round primary buttons (brand gradient + shadow-button). At a bound the spent button fades to 50% opacity — the same treatment as a disabled .btn.</span><span class="right">:disabled = opacity .5</span></div>
+    </div>
+  </div>
+
+  <div class="sub">
+    <div class="sub-title"><h3>In a list row</h3><span class="token">.mt-stepper-field</span><span class="note">the standard usage</span></div>
+    <div class="spec">
+      <div class="stage" style="justify-content: center;">
+        <div class="st-list">
+          <div class="mt-stepper-field">
+            <span class="mt-stepper-field-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path></svg>Days</span>
+            <div class="mt-stepper" data-stepper>
+              <button class="mt-stepper-btn" type="button" data-step="dec" aria-label="Decrease days"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
+              <input class="mt-stepper-value" type="number" value="2" min="0" max="30" aria-label="Days">
+              <button class="mt-stepper-btn" type="button" data-step="inc" aria-label="Increase days"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+            </div>
+          </div>
+          <div class="mt-stepper-field">
+            <span class="mt-stepper-field-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>Hours</span>
+            <div class="mt-stepper" data-stepper>
+              <button class="mt-stepper-btn" type="button" data-step="dec" aria-label="Decrease hours"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
+              <input class="mt-stepper-value" type="number" value="3" min="0" max="23" aria-label="Hours">
+              <button class="mt-stepper-btn" type="button" data-step="inc" aria-label="Increase hours"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+            </div>
+          </div>
+          <div class="mt-stepper-field">
+            <span class="mt-stepper-field-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="10" x2="14" y1="2" y2="2"></line><line x1="12" x2="15" y1="14" y2="11"></line><circle cx="12" cy="14" r="8"></circle></svg>Minutes</span>
+            <div class="mt-stepper" data-stepper>
+              <button class="mt-stepper-btn" type="button" data-step="dec" aria-label="Decrease minutes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
+              <input class="mt-stepper-value" type="number" value="30" min="0" max="55" step="5" aria-label="Minutes">
+              <button class="mt-stepper-btn" type="button" data-step="inc" aria-label="Increase minutes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="cap"><span>Label (with an optional icon) on the left, control on the right. Full-width row, capped to a comfortable width, holds on mobile.</span><span class="right">label left · control right</span></div>
+    </div>
+  </div>
+
+  <div class="sub">
+    <div class="sub-title"><h3>Sizes</h3><span class="token">.is-sm · default · .is-lg</span></div>
+    <div class="spec">
+      <div class="stage" style="gap: 28px;">
+        <div class="mt-stepper is-sm" data-stepper>
+          <button class="mt-stepper-btn" type="button" data-step="dec" aria-label="Decrease"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
+          <input class="mt-stepper-value" type="number" value="2" min="0" max="10" aria-label="Quantity">
+          <button class="mt-stepper-btn" type="button" data-step="inc" aria-label="Increase"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+        </div>
+        <div class="mt-stepper" data-stepper>
+          <button class="mt-stepper-btn" type="button" data-step="dec" aria-label="Decrease"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
+          <input class="mt-stepper-value" type="number" value="2" min="0" max="10" aria-label="Quantity">
+          <button class="mt-stepper-btn" type="button" data-step="inc" aria-label="Increase"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+        </div>
+        <div class="mt-stepper is-lg" data-stepper>
+          <button class="mt-stepper-btn" type="button" data-step="dec" aria-label="Decrease"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
+          <input class="mt-stepper-value" type="number" value="2" min="0" max="10" aria-label="Quantity">
+          <button class="mt-stepper-btn" type="button" data-step="inc" aria-label="Increase"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+        </div>
+      </div>
+      <div class="cap"><span>sm / default / lg scale the button and value together.</span><span class="right">30 / 34 / 40px buttons</span></div>
+    </div>
+  </div>
+
+  <div class="sub">
+    <div class="sub-title"><h3>Props</h3><span class="token">Stepper · $lib/ds</span><span class="note">front-end API</span></div>
+    <table class="type-table">
+      <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="tok">value</td><td class="api-type">number</td><td class="specs">—</td><td class="sample">Current value (bound).</td></tr>
+        <tr><td class="tok">min / max</td><td class="api-type">number</td><td class="specs">−∞ / ∞</td><td class="sample">Bounds. The spent button disables at the limit.</td></tr>
+        <tr><td class="tok">step</td><td class="api-type">number</td><td class="specs">1</td><td class="sample">Increment applied per − / + press.</td></tr>
+        <tr><td class="tok">size</td><td class="api-type">'sm' | 'default' | 'lg'</td><td class="specs">'default'</td><td class="sample">30 / 34 / 40px buttons.</td></tr>
+        <tr><td class="tok">disabled</td><td class="api-type">boolean</td><td class="specs">false</td><td class="sample">Fades the control to 50%.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="rules">
+    <div class="rule"><div class="h do">Do</div><p>Use for a small, bounded quantity (guests, nights, copies). Set <b>min</b> and <b>max</b> so the spent button disables at the edge, and place it as the right-hand control of a labelled list row.</p></div>
+    <div class="rule"><div class="h dnt">Don't</div><p>Use it for a wide numeric range or free entry (use a number field), and don't bake the unit between the value and +. The unit is the row label on the left.</p></div>
+  </div>
+</section>
+
+<section class="block pg-block" id="playground">
+  <div class="head"><span class="num">PG</span><h2>Playground</h2><span class="desc">Live props — size, bounds &amp; state</span></div>
+  <div class="pg" data-pg="stepper">
+    <div class="pg-preview" style="display: flex; justify-content: center; padding: 32px 24px;">
+      <div class="mt-stepper" data-pg-el></div>
+    </div>
+    <div class="pg-controls">
+      <label class="pg-ctrl"><span>Size</span><select data-pg-prop="size"><option value="is-sm">sm · 30</option><option value="default" selected="">default · 34</option><option value="is-lg">lg · 40</option></select></label>
+      <label class="pg-ctrl"><span>Min</span><input type="number" data-pg-prop="min" value="0"></label>
+      <label class="pg-ctrl"><span>Max</span><input type="number" data-pg-prop="max" value="10"></label>
+      <label class="pg-ctrl pg-ctrl-toggle"><span>Disabled</span><button type="button" class="pg-switch" data-pg-prop="disabled" aria-pressed="false" aria-label="Toggle disabled"></button></label>
+    </div>
+  </div>
+</section>
+
+</main><script src="../assets/kit.js"></script><script src="../assets/shell.js"></script></body></html>

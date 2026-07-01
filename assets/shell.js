@@ -111,6 +111,30 @@
       el.className = 'mt-input' + (s.size ? ' ' + s.size : '') + (s.invalid ? ' is-error' : '');
       el.type = s.type || 'text'; el.placeholder = s.placeholder || ''; el.disabled = !!s.disabled;
     },
+    stepper: function (el, s) {
+      var min = (s.min !== '' && s.min != null) ? Math.round(+s.min) : 0;
+      var max = (s.max !== '' && s.max != null) ? Math.round(+s.max) : 10;
+      if (max < min) max = min;
+      var prev = el.querySelector('input');
+      var cur = Math.min(max, Math.max(min, Math.round((prev ? +prev.value : (min > 0 ? min : 2)) || 0)));
+      var dis = !!s.disabled;
+      var mSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg>';
+      var pSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>';
+      el.className = 'mt-stepper' + (s.size && s.size !== 'default' ? ' ' + s.size : '');
+      el.innerHTML =
+        '<button class="mt-stepper-btn" type="button" data-step="dec" aria-label="Decrease"' + (dis ? ' disabled' : '') + '>' + mSvg + '</button>'
+        + '<input class="mt-stepper-value" type="number" value="' + cur + '" min="' + min + '" max="' + max + '" aria-label="Value"' + (dis ? ' disabled' : '') + '>'
+        + '<button class="mt-stepper-btn" type="button" data-step="inc" aria-label="Increase"' + (dis ? ' disabled' : '') + '>' + pSvg + '</button>';
+      var input = el.querySelector('input'), dec = el.querySelector('[data-step="dec"]'), inc = el.querySelector('[data-step="inc"]');
+      function clamp(v) { return Math.min(max, Math.max(min, v)); }
+      function sync() { var v = clamp(Math.round(+input.value || 0)); input.value = v; if (!dis) { dec.disabled = v <= min; inc.disabled = v >= max; } }
+      if (!dis) {
+        dec.addEventListener('click', function () { input.value = clamp((+input.value || 0) - 1); sync(); });
+        inc.addEventListener('click', function () { input.value = clamp((+input.value || 0) + 1); sync(); });
+        input.addEventListener('change', sync);
+      }
+      sync();
+    },
     stat: function (el, s) {
       var trend = s.trend || 'up';
       var ARROWS = { up: '<path d="M7 17 17 7M8 7h9v9"/>', down: '<path d="M7 7l10 10M17 8v9H8"/>', flat: '' };

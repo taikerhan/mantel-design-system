@@ -1,84 +1,84 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Stepper · Mantel</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="../assets/kit.css"><link rel="stylesheet" href="../assets/shell.css">
 <style>
   /* =======================================================================
-     Stepper — .mt-stepper   (EXPLORATION · lives here until promoted to kit.css)
+     Stepper — .ex-stepper   (EXPLORATION · lives here until promoted to kit.css)
      A connected number control — [ − | value | + ] — sharing one input-chrome
      border with hairline ink-200 dividers, so it sits flush beside .mt-input /
      .mt-select. Focus lights the whole control as one unit. The unit label
      (days / hrs / min) is NEVER baked between the value and +; it rides outside
-     as .mt-stepper-unit (suffix) or as a field .mt-label. A native <input
+     as .ex-stepper-unit (suffix) or as a field .mt-label. A native <input
      type=number> carries spinbutton semantics + min/max; the buttons step it.
      Built on Mantel tokens only — promotion = move this block into kit.css.
      ======================================================================= */
-  .mt-stepper { display: inline-flex; align-items: stretch; height: 36px; background: #fff; border: 1px solid var(--ink-400); border-radius: var(--radius-md); font-family: var(--font-sans); overflow: hidden; transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease); }
-  .mt-stepper:hover { border-color: var(--ink-500); }
-  .mt-stepper:focus-within { border-color: var(--brand-600); box-shadow: var(--shadow-focus); }
-  .mt-stepper-btn { flex-shrink: 0; width: 36px; display: inline-flex; align-items: center; justify-content: center; background: #fff; border: 0; color: var(--ink-700); cursor: pointer; transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease); }
-  .mt-stepper-btn:hover { background: var(--ink-100); color: var(--ink-900); }
-  .mt-stepper-btn:active { background: var(--ink-150); }
-  .mt-stepper-btn:disabled { background: #fff; color: var(--ink-300); cursor: not-allowed; }
-  .mt-stepper-btn svg { width: 16px; height: 16px; }
-  .mt-stepper-value { flex: 0 0 56px; width: 56px; min-width: 0; border: 0; border-left: 1px solid var(--ink-300); border-right: 1px solid var(--ink-300); background: transparent; text-align: center; font-family: var(--font-sans); font-size: 14px; font-weight: var(--fw-medium); font-variant-numeric: tabular-nums; letter-spacing: -0.005em; color: var(--ink-900); padding: 0 6px; appearance: none; -webkit-appearance: none; }
-  .mt-stepper-value:focus { outline: none; }
-  .mt-stepper-value::-webkit-outer-spin-button, .mt-stepper-value::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-  .mt-stepper-cell { flex: 0 0 auto; min-width: 56px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; padding: 0 12px; border-left: 1px solid var(--ink-300); border-right: 1px solid var(--ink-300); font-size: 14px; font-weight: var(--fw-medium); font-variant-numeric: tabular-nums; letter-spacing: -0.005em; color: var(--ink-900); }
-  .mt-stepper-cell .u { color: var(--ink-400); font-weight: var(--fw-regular); font-size: 13px; }
-  .mt-stepper.is-disabled { background: var(--ink-50); border-color: var(--ink-200); cursor: not-allowed; }
-  .mt-stepper.is-disabled:hover { border-color: var(--ink-200); }
-  .mt-stepper.is-disabled .mt-stepper-btn { background: var(--ink-50); color: var(--ink-300); cursor: not-allowed; }
-  .mt-stepper.is-disabled .mt-stepper-value, .mt-stepper.is-disabled .mt-stepper-cell { color: var(--ink-400); border-left-color: var(--ink-200); border-right-color: var(--ink-200); }
-  .mt-stepper.is-error { border-color: var(--accent-red); }
-  .mt-stepper.is-error .mt-stepper-value, .mt-stepper.is-error .mt-stepper-cell { border-left-color: var(--accent-red); border-right-color: var(--accent-red); }
-  .mt-stepper.is-error:focus-within { box-shadow: 0 0 0 3px rgba(180, 35, 24, 0.2); }
-  .mt-stepper.is-sm { height: 32px; }
-  .mt-stepper.is-sm .mt-stepper-btn { width: 32px; }
-  .mt-stepper.is-sm .mt-stepper-btn svg { width: 15px; height: 15px; }
-  .mt-stepper.is-sm .mt-stepper-value, .mt-stepper.is-sm .mt-stepper-cell { font-size: 13px; }
-  .mt-stepper.is-lg { height: 40px; }
-  .mt-stepper.is-lg .mt-stepper-btn { width: 40px; }
-  .mt-stepper.is-lg .mt-stepper-value, .mt-stepper.is-lg .mt-stepper-cell { font-size: 15px; }
-  .mt-stepper-group { display: inline-flex; align-items: center; gap: 8px; }
-  .mt-stepper-unit { font-size: 13px; font-weight: var(--fw-medium); letter-spacing: -0.005em; color: var(--ink-500); white-space: nowrap; }
-  .mt-stepper-group .mt-select { width: auto; }
+  .ex-stepper { display: inline-flex; align-items: stretch; height: 36px; background: #fff; border: 1px solid var(--ink-400); border-radius: var(--radius-md); font-family: var(--font-sans); overflow: hidden; transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease); }
+  .ex-stepper:hover { border-color: var(--ink-500); }
+  .ex-stepper:focus-within { border-color: var(--brand-600); box-shadow: var(--shadow-focus); }
+  .ex-stepper-btn { flex-shrink: 0; width: 36px; display: inline-flex; align-items: center; justify-content: center; background: #fff; border: 0; color: var(--ink-700); cursor: pointer; transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease); }
+  .ex-stepper-btn:hover { background: var(--ink-100); color: var(--ink-900); }
+  .ex-stepper-btn:active { background: var(--ink-150); }
+  .ex-stepper-btn:disabled { background: #fff; color: var(--ink-300); cursor: not-allowed; }
+  .ex-stepper-btn svg { width: 16px; height: 16px; }
+  .ex-stepper-value { flex: 0 0 56px; width: 56px; min-width: 0; border: 0; border-left: 1px solid var(--ink-300); border-right: 1px solid var(--ink-300); background: transparent; text-align: center; font-family: var(--font-sans); font-size: 14px; font-weight: var(--fw-medium); font-variant-numeric: tabular-nums; letter-spacing: -0.005em; color: var(--ink-900); padding: 0 6px; appearance: none; -webkit-appearance: none; }
+  .ex-stepper-value:focus { outline: none; }
+  .ex-stepper-value::-webkit-outer-spin-button, .ex-stepper-value::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .ex-stepper-cell { flex: 0 0 auto; min-width: 56px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; padding: 0 12px; border-left: 1px solid var(--ink-300); border-right: 1px solid var(--ink-300); font-size: 14px; font-weight: var(--fw-medium); font-variant-numeric: tabular-nums; letter-spacing: -0.005em; color: var(--ink-900); }
+  .ex-stepper-cell .u { color: var(--ink-400); font-weight: var(--fw-regular); font-size: 13px; }
+  .ex-stepper.is-disabled { background: var(--ink-50); border-color: var(--ink-200); cursor: not-allowed; }
+  .ex-stepper.is-disabled:hover { border-color: var(--ink-200); }
+  .ex-stepper.is-disabled .ex-stepper-btn { background: var(--ink-50); color: var(--ink-300); cursor: not-allowed; }
+  .ex-stepper.is-disabled .ex-stepper-value, .ex-stepper.is-disabled .ex-stepper-cell { color: var(--ink-400); border-left-color: var(--ink-200); border-right-color: var(--ink-200); }
+  .ex-stepper.is-error { border-color: var(--accent-red); }
+  .ex-stepper.is-error .ex-stepper-value, .ex-stepper.is-error .ex-stepper-cell { border-left-color: var(--accent-red); border-right-color: var(--accent-red); }
+  .ex-stepper.is-error:focus-within { box-shadow: 0 0 0 3px rgba(180, 35, 24, 0.2); }
+  .ex-stepper.is-sm { height: 32px; }
+  .ex-stepper.is-sm .ex-stepper-btn { width: 32px; }
+  .ex-stepper.is-sm .ex-stepper-btn svg { width: 15px; height: 15px; }
+  .ex-stepper.is-sm .ex-stepper-value, .ex-stepper.is-sm .ex-stepper-cell { font-size: 13px; }
+  .ex-stepper.is-lg { height: 40px; }
+  .ex-stepper.is-lg .ex-stepper-btn { width: 40px; }
+  .ex-stepper.is-lg .ex-stepper-value, .ex-stepper.is-lg .ex-stepper-cell { font-size: 15px; }
+  .ex-stepper-group { display: inline-flex; align-items: center; gap: 8px; }
+  .ex-stepper-unit { font-size: 13px; font-weight: var(--fw-medium); letter-spacing: -0.005em; color: var(--ink-500); white-space: nowrap; }
+  .ex-stepper-group .mt-select { width: auto; }
 
   /* CTA take (Option A) — the blue icon-button chrome (brand-600 border,
-     brand-700 glyph). The default .mt-stepper above is the form-input take
+     brand-700 glyph). The default .ex-stepper above is the form-input take
      (grey, preferred); this brighter one is shown only as Option A. */
-  .mt-stepper.is-cta { border-color: var(--brand-600); }
-  .mt-stepper.is-cta:hover { border-color: var(--brand-700); }
-  .mt-stepper.is-cta .mt-stepper-btn { color: var(--brand-700); }
-  .mt-stepper.is-cta .mt-stepper-btn:hover { background: var(--brand-50); color: var(--brand-700); }
-  .mt-stepper.is-cta .mt-stepper-btn:active { background: var(--brand-100); }
-  .mt-stepper.is-cta .mt-stepper-value, .mt-stepper.is-cta .mt-stepper-cell { border-left-color: var(--brand-600); border-right-color: var(--brand-600); }
+  .ex-stepper.is-cta { border-color: var(--brand-600); }
+  .ex-stepper.is-cta:hover { border-color: var(--brand-700); }
+  .ex-stepper.is-cta .ex-stepper-btn { color: var(--brand-700); }
+  .ex-stepper.is-cta .ex-stepper-btn:hover { background: var(--brand-50); color: var(--brand-700); }
+  .ex-stepper.is-cta .ex-stepper-btn:active { background: var(--brand-100); }
+  .ex-stepper.is-cta .ex-stepper-value, .ex-stepper.is-cta .ex-stepper-cell { border-left-color: var(--brand-600); border-right-color: var(--brand-600); }
 
   /* Split takes (C rounded-square / E fully round) — value flanked by a neutral
      − and a + styled as our primary button (brand gradient + shadow-button;
      disabled fades to 50% like any .btn). Button shape set on the container. */
-  .mt-stepper-flank { display: inline-flex; align-items: center; gap: 12px; }
-  .mt-stepper-fbtn { width: 34px; height: 34px; border: 0; display: inline-flex; align-items: center; justify-content: center; background: var(--ink-100); color: var(--ink-700); cursor: pointer; transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease), box-shadow var(--dur) var(--ease), opacity var(--dur) var(--ease); }
-  .mt-stepper-fbtn:hover { background: var(--ink-200); }
-  .mt-stepper-fbtn:active { background: var(--ink-300); }
-  .mt-stepper-fbtn:disabled { background: var(--ink-100); color: var(--ink-300); cursor: not-allowed; }
-  .mt-stepper-fbtn svg { width: 17px; height: 17px; }
-  .mt-stepper-fbtn.is-primary { background: linear-gradient(180deg, var(--brand-500) 0%, var(--brand-600) 100%); color: #fff; box-shadow: var(--shadow-button); }
-  .mt-stepper-fbtn.is-primary:hover { background: linear-gradient(180deg, var(--brand-500) 0%, var(--brand-700) 100%); box-shadow: var(--shadow-button-hover); }
-  .mt-stepper-fbtn.is-primary:active { background: linear-gradient(180deg, var(--brand-600) 0%, var(--brand-700) 100%); box-shadow: inset 0 1px 3px rgba(3,18,38,.22); }
-  .mt-stepper-fbtn.is-primary:disabled { background: linear-gradient(180deg, var(--brand-500) 0%, var(--brand-600) 100%); color: #fff; box-shadow: var(--shadow-button); opacity: .5; }
-  .mt-stepper-flank.is-round .mt-stepper-fbtn { border-radius: 50%; }
-  .mt-stepper-flank.is-square .mt-stepper-fbtn { border-radius: var(--radius-md); }
+  .ex-stepper-flank { display: inline-flex; align-items: center; gap: 12px; }
+  .ex-stepper-fbtn { width: 34px; height: 34px; border: 0; display: inline-flex; align-items: center; justify-content: center; background: var(--ink-100); color: var(--ink-700); cursor: pointer; transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease), box-shadow var(--dur) var(--ease), opacity var(--dur) var(--ease); }
+  .ex-stepper-fbtn:hover { background: var(--ink-200); }
+  .ex-stepper-fbtn:active { background: var(--ink-300); }
+  .ex-stepper-fbtn:disabled { background: var(--ink-100); color: var(--ink-300); cursor: not-allowed; }
+  .ex-stepper-fbtn svg { width: 17px; height: 17px; }
+  .ex-stepper-fbtn.is-primary { background: linear-gradient(180deg, var(--brand-500) 0%, var(--brand-600) 100%); color: #fff; box-shadow: var(--shadow-button); }
+  .ex-stepper-fbtn.is-primary:hover { background: linear-gradient(180deg, var(--brand-500) 0%, var(--brand-700) 100%); box-shadow: var(--shadow-button-hover); }
+  .ex-stepper-fbtn.is-primary:active { background: linear-gradient(180deg, var(--brand-600) 0%, var(--brand-700) 100%); box-shadow: inset 0 1px 3px rgba(3,18,38,.22); }
+  .ex-stepper-fbtn.is-primary:disabled { background: linear-gradient(180deg, var(--brand-500) 0%, var(--brand-600) 100%); color: #fff; box-shadow: var(--shadow-button); opacity: .5; }
+  .ex-stepper-flank.is-round .ex-stepper-fbtn { border-radius: 50%; }
+  .ex-stepper-flank.is-square .ex-stepper-fbtn { border-radius: var(--radius-md); }
 
   /* Bare value — a borderless number field used by the Apple / round takes. */
-  .mt-stepper-bare { width: 34px; border: 0; background: transparent; text-align: center; font-family: var(--font-sans); font-size: 17px; font-weight: var(--fw-medium); font-variant-numeric: tabular-nums; color: var(--ink-900); padding: 0; appearance: none; -webkit-appearance: none; }
-  .mt-stepper-bare:focus { outline: none; }
-  .mt-stepper-bare:disabled { color: var(--ink-400); -webkit-text-fill-color: var(--ink-400); }
+  .ex-stepper-bare { width: 34px; border: 0; background: transparent; text-align: center; font-family: var(--font-sans); font-size: 17px; font-weight: var(--fw-medium); font-variant-numeric: tabular-nums; color: var(--ink-900); padding: 0; appearance: none; -webkit-appearance: none; }
+  .ex-stepper-bare:focus { outline: none; }
+  .ex-stepper-bare:disabled { color: var(--ink-400); -webkit-text-fill-color: var(--ink-400); }
 
   /* List-row layout — label (+ unit) on the left, stepper on the right; the real
      usage in a settings / detail list. Full-width, holds on mobile. */
-  .mt-stepper-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; width: 100%; }
+  .ex-stepper-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; width: 100%; }
   #chrome .spec { max-width: 480px; }
-  .mt-stepper-row-label { display: inline-flex; align-items: center; gap: 10px; font-size: 16px; font-weight: var(--fw-medium); color: var(--ink-900); min-width: 0; }
-  .mt-stepper-row-icon { width: 18px; height: 18px; color: var(--ink-500); flex-shrink: 0; }
-  .mt-stepper-bare::-webkit-outer-spin-button, .mt-stepper-bare::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .ex-stepper-row-label { display: inline-flex; align-items: center; gap: 10px; font-size: 16px; font-weight: var(--fw-medium); color: var(--ink-900); min-width: 0; }
+  .ex-stepper-row-icon { width: 18px; height: 18px; color: var(--ink-500); flex-shrink: 0; }
+  .ex-stepper-bare::-webkit-outer-spin-button, .ex-stepper-bare::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
   /* Exploration-only annotations. */
   .x-state { display: flex; flex-direction: column; align-items: center; gap: 9px; }
@@ -86,7 +86,7 @@
   .x-field { display: flex; flex-direction: column; gap: 6px; }
   .x-pref { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; padding: 3px 10px; border-radius: var(--radius-full); background: var(--accent-green-bg); color: var(--accent-green); font-size: 12px; font-weight: 600; }
   .x-pref svg { width: 13px; height: 13px; }
-</style></head><body class="ds-body"><aside class="ds-nav"><div class="ds-brand"><a class="ds-logo" href="../index.html" aria-label="Mantel — UI Kit home"><img src="../assets/mantel-logo.svg" alt="Mantel"></a><span class="ds-ver">UI Kit · v2.3.1</span></div><input class="ds-search" type="search" placeholder="Search…" aria-label="Search components"><nav class="ds-links"><a class="ds-link" href="../index.html" data-name="home dashboard overview">Overview</a><a class="ds-link" href="../changelog.html" data-name="changelog releases versions history">Changelog</a><div class="ds-group">Design review</div><a class="ds-link is-active" href="../review.html" data-name="review queue">Review queue<span class="ds-wip" title="Items awaiting review">2</span></a><div class="ds-group">Foundations</div><a class="ds-link" href="../components/type.html" data-name="typography">Typography</a><a class="ds-link" href="../components/color.html" data-name="color">Color</a><a class="ds-link" href="../components/spacing.html" data-name="spacing">Spacing</a><a class="ds-link" href="../components/radius.html" data-name="radius">Radius</a><a class="ds-link" href="../components/shadow.html" data-name="shadow">Shadow</a><a class="ds-link" href="../components/motion.html" data-name="motion">Motion</a><div class="ds-group">Components</div><a class="ds-link" href="../components/buttons.html" data-name="buttons">Buttons</a><a class="ds-link" href="../components/form-inputs.html" data-name="form inputs">Form inputs</a><a class="ds-link" href="../components/inputs.html" data-name="search &amp; pickers">Search &amp; pickers</a><a class="ds-link" href="../components/data-table.html" data-name="table">Table</a><a class="ds-link" href="../components/modal.html" data-name="modal">Modal</a><a class="ds-link" href="../components/menu.html" data-name="dropdown menu">Dropdown menu</a><a class="ds-link" href="../components/tabs.html" data-name="tabs">Tabs</a><a class="ds-link" href="../components/segmented.html" data-name="segmented control">Segmented control</a><a class="ds-link" href="../components/btn-group.html" data-name="button group">Button group</a><a class="ds-link" href="../components/toasts.html" data-name="toasts">Toasts</a><a class="ds-link" href="../components/alerts.html" data-name="alerts">Alerts</a><a class="ds-link" href="../components/stats.html" data-name="stat card">Stat card</a><a class="ds-link" href="../components/pills.html" data-name="status pills">Status pills</a><a class="ds-link" href="../components/badges.html" data-name="strength badges">Strength badges</a><a class="ds-link" href="../components/avatars.html" data-name="avatars">Avatars</a><a class="ds-link" href="../components/tooltips.html" data-name="tooltips">Tooltips</a><a class="ds-link" href="../components/toggles.html" data-name="switch / checkbox / radio">Switch / checkbox / radio</a><a class="ds-link" href="../components/crumbs.html" data-name="breadcrumbs">Breadcrumbs</a><a class="ds-link" href="../components/pager.html" data-name="pagination">Pagination</a><a class="ds-link" href="../components/activity.html" data-name="activity feed">Activity feed</a><a class="ds-link" href="../components/sheet.html" data-name="sheet / drawer">Sheet / drawer</a><a class="ds-link" href="../components/empty.html" data-name="empty state">Empty state</a><a class="ds-link" href="../components/focus.html" data-name="focus card">Focus card</a><a class="ds-link" href="../components/live.html" data-name="live indicator">Live indicator</a><a class="ds-link" href="../components/loaders.html" data-name="loaders skeleton spinner progress">Loaders</a><a class="ds-link" href="../components/category.html" data-name="category pills">Category pills</a><div class="ds-group">Combos</div><a class="ds-link" href="../components/header.html" data-name="page header combo title description breadcrumb">Page header</a></nav></aside><main class="ds-main">
+</style></head><body class="ds-body"><aside class="ds-nav"><div class="ds-brand"><a class="ds-logo" href="../index.html" aria-label="Mantel — UI Kit home"><img src="../assets/mantel-logo.svg" alt="Mantel"></a><span class="ds-ver">UI Kit · v2.3.2</span></div><input class="ds-search" type="search" placeholder="Search…" aria-label="Search components"><nav class="ds-links"><a class="ds-link" href="../index.html" data-name="home dashboard overview">Overview</a><a class="ds-link" href="../changelog.html" data-name="changelog releases versions history">Changelog</a><div class="ds-group">Design review</div><a class="ds-link is-active" href="../review.html" data-name="review queue">Review queue<span class="ds-wip" title="Items awaiting review">1</span></a><div class="ds-group">Foundations</div><a class="ds-link" href="../components/type.html" data-name="typography">Typography</a><a class="ds-link" href="../components/color.html" data-name="color">Color</a><a class="ds-link" href="../components/spacing.html" data-name="spacing">Spacing</a><a class="ds-link" href="../components/radius.html" data-name="radius">Radius</a><a class="ds-link" href="../components/shadow.html" data-name="shadow">Shadow</a><a class="ds-link" href="../components/motion.html" data-name="motion">Motion</a><div class="ds-group">Components</div><a class="ds-link" href="../components/buttons.html" data-name="buttons">Buttons</a><a class="ds-link" href="../components/form-inputs.html" data-name="form inputs">Form inputs</a><a class="ds-link" href="../components/stepper.html" data-name="stepper number quantity">Stepper</a><a class="ds-link" href="../components/inputs.html" data-name="search &amp; pickers">Search &amp; pickers</a><a class="ds-link" href="../components/data-table.html" data-name="table">Table</a><a class="ds-link" href="../components/modal.html" data-name="modal">Modal</a><a class="ds-link" href="../components/menu.html" data-name="dropdown menu">Dropdown menu</a><a class="ds-link" href="../components/tabs.html" data-name="tabs">Tabs</a><a class="ds-link" href="../components/segmented.html" data-name="segmented control">Segmented control</a><a class="ds-link" href="../components/btn-group.html" data-name="button group">Button group</a><a class="ds-link" href="../components/toasts.html" data-name="toasts">Toasts</a><a class="ds-link" href="../components/alerts.html" data-name="alerts">Alerts</a><a class="ds-link" href="../components/stats.html" data-name="stat card">Stat card</a><a class="ds-link" href="../components/pills.html" data-name="status pills">Status pills</a><a class="ds-link" href="../components/badges.html" data-name="strength badges">Strength badges</a><a class="ds-link" href="../components/avatars.html" data-name="avatars">Avatars</a><a class="ds-link" href="../components/tooltips.html" data-name="tooltips">Tooltips</a><a class="ds-link" href="../components/toggles.html" data-name="switch / checkbox / radio">Switch / checkbox / radio</a><a class="ds-link" href="../components/crumbs.html" data-name="breadcrumbs">Breadcrumbs</a><a class="ds-link" href="../components/pager.html" data-name="pagination">Pagination</a><a class="ds-link" href="../components/activity.html" data-name="activity feed">Activity feed</a><a class="ds-link" href="../components/sheet.html" data-name="sheet / drawer">Sheet / drawer</a><a class="ds-link" href="../components/empty.html" data-name="empty state">Empty state</a><a class="ds-link" href="../components/focus.html" data-name="focus card">Focus card</a><a class="ds-link" href="../components/live.html" data-name="live indicator">Live indicator</a><a class="ds-link" href="../components/loaders.html" data-name="loaders skeleton spinner progress">Loaders</a><a class="ds-link" href="../components/category.html" data-name="category pills">Category pills</a><div class="ds-group">Combos</div><a class="ds-link" href="../components/header.html" data-name="page header combo title description breadcrumb">Page header</a></nav></aside><main class="ds-main">
 
 <a class="ds-back" href="../review.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"></path><path d="M12 19l-7-7 7-7"></path></svg>Review queue</a>
 
@@ -103,15 +103,15 @@
   </div>
 
   <div class="sub">
-    <div class="sub-title"><h3>A — Connected · blue</h3><span class="token">.mt-stepper.is-cta</span></div>
+    <div class="sub-title"><h3>A — Connected · blue</h3><span class="token">.ex-stepper.is-cta</span></div>
     <div class="spec">
       <div class="stage" style="padding: 18px 24px;">
-        <div class="mt-stepper-row">
-          <span class="mt-stepper-row-label"><svg class="mt-stepper-row-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path></svg>Days</span>
-          <div class="mt-stepper is-cta" data-stepper>
-            <button class="mt-stepper-btn" type="button" data-step="dec" aria-label="Decrease"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
-            <input class="mt-stepper-value" type="number" value="0" min="0" max="10" aria-label="Days">
-            <button class="mt-stepper-btn" type="button" data-step="inc" aria-label="Increase"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+        <div class="ex-stepper-row">
+          <span class="ex-stepper-row-label"><svg class="ex-stepper-row-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path></svg>Days</span>
+          <div class="ex-stepper is-cta" data-stepper>
+            <button class="ex-stepper-btn" type="button" data-step="dec" aria-label="Decrease"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
+            <input class="ex-stepper-value" type="number" value="0" min="0" max="10" aria-label="Days">
+            <button class="ex-stepper-btn" type="button" data-step="inc" aria-label="Increase"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
           </div>
         </div>
       </div>
@@ -119,15 +119,15 @@
   </div>
 
   <div class="sub">
-    <div class="sub-title"><h3>B — Connected · grey</h3><span class="token">.mt-stepper</span></div>
+    <div class="sub-title"><h3>B — Connected · grey</h3><span class="token">.ex-stepper</span></div>
     <div class="spec">
       <div class="stage" style="padding: 18px 24px;">
-        <div class="mt-stepper-row">
-          <span class="mt-stepper-row-label"><svg class="mt-stepper-row-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path></svg>Days</span>
-          <div class="mt-stepper" data-stepper>
-            <button class="mt-stepper-btn" type="button" data-step="dec" aria-label="Decrease"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
-            <input class="mt-stepper-value" type="number" value="0" min="0" max="10" aria-label="Days">
-            <button class="mt-stepper-btn" type="button" data-step="inc" aria-label="Increase"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+        <div class="ex-stepper-row">
+          <span class="ex-stepper-row-label"><svg class="ex-stepper-row-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path></svg>Days</span>
+          <div class="ex-stepper" data-stepper>
+            <button class="ex-stepper-btn" type="button" data-step="dec" aria-label="Decrease"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
+            <input class="ex-stepper-value" type="number" value="0" min="0" max="10" aria-label="Days">
+            <button class="ex-stepper-btn" type="button" data-step="inc" aria-label="Increase"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
           </div>
         </div>
       </div>
@@ -135,15 +135,15 @@
   </div>
 
   <div class="sub">
-    <div class="sub-title"><h3>C — Split · square</h3><span class="token">.mt-stepper-flank.is-square</span></div>
+    <div class="sub-title"><h3>C — Split · square</h3><span class="token">.ex-stepper-flank.is-square</span></div>
     <div class="spec">
       <div class="stage" style="padding: 18px 24px;">
-        <div class="mt-stepper-row">
-          <span class="mt-stepper-row-label"><svg class="mt-stepper-row-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path></svg>Days</span>
-          <div class="mt-stepper-flank is-square" data-stepper>
-            <button class="mt-stepper-fbtn is-primary" type="button" data-step="dec" aria-label="Decrease"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
-            <input class="mt-stepper-bare" type="number" value="0" min="0" max="10" aria-label="Days">
-            <button class="mt-stepper-fbtn is-primary" type="button" data-step="inc" aria-label="Increase"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+        <div class="ex-stepper-row">
+          <span class="ex-stepper-row-label"><svg class="ex-stepper-row-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path></svg>Days</span>
+          <div class="ex-stepper-flank is-square" data-stepper>
+            <button class="ex-stepper-fbtn is-primary" type="button" data-step="dec" aria-label="Decrease"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
+            <input class="ex-stepper-bare" type="number" value="0" min="0" max="10" aria-label="Days">
+            <button class="ex-stepper-fbtn is-primary" type="button" data-step="inc" aria-label="Increase"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
           </div>
         </div>
       </div>
@@ -151,15 +151,15 @@
   </div>
 
   <div class="sub">
-    <div class="sub-title"><h3>D — Split · round</h3><span class="token">.mt-stepper-flank.is-round</span></div>
+    <div class="sub-title"><h3>D — Split · round</h3><span class="token">.ex-stepper-flank.is-round</span></div>
     <div class="spec">
       <div class="stage" style="padding: 18px 24px;">
-        <div class="mt-stepper-row">
-          <span class="mt-stepper-row-label"><svg class="mt-stepper-row-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path></svg>Days</span>
-          <div class="mt-stepper-flank is-round" data-stepper>
-            <button class="mt-stepper-fbtn is-primary" type="button" data-step="dec" aria-label="Decrease"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
-            <input class="mt-stepper-bare" type="number" value="0" min="0" max="10" aria-label="Days">
-            <button class="mt-stepper-fbtn is-primary" type="button" data-step="inc" aria-label="Increase"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+        <div class="ex-stepper-row">
+          <span class="ex-stepper-row-label"><svg class="ex-stepper-row-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path></svg>Days</span>
+          <div class="ex-stepper-flank is-round" data-stepper>
+            <button class="ex-stepper-fbtn is-primary" type="button" data-step="dec" aria-label="Decrease"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
+            <input class="ex-stepper-bare" type="number" value="0" min="0" max="10" aria-label="Days">
+            <button class="ex-stepper-fbtn is-primary" type="button" data-step="inc" aria-label="Increase"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
           </div>
         </div>
       </div>
@@ -175,46 +175,46 @@
   </div>
 
   <div class="sub">
-    <div class="sub-title"><h3>Anatomy &amp; states</h3><span class="token">.mt-stepper</span><span class="note">− / value / + share one border</span></div>
+    <div class="sub-title"><h3>Anatomy &amp; states</h3><span class="token">.ex-stepper</span><span class="note">− / value / + share one border</span></div>
     <div class="spec">
       <div class="stage" style="gap: 30px;">
         <div class="x-state">
-          <div class="mt-stepper" data-stepper>
-            <button class="mt-stepper-btn" type="button" data-step="dec" aria-label="Decrease"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
-            <input class="mt-stepper-value" type="number" value="3" aria-label="Quantity">
-            <button class="mt-stepper-btn" type="button" data-step="inc" aria-label="Increase"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+          <div class="ex-stepper" data-stepper>
+            <button class="ex-stepper-btn" type="button" data-step="dec" aria-label="Decrease"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
+            <input class="ex-stepper-value" type="number" value="3" aria-label="Quantity">
+            <button class="ex-stepper-btn" type="button" data-step="inc" aria-label="Increase"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
           </div>
           <span class="l">Default</span>
         </div>
         <div class="x-state">
-          <div class="mt-stepper" data-stepper>
-            <button class="mt-stepper-btn" type="button" data-step="dec" aria-label="Decrease" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
-            <input class="mt-stepper-value" type="number" value="0" min="0" max="10" aria-label="Quantity">
-            <button class="mt-stepper-btn" type="button" data-step="inc" aria-label="Increase"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+          <div class="ex-stepper" data-stepper>
+            <button class="ex-stepper-btn" type="button" data-step="dec" aria-label="Decrease" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
+            <input class="ex-stepper-value" type="number" value="0" min="0" max="10" aria-label="Quantity">
+            <button class="ex-stepper-btn" type="button" data-step="inc" aria-label="Increase"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
           </div>
           <span class="l">At min — − spent</span>
         </div>
         <div class="x-state">
-          <div class="mt-stepper" data-stepper>
-            <button class="mt-stepper-btn" type="button" data-step="dec" aria-label="Decrease"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
-            <input class="mt-stepper-value" type="number" value="10" min="1" max="10" aria-label="Quantity">
-            <button class="mt-stepper-btn" type="button" data-step="inc" aria-label="Increase" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+          <div class="ex-stepper" data-stepper>
+            <button class="ex-stepper-btn" type="button" data-step="dec" aria-label="Decrease"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
+            <input class="ex-stepper-value" type="number" value="10" min="1" max="10" aria-label="Quantity">
+            <button class="ex-stepper-btn" type="button" data-step="inc" aria-label="Increase" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
           </div>
           <span class="l">At max — + spent</span>
         </div>
         <div class="x-state">
-          <div class="mt-stepper is-disabled">
-            <button class="mt-stepper-btn" type="button" aria-label="Decrease" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
-            <input class="mt-stepper-value" type="number" value="8" aria-label="Quantity" disabled>
-            <button class="mt-stepper-btn" type="button" aria-label="Increase" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+          <div class="ex-stepper is-disabled">
+            <button class="ex-stepper-btn" type="button" aria-label="Decrease" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
+            <input class="ex-stepper-value" type="number" value="8" aria-label="Quantity" disabled>
+            <button class="ex-stepper-btn" type="button" aria-label="Increase" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
           </div>
           <span class="l">Disabled</span>
         </div>
         <div class="x-state">
-          <div class="mt-stepper is-error" data-stepper>
-            <button class="mt-stepper-btn" type="button" data-step="dec" aria-label="Decrease"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
-            <input class="mt-stepper-value" type="number" value="0" aria-label="Quantity">
-            <button class="mt-stepper-btn" type="button" data-step="inc" aria-label="Increase"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+          <div class="ex-stepper is-error" data-stepper>
+            <button class="ex-stepper-btn" type="button" data-step="dec" aria-label="Decrease"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
+            <input class="ex-stepper-value" type="number" value="0" aria-label="Quantity">
+            <button class="ex-stepper-btn" type="button" data-step="inc" aria-label="Increase"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
           </div>
           <span class="l">Error</span>
         </div>
@@ -227,20 +227,20 @@
     <div class="sub-title"><h3>Sizes</h3><span class="token">.is-sm · default · .is-lg</span></div>
     <div class="spec">
       <div class="stage" style="gap: 18px;">
-        <div class="mt-stepper is-sm" data-stepper>
-          <button class="mt-stepper-btn" type="button" data-step="dec" aria-label="Decrease"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
-          <input class="mt-stepper-value" type="number" value="3" aria-label="Quantity">
-          <button class="mt-stepper-btn" type="button" data-step="inc" aria-label="Increase"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+        <div class="ex-stepper is-sm" data-stepper>
+          <button class="ex-stepper-btn" type="button" data-step="dec" aria-label="Decrease"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
+          <input class="ex-stepper-value" type="number" value="3" aria-label="Quantity">
+          <button class="ex-stepper-btn" type="button" data-step="inc" aria-label="Increase"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
         </div>
-        <div class="mt-stepper" data-stepper>
-          <button class="mt-stepper-btn" type="button" data-step="dec" aria-label="Decrease"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
-          <input class="mt-stepper-value" type="number" value="3" aria-label="Quantity">
-          <button class="mt-stepper-btn" type="button" data-step="inc" aria-label="Increase"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+        <div class="ex-stepper" data-stepper>
+          <button class="ex-stepper-btn" type="button" data-step="dec" aria-label="Decrease"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
+          <input class="ex-stepper-value" type="number" value="3" aria-label="Quantity">
+          <button class="ex-stepper-btn" type="button" data-step="inc" aria-label="Increase"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
         </div>
-        <div class="mt-stepper is-lg" data-stepper>
-          <button class="mt-stepper-btn" type="button" data-step="dec" aria-label="Decrease"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
-          <input class="mt-stepper-value" type="number" value="3" aria-label="Quantity">
-          <button class="mt-stepper-btn" type="button" data-step="inc" aria-label="Increase"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+        <div class="ex-stepper is-lg" data-stepper>
+          <button class="ex-stepper-btn" type="button" data-step="dec" aria-label="Decrease"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
+          <input class="ex-stepper-value" type="number" value="3" aria-label="Quantity">
+          <button class="ex-stepper-btn" type="button" data-step="inc" aria-label="Increase"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
         </div>
       </div>
       <div class="cap"><span>Matches input heights so a stepper sits flush in a toolbar or form row</span><span class="right">heights 32 / 36 / 40</span></div>
@@ -256,32 +256,32 @@
   </div>
 
   <div class="sub">
-    <div class="sub-title"><h3>Option A — Unit as a suffix</h3><span class="token">.mt-stepper-group + .mt-stepper-unit</span><span class="note">unit rides outside the control</span></div>
+    <div class="sub-title"><h3>Option A — Unit as a suffix</h3><span class="token">.ex-stepper-group + .ex-stepper-unit</span><span class="note">unit rides outside the control</span></div>
     <div class="spec">
       <div class="stage" style="gap: 18px;">
-        <div class="mt-stepper-group">
-          <div class="mt-stepper" data-stepper>
-            <button class="mt-stepper-btn" type="button" data-step="dec" aria-label="Decrease days"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
-            <input class="mt-stepper-value" type="number" value="2" min="0" max="30" aria-label="Days">
-            <button class="mt-stepper-btn" type="button" data-step="inc" aria-label="Increase days"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+        <div class="ex-stepper-group">
+          <div class="ex-stepper" data-stepper>
+            <button class="ex-stepper-btn" type="button" data-step="dec" aria-label="Decrease days"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
+            <input class="ex-stepper-value" type="number" value="2" min="0" max="30" aria-label="Days">
+            <button class="ex-stepper-btn" type="button" data-step="inc" aria-label="Increase days"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
           </div>
-          <span class="mt-stepper-unit">days</span>
+          <span class="ex-stepper-unit">days</span>
         </div>
-        <div class="mt-stepper-group">
-          <div class="mt-stepper" data-stepper>
-            <button class="mt-stepper-btn" type="button" data-step="dec" aria-label="Decrease hours"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
-            <input class="mt-stepper-value" type="number" value="3" min="0" max="23" aria-label="Hours">
-            <button class="mt-stepper-btn" type="button" data-step="inc" aria-label="Increase hours"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+        <div class="ex-stepper-group">
+          <div class="ex-stepper" data-stepper>
+            <button class="ex-stepper-btn" type="button" data-step="dec" aria-label="Decrease hours"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
+            <input class="ex-stepper-value" type="number" value="3" min="0" max="23" aria-label="Hours">
+            <button class="ex-stepper-btn" type="button" data-step="inc" aria-label="Increase hours"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
           </div>
-          <span class="mt-stepper-unit">hrs</span>
+          <span class="ex-stepper-unit">hrs</span>
         </div>
-        <div class="mt-stepper-group">
-          <div class="mt-stepper" data-stepper>
-            <button class="mt-stepper-btn" type="button" data-step="dec" aria-label="Decrease minutes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
-            <input class="mt-stepper-value" type="number" value="30" min="0" max="55" step="5" aria-label="Minutes">
-            <button class="mt-stepper-btn" type="button" data-step="inc" aria-label="Increase minutes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+        <div class="ex-stepper-group">
+          <div class="ex-stepper" data-stepper>
+            <button class="ex-stepper-btn" type="button" data-step="dec" aria-label="Decrease minutes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
+            <input class="ex-stepper-value" type="number" value="30" min="0" max="55" step="5" aria-label="Minutes">
+            <button class="ex-stepper-btn" type="button" data-step="inc" aria-label="Increase minutes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
           </div>
-          <span class="mt-stepper-unit">min</span>
+          <span class="ex-stepper-unit">min</span>
         </div>
       </div>
       <div class="cap"><span>Unit rides outside the control as muted ink-500 text. The stepper stays a pure number control; the row reads left-to-right as "2 days, 3 hrs, 30 min". Matches PatternFly, USWDS, Nord.</span><span class="right">PatternFly · USWDS · Nord</span></div>
@@ -294,26 +294,26 @@
       <div class="stage" style="gap: 18px; align-items: flex-end;">
         <div class="x-field">
           <label class="mt-label">Days</label>
-          <div class="mt-stepper" data-stepper>
-            <button class="mt-stepper-btn" type="button" data-step="dec" aria-label="Decrease"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
-            <input class="mt-stepper-value" type="number" value="2" min="0" max="30" aria-label="Days">
-            <button class="mt-stepper-btn" type="button" data-step="inc" aria-label="Increase"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+          <div class="ex-stepper" data-stepper>
+            <button class="ex-stepper-btn" type="button" data-step="dec" aria-label="Decrease"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
+            <input class="ex-stepper-value" type="number" value="2" min="0" max="30" aria-label="Days">
+            <button class="ex-stepper-btn" type="button" data-step="inc" aria-label="Increase"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
           </div>
         </div>
         <div class="x-field">
           <label class="mt-label">Hrs</label>
-          <div class="mt-stepper" data-stepper>
-            <button class="mt-stepper-btn" type="button" data-step="dec" aria-label="Decrease"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
-            <input class="mt-stepper-value" type="number" value="3" min="0" max="23" aria-label="Hours">
-            <button class="mt-stepper-btn" type="button" data-step="inc" aria-label="Increase"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+          <div class="ex-stepper" data-stepper>
+            <button class="ex-stepper-btn" type="button" data-step="dec" aria-label="Decrease"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
+            <input class="ex-stepper-value" type="number" value="3" min="0" max="23" aria-label="Hours">
+            <button class="ex-stepper-btn" type="button" data-step="inc" aria-label="Increase"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
           </div>
         </div>
         <div class="x-field">
           <label class="mt-label">Min</label>
-          <div class="mt-stepper" data-stepper>
-            <button class="mt-stepper-btn" type="button" data-step="dec" aria-label="Decrease"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
-            <input class="mt-stepper-value" type="number" value="30" min="0" max="55" step="5" aria-label="Minutes">
-            <button class="mt-stepper-btn" type="button" data-step="inc" aria-label="Increase"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+          <div class="ex-stepper" data-stepper>
+            <button class="ex-stepper-btn" type="button" data-step="dec" aria-label="Decrease"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
+            <input class="ex-stepper-value" type="number" value="30" min="0" max="55" step="5" aria-label="Minutes">
+            <button class="ex-stepper-btn" type="button" data-step="inc" aria-label="Increase"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
           </div>
         </div>
       </div>
@@ -343,29 +343,4 @@
 </section>
 
 </main><script src="../assets/kit.js"></script><script src="../assets/shell.js"></script>
-<script>
-  // Stepper — native <input type=number> carries the value + min/max; the
-  // − / + buttons step it and grey out at a bound. Self-contained so the
-  // review page is clickable without depending on kit.js.
-  document.querySelectorAll('[data-stepper]').forEach(function (s) {
-    var input = s.querySelector('input');
-    var dec = s.querySelector('[data-step="dec"]');
-    var inc = s.querySelector('[data-step="inc"]');
-    if (!input) return;
-    var min = input.min !== '' ? +input.min : -Infinity;
-    var max = input.max !== '' ? +input.max : Infinity;
-    var step = +input.step || 1;
-    var clamp = function (v) { return Math.min(max, Math.max(min, v)); };
-    var sync = function () {
-      var v = clamp(Math.round((+input.value || 0)));
-      input.value = v;
-      if (dec) dec.disabled = v <= min;
-      if (inc) inc.disabled = v >= max;
-    };
-    if (dec) dec.addEventListener('click', function () { input.value = clamp((+input.value || 0) - step); sync(); });
-    if (inc) inc.addEventListener('click', function () { input.value = clamp((+input.value || 0) + step); sync(); });
-    input.addEventListener('change', sync);
-    sync();
-  });
-</script>
 </body></html>
