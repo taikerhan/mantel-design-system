@@ -1,0 +1,9 @@
+{
+  // Cloudflare Workers config — static assets deploy for the Mantel DS site.
+  // The repo IS the site: every HTML page + assets/ ships as-is.
+  "name": "mantel-design-system",
+  "compatibility_date": "2026-07-08",
+  "assets": {
+    "directory": "."
+  }
+}
