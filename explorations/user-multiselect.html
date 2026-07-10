@@ -1,0 +1,318 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>User multi-select · Design review · Mantel</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="../assets/kit.css"><link rel="stylesheet" href="../assets/shell.css">
+<style>
+  /* ---------------------------------------------------------------------------
+     SCOPED EXPLORATION CSS — review only, NOT promoted into tokens yet.
+     Design rationale: refined-minimal, straight from the kit — Geist, brand-600
+     primaries, ink borders, --shadow-menu popovers. Three LIVE demos for the
+     Messages team-member filter: each option is one working component you can
+     click, type into, and pick from — not a wall of frozen states.
+     --------------------------------------------------------------------------- */
+
+  /* Page background: white for this review page (site default is ink-50) */
+  .ds-body { background: #fff; }
+
+  .sc-title-row { display: flex; align-items: center; gap: 20px; }
+  .rev-chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: var(--radius-full); font-size: 12px; font-weight: 600; background: var(--accent-amber-bg); color: var(--accent-amber); }
+  .rev-chip .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+
+  /* Sections — same rhythm as the other review pages */
+  .sc-section { margin-top: 76px; }
+  .sc-section:first-of-type { margin-top: 32px; }
+  .sc-option { font-size: 24px; font-weight: 600; letter-spacing: -0.019em; color: var(--ink-900); margin: 0 0 14px; }
+
+  /* Demo slot — the Messages panel's real 372px width; open menus overlay whatever is below */
+  .msx-frame { width: 372px; }
+
+  /* Avatars — kit --av-* tones, deterministic per person */
+  .msx-avatar { border-radius: var(--radius-full); display: inline-flex; align-items: center; justify-content: center; font-weight: var(--fw-semibold); flex-shrink: 0; }
+  .msx-avatar.is-20 { width: 20px; height: 20px; font-size: 10.5px; }
+  .msx-avatar.is-24 { width: 24px; height: 24px; font-size: 10.5px; }
+  .msx-avatar.is-26 { width: 26px; height: 26px; font-size: 10.5px; }
+  .msx-avatar.t1 { background: var(--av-1-bg); color: var(--av-1-fg); }
+  .msx-avatar.t2 { background: var(--av-2-bg); color: var(--av-2-fg); }
+  .msx-avatar.t3 { background: var(--av-3-bg); color: var(--av-3-fg); }
+  .msx-avatar.t4 { background: var(--av-4-bg); color: var(--av-4-fg); }
+  .msx-avatar.t5 { background: var(--av-5-bg); color: var(--av-5-fg); }
+  .msx-avatar.t6 { background: var(--av-6-bg); color: var(--av-6-fg); }
+
+  /* Person chip — avatar + name + remove */
+  .msx-chip { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 5px 0 4px; background: var(--ink-100); border-radius: var(--radius-full); font-size: 13px; font-weight: var(--fw-medium); color: var(--ink-800); white-space: nowrap; }
+  .msx-chip-x { border: 0; background: transparent; width: 18px; height: 18px; border-radius: var(--radius-full); display: inline-flex; align-items: center; justify-content: center; padding: 0; color: var(--ink-500); cursor: pointer; transition: background-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease); }
+  .msx-chip-x:hover { background: var(--ink-200); color: var(--ink-800); }
+  .msx-chip-x svg { width: 12px; height: 12px; }
+
+  /* Combo wrapper + floating menu */
+  .msx-combo { position: relative; }
+  .msx-menu { position: absolute; top: calc(100% + 6px); left: 0; right: 0; background: #fff; border: 1px solid var(--ink-200); border-radius: var(--radius-lg); box-shadow: var(--shadow-menu); padding: 6px; z-index: 6; }
+  .msx-menu.is-anchored { right: auto; width: 340px; }
+  .msx-opt { display: flex; align-items: center; gap: 10px; width: 100%; height: 40px; padding: 0 10px; border: 0; background: transparent; border-radius: var(--radius-md); font-family: var(--font-sans); font-size: 14px; font-weight: var(--fw-medium); color: var(--ink-900); cursor: pointer; text-align: left; transition: background-color var(--dur-fast) var(--ease); }
+  .msx-opt:hover { background: var(--ink-100); }
+  .msx-opt.is-active { background: var(--brand-50); color: var(--brand-700); }
+  .msx-opt b { font-weight: var(--fw-bold); }
+  .msx-opt-check { margin-left: auto; width: 16px; height: 16px; color: var(--brand-700); flex-shrink: 0; }
+  .msx-empty { padding: 12px 10px; font-size: 14px; color: var(--ink-500); }
+
+  /* Option 1 — token field: chips wrap inside the input */
+  .msx-tokenfield { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 5px 6px; min-height: 40px; position: relative; background: #fff; border: 1px solid var(--ink-400); border-radius: var(--radius-md); cursor: text; transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease); }
+  .msx-tokenfield:hover { border-color: var(--ink-500); }
+  .msx-tokenfield.is-focus { border-color: var(--brand-600); box-shadow: var(--shadow-focus); }
+  .msx-tokenfield input { flex: 1; min-width: 70px; border: 0; outline: 0; height: 28px; background: transparent; font-family: var(--font-sans); font-size: 14px; color: var(--ink-900); }
+  .msx-tokenfield input::placeholder { color: var(--ink-400); }
+  /* The field carries the focus ring; suppress the kit's global :focus-visible ring on the inline input */
+  .msx-tokenfield input:focus-visible { box-shadow: none; }
+
+  /* Options 2 & 3 — trigger button + searchable popover */
+  .msx-peoplebtn { display: flex; width: 100%; align-items: center; gap: 8px; height: 36px; padding: 0 10px 0 8px; background: #fff; border: 1px solid var(--ink-400); border-radius: var(--radius-md); font-family: var(--font-sans); font-size: 14px; font-weight: var(--fw-medium); font-variant-numeric: tabular-nums; color: var(--ink-900); cursor: pointer; transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease); }
+  .msx-peoplebtn > svg:last-child { margin-left: auto; }
+  .msx-peoplebtn:hover { border-color: var(--ink-500); }
+  .msx-peoplebtn.is-open { border-color: var(--brand-600); box-shadow: var(--shadow-focus); }
+  .msx-peoplebtn svg { width: 16px; height: 16px; color: var(--ink-500); flex-shrink: 0; }
+  .msx-peoplebtn .msx-ph { color: var(--ink-400); font-weight: var(--fw-regular); }
+  .msx-stack { display: inline-flex; }
+  .msx-stack .msx-avatar { box-shadow: 0 0 0 2px #fff; }
+  .msx-stack .msx-avatar + .msx-avatar { margin-left: -6px; }
+  .msx-stack .is-more { background: var(--ink-100); color: var(--ink-700); font-variant-numeric: tabular-nums; }
+  .msx-popsearch { margin: 2px 2px 6px; }
+  /* Row IS the kit checkbox (label.mt-check) so the .mt-check-label contract and
+     keyboard focus (space toggles the real input) both hold */
+  .mt-check.msx-popcheck { display: flex; align-items: center; height: 36px; padding: 0 8px; border-radius: var(--radius-md); cursor: pointer; }
+  .mt-check.msx-popcheck + .mt-check.msx-popcheck { margin-top: 2px; }
+  .msx-popcheck:hover { background: var(--ink-50); }
+  .msx-popcheck.is-selected, .msx-popcheck.is-selected:hover { background: var(--brand-50); }
+  .msx-popfoot { display: flex; align-items: center; justify-content: space-between; padding: 8px 8px 4px; }
+  .msx-popfoot .n { font-size: 13px; color: var(--ink-500); font-variant-numeric: tabular-nums; }
+  .msx-clearall { border: 0; background: transparent; padding: 4px 8px; border-radius: var(--radius-md); font-family: var(--font-sans); font-size: 13px; font-weight: var(--fw-semibold); color: var(--brand-600); cursor: pointer; transition: background-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease); }
+  .msx-clearall:hover { background: var(--brand-50); color: var(--brand-700); }
+
+  /* Option 3 — labelled chip row; the small add button is the trigger */
+  .msx-head { margin: 0 0 10px; font-size: 15px; font-weight: var(--fw-semibold); color: var(--ink-800); letter-spacing: -0.005em; }
+  .msx-chiprow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+  /* Option 3 chips run one size up (32px) so the row reads at body scale */
+  .msx-chiprow .msx-chip { height: 32px; font-size: 14px; padding: 0 7px 0 5px; }
+  .msx-chiprow .msx-chip .msx-avatar { width: 24px; height: 24px; font-size: 10.5px; }
+  .msx-chiprow .msx-chip-x { width: 20px; height: 20px; }
+  .msx-chiprow .msx-chip-x svg { width: 13px; height: 13px; }
+  .msx-addbtn { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 15px 0 12px; background: #fff; border: 1px solid var(--brand-600); border-radius: var(--radius-full); font-family: var(--font-sans); font-size: 14px; font-weight: var(--fw-medium); color: var(--brand-600); cursor: pointer; transition: border-color var(--dur-fast) var(--ease), background-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease); }
+  .msx-addbtn:hover { border-color: var(--brand-700); background: var(--brand-50); color: var(--brand-700); }
+  .msx-addbtn svg { width: 13px; height: 13px; color: var(--brand-600); flex-shrink: 0; }
+  .msx-addbtn:hover svg { color: var(--brand-700); }
+</style></head><body class="ds-body"><aside class="ds-nav"><div class="ds-brand"><a class="ds-logo" href="../index.html" aria-label="Mantel — UI Kit home"><img src="../assets/mantel-logo.svg" alt="Mantel"></a><span class="ds-ver">UI Kit · v2.3.2</span></div><input class="ds-search" type="search" placeholder="Search…" aria-label="Search components"><nav class="ds-links"><a class="ds-link" href="../index.html" data-name="home dashboard overview">Overview</a><a class="ds-link" href="../changelog.html" data-name="changelog releases versions history">Changelog</a><div class="ds-group">Design review</div><a class="ds-link is-active" href="../review.html" data-name="review queue">Review queue<span class="ds-wip" title="Items awaiting review">2</span></a><div class="ds-group">Foundations</div><a class="ds-link" href="../components/type.html" data-name="typography">Typography</a><a class="ds-link" href="../components/color.html" data-name="color">Color</a><a class="ds-link" href="../components/spacing.html" data-name="spacing">Spacing</a><a class="ds-link" href="../components/radius.html" data-name="radius">Radius</a><a class="ds-link" href="../components/shadow.html" data-name="shadow">Shadow</a><a class="ds-link" href="../components/motion.html" data-name="motion">Motion</a><div class="ds-group">Components</div><a class="ds-link" href="../components/buttons.html" data-name="buttons">Buttons</a><a class="ds-link" href="../components/form-inputs.html" data-name="form inputs">Form inputs</a><a class="ds-link" href="../components/stepper.html" data-name="stepper number quantity">Stepper</a><a class="ds-link" href="../components/inputs.html" data-name="search &amp; pickers">Search &amp; pickers</a><a class="ds-link" href="../components/data-table.html" data-name="table">Table</a><a class="ds-link" href="../components/modal.html" data-name="modal">Modal</a><a class="ds-link" href="../components/menu.html" data-name="dropdown menu">Dropdown menu</a><a class="ds-link" href="../components/tabs.html" data-name="tabs">Tabs</a><a class="ds-link" href="../components/segmented.html" data-name="segmented control">Segmented control</a><a class="ds-link" href="../components/btn-group.html" data-name="button group">Button group</a><a class="ds-link" href="../components/toasts.html" data-name="toasts">Toasts</a><a class="ds-link" href="../components/alerts.html" data-name="alerts">Alerts</a><a class="ds-link" href="../components/stats.html" data-name="stat card">Stat card</a><a class="ds-link" href="../components/pills.html" data-name="status pills">Status pills</a><a class="ds-link" href="../components/badges.html" data-name="strength badges">Strength badges</a><a class="ds-link" href="../components/avatars.html" data-name="avatars">Avatars</a><a class="ds-link" href="../components/tooltips.html" data-name="tooltips">Tooltips</a><a class="ds-link" href="../components/toggles.html" data-name="switch / checkbox / radio">Switch / checkbox / radio</a><a class="ds-link" href="../components/crumbs.html" data-name="breadcrumbs">Breadcrumbs</a><a class="ds-link" href="../components/pager.html" data-name="pagination">Pagination</a><a class="ds-link" href="../components/activity.html" data-name="activity feed">Activity feed</a><a class="ds-link" href="../components/sheet.html" data-name="sheet / drawer">Sheet / drawer</a><a class="ds-link" href="../components/empty.html" data-name="empty state">Empty state</a><a class="ds-link" href="../components/focus.html" data-name="focus card">Focus card</a><a class="ds-link" href="../components/live.html" data-name="live indicator">Live indicator</a><a class="ds-link" href="../components/loaders.html" data-name="loaders skeleton spinner progress">Loaders</a><a class="ds-link" href="../components/category.html" data-name="category pills">Category pills</a><div class="ds-group">Combos</div><a class="ds-link" href="../components/header.html" data-name="page header combo title description breadcrumb">Page header</a></nav></aside><main class="ds-main">
+
+<div class="ds-page-head">
+  <a class="ds-back" href="../review.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"></path><path d="M12 19l-7-7 7-7"></path></svg>Review queue</a>
+  <div class="ds-eyebrow">Design review · Search &amp; pickers</div>
+  <div class="sc-title-row">
+    <h1 class="ds-h1">User multi-select</h1>
+    <span class="rev-chip"><span class="dot"></span>Needs a call</span>
+  </div></div>
+
+<!-- ============================================================ Option 1 -->
+<section class="sc-section">
+  <h2 class="sc-option">Option 1 — Token field</h2>
+  <div class="msx-frame" id="msx-opt1"></div>
+</section>
+
+<!-- ============================================================ Option 2 -->
+<section class="sc-section">
+  <h2 class="sc-option">Option 2 — Trigger + panel</h2>
+  <div class="msx-frame" id="msx-opt2"></div>
+</section>
+
+<!-- ============================================================ Option 3 -->
+<section class="sc-section">
+  <h2 class="sc-option">Option 3 — Input chips</h2>
+  <div class="msx-frame" id="msx-opt3"></div>
+</section>
+
+</main><script src="../assets/shell.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var ROSTER = [
+    { name: 'Al Closemaster',     tone: 1 },
+    { name: 'César Felipe',  tone: 3 },
+    { name: 'Kevin Wang',         tone: 2 },
+    { name: 'Kevin WangAdminTest',tone: 2 },
+    { name: 'Li Han Huang',       tone: 4 },
+    { name: 'Peter Brendel',      tone: 5 },
+    { name: 'Sarah Salesnatural', tone: 6 }
+  ];
+  var DEFAULTS = [];
+
+  var SVG_X = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>';
+  var SVG_CHECK = '<svg class="msx-opt-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>';
+  var SVG_BOXCHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>';
+  var SVG_DOWN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>';
+  var SVG_UP = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"></path></svg>';
+  var SVG_PLUS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>';
+
+  function initials(name) {
+    var parts = name.split(' ');
+    return (parts[0][0] + (parts[1] ? parts[1][0] : '')).toUpperCase();
+  }
+  function avatar(p, size) {
+    return '<span class="msx-avatar is-' + size + ' t' + p.tone + '">' + initials(p.name) + '</span>';
+  }
+  function highlight(name, q) {
+    if (!q) return name;
+    var i = name.toLowerCase().indexOf(q.toLowerCase());
+    if (i < 0) return name;
+    return name.slice(0, i) + '<b>' + name.slice(i, i + q.length) + '</b>' + name.slice(i + q.length);
+  }
+  function filtered(q) {
+    return ROSTER.filter(function (p) { return p.name.toLowerCase().indexOf(q.toLowerCase()) >= 0; });
+  }
+  function chip(p) {
+    return '<span class="msx-chip">' + avatar(p, 20) + p.name +
+      '<button class="msx-chip-x" type="button" data-remove="' + p.name + '" aria-label="Remove ' + p.name + '">' + SVG_X + '</button></span>';
+  }
+
+  // One tiny state store per option; every change re-renders its frame.
+  function makeState() { return { sel: DEFAULTS.slice(), q: '', open: false, hi: 0 }; }
+  function isSel(st, name) { return st.sel.indexOf(name) >= 0; }
+  function toggle(st, name) {
+    var i = st.sel.indexOf(name);
+    if (i >= 0) st.sel.splice(i, 1); else st.sel.push(name);
+  }
+  function selPeople(st) { return ROSTER.filter(function (p) { return isSel(st, p.name); }); }
+
+  function bindCommon(el, st, render) {
+    el.addEventListener('click', function (e) {
+      var rm = e.target.closest('[data-remove]');
+      if (rm) { toggle(st, rm.getAttribute('data-remove')); render(); return; }
+      var pick = e.target.closest('[data-pick]');
+      if (pick) { toggle(st, pick.getAttribute('data-pick')); st.q = ''; st.hi = 0; render(); return; }
+      var clear = e.target.closest('[data-clear]');
+      if (clear) { st.sel = []; render(); return; }
+      var trig = e.target.closest('[data-trigger]');
+      if (trig) { st.open = !st.open; st.q = ''; render(); return; }
+    });
+    el.addEventListener('input', function (e) {
+      if (e.target.matches('input[data-q]')) { st.q = e.target.value; st.hi = 0; st.open = true; render(); }
+    });
+    // Use composedPath, not contains(): render() swaps the DOM mid-bubble, so by
+    // the time this fires e.target is detached and contains() would always be false.
+    document.addEventListener('click', function (e) {
+      if (st.open && e.composedPath().indexOf(el) < 0) { st.open = false; st.q = ''; render(); }
+    });
+  }
+  function refocus(el) {
+    var inp = el.querySelector('input[data-q]');
+    if (inp) { inp.focus(); inp.setSelectionRange(inp.value.length, inp.value.length); }
+  }
+  // True while the user is actually typing in the search input — used so popovers
+  // restore focus mid-typing but do NOT auto-focus (and ring) the input on open.
+  function typingQ(el) {
+    var a = document.activeElement;
+    return !!(a && el.contains(a) && a.matches && a.matches('input[data-q]'));
+  }
+  function listRows(st, size, hi) {
+    var rows = filtered(st.q).map(function (p, i) {
+      return '<button class="msx-opt' + (i === hi ? ' is-active' : '') + '" type="button" data-pick="' + p.name + '">' + avatar(p, size) +
+        '<span>' + highlight(p.name, st.q) + '</span>' + (isSel(st, p.name) ? SVG_CHECK : '') + '</button>';
+    }).join('');
+    return rows || '<div class="msx-empty">No customers found.</div>';
+  }
+
+  /* ---- Option 1: token field (chips + inline typeahead) ---- */
+  (function () {
+    var el = document.getElementById('msx-opt1');
+    var st = makeState();
+    function render() {
+      var html = '<div class="msx-combo"><div class="msx-tokenfield' + (st.open ? ' is-focus' : '') + '" data-trigger-field>' +
+        selPeople(st).map(chip).join('') +
+        '<input type="text" data-q value="' + st.q.replace(/"/g, '&quot;') + '"' + (st.sel.length ? '' : ' placeholder="Select customer"') + ' aria-label="Select customer">' +
+        '</div>' +
+        (st.open ? '<div class="msx-menu" role="listbox" aria-label="Customers">' + listRows(st, 26, st.hi) + '</div>' : '') +
+        '</div>';
+      el.innerHTML = html;
+      if (st.open) refocus(el);
+    }
+    bindCommon(el, st, render);
+    el.addEventListener('click', function (e) {
+      if (e.target.closest('[data-trigger-field]') && !e.target.closest('button') && !st.open) { st.open = true; st.hi = 0; render(); }
+    });
+    // shadcn Combobox-multiple keyboard parity: autoHighlight + arrows + Enter,
+    // Backspace on an empty input removes the last chip, Escape closes.
+    el.addEventListener('keydown', function (e) {
+      if (!st.open) {
+        if (e.key === 'ArrowDown') { st.open = true; st.hi = 0; render(); e.preventDefault(); }
+        return;
+      }
+      var list = filtered(st.q);
+      if (e.key === 'ArrowDown') { st.hi = Math.min(st.hi + 1, list.length - 1); render(); e.preventDefault(); }
+      else if (e.key === 'ArrowUp') { st.hi = Math.max(st.hi - 1, 0); render(); e.preventDefault(); }
+      else if (e.key === 'Enter') { if (list[st.hi]) { toggle(st, list[st.hi].name); st.q = ''; st.hi = 0; render(); } e.preventDefault(); }
+      else if (e.key === 'Escape') { st.open = false; st.q = ''; render(); }
+      else if (e.key === 'Backspace' && e.target.matches('input[data-q]') && e.target.value === '' && st.sel.length) { st.sel.pop(); render(); }
+    });
+    render();
+  })();
+
+  /* ---- Option 2: avatar-stack trigger + checklist panel ---- */
+  (function () {
+    var el = document.getElementById('msx-opt2');
+    var st = makeState();
+    function render() {
+      var keep = typingQ(el);
+      var people = selPeople(st);
+      var label = people.length ? people.length + ' customer' + (people.length > 1 ? 's' : '') : '<span class="msx-ph">Select customers</span>';
+      var shown = people.slice(0, 5);
+      var extra = people.length - shown.length;
+      var stack = people.length ? '<span class="msx-stack">' + shown.map(function (p) { return avatar(p, 24); }).join('') +
+        (extra > 0 ? '<span class="msx-avatar is-24 is-more">+' + extra + '</span>' : '') + '</span>' : '';
+      var checks = filtered(st.q).map(function (p) {
+        return '<label class="mt-check msx-popcheck' + (isSel(st, p.name) ? ' is-selected' : '') + '">' +
+          '<input type="checkbox" data-name="' + p.name + '"' + (isSel(st, p.name) ? ' checked' : '') + '>' +
+          '<span class="mt-check-box">' + SVG_BOXCHECK + '</span>' +
+          avatar(p, 24) + '<span class="mt-check-label">' + highlight(p.name, st.q) + '</span></label>';
+      }).join('') || '<div class="msx-empty">No customers found.</div>';
+      el.innerHTML = '<div class="msx-combo">' +
+        '<button class="msx-peoplebtn' + (st.open ? ' is-open' : '') + '" type="button" data-trigger aria-haspopup="listbox" aria-expanded="' + st.open + '">' +
+        stack + label + (st.open ? SVG_UP : SVG_DOWN) + '</button>' +
+        (st.open ? '<div class="msx-menu is-anchored" aria-label="Customers">' +
+          '<div class="msx-popsearch"><input class="mt-input is-sm" type="text" data-q value="' + st.q.replace(/"/g, '&quot;') + '" placeholder="Search customers" aria-label="Search customers"></div>' +
+          checks + '<div class="mt-menu-divider"></div>' +
+          '<div class="msx-popfoot"><span class="n">' + people.length + ' selected</span><button class="msx-clearall" type="button" data-clear>Clear all</button></div>' +
+          '</div>' : '') +
+        '</div>';
+      if (st.open && keep) refocus(el);
+    }
+    bindCommon(el, st, render);
+    // Checkbox rows are real label.mt-check inputs — toggle on change (mouse or
+    // Space), then restore focus to the same row's input after the re-render.
+    el.addEventListener('change', function (e) {
+      if (!e.target.matches('input[data-name]')) return;
+      var name = e.target.getAttribute('data-name');
+      toggle(st, name);
+      render();
+      var again = el.querySelector('input[data-name="' + name + '"]');
+      if (again) again.focus();
+    });
+    render();
+  })();
+
+  /* ---- Option 3: dropdown trigger + input-chip row ---- */
+  (function () {
+    var el = document.getElementById('msx-opt3');
+    var st = makeState();
+    function render() {
+      var keep = typingQ(el);
+      var people = selPeople(st);
+      el.innerHTML = '<h3 class="msx-head">Select customers</h3>' +
+        '<div class="msx-combo">' +
+        '<div class="msx-chiprow">' + people.map(chip).join('') +
+        '<button class="msx-addbtn" type="button" data-trigger aria-haspopup="listbox" aria-expanded="' + st.open + '">' +
+        SVG_PLUS + 'Add customer</button></div>' +
+        (st.open ? '<div class="msx-menu is-anchored" role="listbox" aria-label="Customers">' +
+          '<div class="msx-popsearch"><input class="mt-input is-sm" type="text" data-q value="' + st.q.replace(/"/g, '&quot;') + '" placeholder="Search customers" aria-label="Search customers"></div>' +
+          listRows(st, 24) + '</div>' : '') +
+        '</div>';
+      if (st.open && keep) refocus(el);
+    }
+    bindCommon(el, st, render);
+    render();
+  })();
+})();
+</script></body></html>
