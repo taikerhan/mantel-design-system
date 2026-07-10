@@ -3,10 +3,18 @@
   /* Demo scaffolding only (state labels + the mini list card) — not component CSS. */
   .st-state { display: flex; flex-direction: column; align-items: center; gap: 10px; }
   .st-state .l { font-family: var(--font-mono); font-size: 14px; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-500); }
-  .st-list { width: 100%; max-width: 440px; background: #fff; border-radius: var(--radius-2xl); box-shadow: var(--shadow-card); overflow: hidden; }
+  .st-list { width: 100%; max-width: 440px; background: var(--surface); border-radius: var(--radius-2xl); box-shadow: var(--shadow-card); overflow: hidden; }
   .st-list .mt-stepper-field { padding: 14px 18px; }
   .st-list .mt-stepper-field + .mt-stepper-field { border-top: 1px solid var(--ink-150); }
-</style></head><body class="ds-body"><aside class="ds-nav"><div class="ds-brand"><a class="ds-logo" href="../index.html" aria-label="Mantel — UI Kit home"><img src="../assets/mantel-logo.svg" alt="Mantel"></a><span class="ds-ver">UI Kit · v2.3.2</span></div><input class="ds-search" type="search" placeholder="Search…" aria-label="Search components"><nav class="ds-links"><a class="ds-link" href="../index.html" data-name="home dashboard overview">Overview</a><a class="ds-link" href="../changelog.html" data-name="changelog releases versions history">Changelog</a><div class="ds-group">Design review</div><a class="ds-link" href="../review.html" data-name="review queue">Review queue<span class="ds-wip" title="Items awaiting review">2</span></a><div class="ds-group">Foundations</div><a class="ds-link" href="../components/type.html" data-name="typography">Typography</a><a class="ds-link" href="../components/color.html" data-name="color">Color</a><a class="ds-link" href="../components/spacing.html" data-name="spacing">Spacing</a><a class="ds-link" href="../components/radius.html" data-name="radius">Radius</a><a class="ds-link" href="../components/shadow.html" data-name="shadow">Shadow</a><a class="ds-link" href="../components/motion.html" data-name="motion">Motion</a><div class="ds-group">Components</div><a class="ds-link" href="../components/buttons.html" data-name="buttons">Buttons</a><a class="ds-link" href="../components/form-inputs.html" data-name="form inputs">Form inputs</a><a class="ds-link is-active" href="../components/stepper.html" data-name="stepper number quantity">Stepper</a><a class="ds-link" href="../components/inputs.html" data-name="search &amp; pickers">Search &amp; pickers</a><a class="ds-link" href="../components/data-table.html" data-name="table">Table</a><a class="ds-link" href="../components/modal.html" data-name="modal">Modal</a><a class="ds-link" href="../components/menu.html" data-name="dropdown menu">Dropdown menu</a><a class="ds-link" href="../components/tabs.html" data-name="tabs">Tabs</a><a class="ds-link" href="../components/segmented.html" data-name="segmented control">Segmented control</a><a class="ds-link" href="../components/btn-group.html" data-name="button group">Button group</a><a class="ds-link" href="../components/toasts.html" data-name="toasts">Toasts</a><a class="ds-link" href="../components/alerts.html" data-name="alerts">Alerts</a><a class="ds-link" href="../components/stats.html" data-name="stat card">Stat card</a><a class="ds-link" href="../components/pills.html" data-name="status pills">Status pills</a><a class="ds-link" href="../components/badges.html" data-name="strength badges">Strength badges</a><a class="ds-link" href="../components/avatars.html" data-name="avatars">Avatars</a><a class="ds-link" href="../components/tooltips.html" data-name="tooltips">Tooltips</a><a class="ds-link" href="../components/toggles.html" data-name="switch / checkbox / radio">Switch / checkbox / radio</a><a class="ds-link" href="../components/crumbs.html" data-name="breadcrumbs">Breadcrumbs</a><a class="ds-link" href="../components/pager.html" data-name="pagination">Pagination</a><a class="ds-link" href="../components/activity.html" data-name="activity feed">Activity feed</a><a class="ds-link" href="../components/sheet.html" data-name="sheet / drawer">Sheet / drawer</a><a class="ds-link" href="../components/empty.html" data-name="empty state">Empty state</a><a class="ds-link" href="../components/focus.html" data-name="focus card">Focus card</a><a class="ds-link" href="../components/live.html" data-name="live indicator">Live indicator</a><a class="ds-link" href="../components/loaders.html" data-name="loaders skeleton spinner progress">Loaders</a><a class="ds-link" href="../components/category.html" data-name="category pills">Category pills</a><div class="ds-group">Combos</div><a class="ds-link" href="../components/header.html" data-name="page header combo title description breadcrumb">Page header</a></nav></aside><main class="ds-main">
+  /* Products-to-Quote examples (Stepper Combo review · Option 1) */
+  .st-tiles { display: flex; gap: 72px; }
+  .st-tile { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .st-product { font-size: 16px; font-weight: 600; letter-spacing: -0.01em; color: var(--ink-900); }
+  .st-tile .mt-stepper { width: 144px; justify-content: space-between; }
+  .st-mobile { width: 375px; max-width: 100%; display: flex; flex-direction: column; gap: 28px; }
+  .st-mrow { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .st-mrow .mt-stepper { width: 144px; justify-content: space-between; }
+</style></head><body class="ds-body"><aside class="ds-nav"><div class="ds-brand"><a class="ds-logo" href="../index.html" aria-label="Mantel — UI Kit home"><img src="../assets/mantel-logo.svg" alt="Mantel"></a><span class="ds-ver">UI Kit · v2.3.3</span></div><input class="ds-search" type="search" placeholder="Search…" aria-label="Search components"><nav class="ds-links"><a class="ds-link" href="../index.html" data-name="home dashboard overview">Overview</a><a class="ds-link" href="../changelog.html" data-name="changelog releases versions history">Changelog</a><div class="ds-group">Design review</div><a class="ds-link" href="../review.html" data-name="review queue">Review queue<span class="ds-wip" title="Items awaiting review">2</span></a><div class="ds-group">Foundations</div><a class="ds-link" href="../components/type.html" data-name="typography">Typography</a><a class="ds-link" href="../components/color.html" data-name="color">Color</a><a class="ds-link" href="../components/spacing.html" data-name="spacing">Spacing</a><a class="ds-link" href="../components/radius.html" data-name="radius">Radius</a><a class="ds-link" href="../components/shadow.html" data-name="shadow">Shadow</a><a class="ds-link" href="../components/motion.html" data-name="motion">Motion</a><div class="ds-group">Components</div><a class="ds-link" href="../components/buttons.html" data-name="buttons">Buttons</a><a class="ds-link" href="../components/form-inputs.html" data-name="form inputs">Form inputs</a><a class="ds-link is-active" href="../components/stepper.html" data-name="stepper number quantity">Stepper</a><a class="ds-link" href="../components/inputs.html" data-name="search &amp; pickers">Search &amp; pickers</a><a class="ds-link" href="../components/data-table.html" data-name="table">Table</a><a class="ds-link" href="../components/modal.html" data-name="modal">Modal</a><a class="ds-link" href="../components/menu.html" data-name="dropdown menu">Dropdown menu</a><a class="ds-link" href="../components/tabs.html" data-name="tabs">Tabs</a><a class="ds-link" href="../components/segmented.html" data-name="segmented control">Segmented control</a><a class="ds-link" href="../components/btn-group.html" data-name="button group">Button group</a><a class="ds-link" href="../components/toasts.html" data-name="toasts">Toasts</a><a class="ds-link" href="../components/alerts.html" data-name="alerts">Alerts</a><a class="ds-link" href="../components/stats.html" data-name="stat card">Stat card</a><a class="ds-link" href="../components/pills.html" data-name="status pills">Status pills</a><a class="ds-link" href="../components/badges.html" data-name="strength badges">Strength badges</a><a class="ds-link" href="../components/avatars.html" data-name="avatars">Avatars</a><a class="ds-link" href="../components/tooltips.html" data-name="tooltips">Tooltips</a><a class="ds-link" href="../components/toggles.html" data-name="switch / checkbox / radio">Switch / checkbox / radio</a><a class="ds-link" href="../components/crumbs.html" data-name="breadcrumbs">Breadcrumbs</a><a class="ds-link" href="../components/pager.html" data-name="pagination">Pagination</a><a class="ds-link" href="../components/activity.html" data-name="activity feed">Activity feed</a><a class="ds-link" href="../components/sheet.html" data-name="sheet / drawer">Sheet / drawer</a><a class="ds-link" href="../components/empty.html" data-name="empty state">Empty state</a><a class="ds-link" href="../components/focus.html" data-name="focus card">Focus card</a><a class="ds-link" href="../components/live.html" data-name="live indicator">Live indicator</a><a class="ds-link" href="../components/loaders.html" data-name="loaders skeleton spinner progress">Loaders</a><a class="ds-link" href="../components/category.html" data-name="category pills">Category pills</a><div class="ds-group">Combos</div><a class="ds-link" href="../components/header.html" data-name="page header combo title description breadcrumb">Page header</a></nav></aside><main class="ds-main">
 
 <div class="ds-page-head">
   <div class="ds-eyebrow">Components</div>
@@ -16,7 +24,7 @@
 <section class="block" id="stepper">
   <div class="head">
     <h2>Stepper</h2>
-    <span class="desc">Value between round primary − / + · disables at a bound · spinbutton semantics</span>
+    <span class="desc">Round primary − / + on a white bordered track · disables at a bound · spinbutton semantics</span>
   </div>
 
   <div class="sub">
@@ -56,7 +64,7 @@
           <span class="l">Disabled</span>
         </div>
       </div>
-      <div class="cap"><span>Round primary buttons (brand gradient + shadow-button). At a bound the spent button fades to 50% opacity — the same treatment as a disabled .btn.</span><span class="right">:disabled = opacity .5</span></div>
+      <div class="cap"><span>Round primary buttons (brand gradient + shadow-button) ride a white pill track — a 1px ink-200 inset ring ties − / value / + into one control, so the stepper holds up standalone. At a bound the spent button fades to 50% opacity — the same treatment as a disabled .btn.</span><span class="right">:disabled = opacity .5</span></div>
     </div>
   </div>
 
@@ -92,6 +100,76 @@
         </div>
       </div>
       <div class="cap"><span>Label (with an optional icon) on the left, control on the right. Full-width row, capped to a comfortable width, holds on mobile.</span><span class="right">label left · control right</span></div>
+    </div>
+  </div>
+
+  <div class="sub">
+    <div class="sub-title"><h3>Standalone tiles — desktop</h3><span class="token">label above · control below</span><span class="note">from the Stepper Combo review · Option 1</span></div>
+    <div class="spec">
+      <div class="stage" style="justify-content: center;">
+        <div class="st-tiles">
+          <div class="st-tile">
+            <span class="st-product">Garage Doors</span>
+            <div class="mt-stepper" data-stepper>
+              <button class="mt-stepper-btn" type="button" data-step="dec" aria-label="Decrease Garage Doors"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
+              <input class="mt-stepper-value" type="number" value="0" min="0" max="10" aria-label="Garage Doors quantity">
+              <button class="mt-stepper-btn" type="button" data-step="inc" aria-label="Increase Garage Doors"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+            </div>
+          </div>
+          <div class="st-tile">
+            <span class="st-product">HVAC</span>
+            <div class="mt-stepper" data-stepper>
+              <button class="mt-stepper-btn" type="button" data-step="dec" aria-label="Decrease HVAC"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
+              <input class="mt-stepper-value" type="number" value="1" min="0" max="10" aria-label="HVAC quantity">
+              <button class="mt-stepper-btn" type="button" data-step="inc" aria-label="Increase HVAC"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+            </div>
+          </div>
+          <div class="st-tile">
+            <span class="st-product">Generic</span>
+            <div class="mt-stepper" data-stepper>
+              <button class="mt-stepper-btn" type="button" data-step="dec" aria-label="Decrease Generic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
+              <input class="mt-stepper-value" type="number" value="0" min="0" max="10" aria-label="Generic quantity">
+              <button class="mt-stepper-btn" type="button" data-step="inc" aria-label="Increase Generic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="cap"><span>Standing alone under a centred label, the track keeps the trio reading as one control — the case that prompted the review.</span><span class="right">tiles · gap 72</span></div>
+    </div>
+  </div>
+
+  <div class="sub">
+    <div class="sub-title"><h3>Standalone list — mobile</h3><span class="token">375px · label left</span><span class="note">from the Stepper Combo review · Option 1</span></div>
+    <div class="spec">
+      <div class="stage" style="justify-content: center;">
+        <div class="st-mobile">
+          <div class="st-mrow">
+            <span class="st-product">Garage Doors</span>
+            <div class="mt-stepper" data-stepper>
+              <button class="mt-stepper-btn" type="button" data-step="dec" aria-label="Decrease Garage Doors"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
+              <input class="mt-stepper-value" type="number" value="0" min="0" max="10" aria-label="Garage Doors quantity">
+              <button class="mt-stepper-btn" type="button" data-step="inc" aria-label="Increase Garage Doors"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+            </div>
+          </div>
+          <div class="st-mrow">
+            <span class="st-product">HVAC</span>
+            <div class="mt-stepper" data-stepper>
+              <button class="mt-stepper-btn" type="button" data-step="dec" aria-label="Decrease HVAC"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
+              <input class="mt-stepper-value" type="number" value="0" min="0" max="10" aria-label="HVAC quantity">
+              <button class="mt-stepper-btn" type="button" data-step="inc" aria-label="Increase HVAC"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+            </div>
+          </div>
+          <div class="st-mrow">
+            <span class="st-product">Generic</span>
+            <div class="mt-stepper" data-stepper>
+              <button class="mt-stepper-btn" type="button" data-step="dec" aria-label="Decrease Generic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
+              <input class="mt-stepper-value" type="number" value="0" min="0" max="10" aria-label="Generic quantity">
+              <button class="mt-stepper-btn" type="button" data-step="inc" aria-label="Increase Generic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="cap"><span>On phone width the tiles become a 375px list — label left, a fixed 144px track right, 28px row rhythm.</span><span class="right">label left · track 144</span></div>
     </div>
   </div>
 

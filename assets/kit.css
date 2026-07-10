@@ -64,6 +64,9 @@
   --brand-800: #002f5e;
   --brand-900: #001f3f;
 
+  /* Color — Surface */
+  --surface: #FFFFFF;  /* cards & control surfaces — what cards, pill tracks and modals sit on */
+
   /* Color — Ink (cool neutral with subtle navy undertone) */
   --ink-50:  #F8F9FB;  /* page background */
   --ink-100: #F2F4F7;  /* hover fill, soft chip bg */
@@ -599,14 +602,22 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
 /* =========================================================================
    Stepper — .mt-stepper
    A number control: a value flanked by two round primary − / + buttons
-   (brand gradient + --shadow-button). The spent button disables at a bound,
-   fading to 50% like a disabled .btn. A native <input type=number> holds the
+   (brand gradient + --shadow-button), riding a white pill TRACK (inset
+   ink-200 ring) that ties the trio into one control — adopted from the
+   Stepper Combo review (Option 1) so a standalone stepper no longer reads
+   as three detached circles. The spent button disables at a bound, fading
+   to 50% like a disabled .btn. A native <input type=number> holds the
    value + min/max (spinbutton semantics); the buttons step it — wire the
-   [data-stepper] initialiser in kit.js. Typically used in a list row via
-   .mt-stepper-field (label left, control right). Add .is-sm / .is-lg to
-   resize.
+   [data-stepper] initialiser in kit.js. Works standalone (tile / column)
+   or in a list row via .mt-stepper-field (label left, control right).
+   Add .is-sm / .is-lg to resize.
    ========================================================================= */
-.mt-stepper { display: inline-flex; align-items: center; gap: 12px; font-family: var(--font-sans); }
+.mt-stepper {
+  display: inline-flex; align-items: center; gap: 6px; padding: 5px;
+  background: var(--surface); border-radius: var(--radius-full);
+  box-shadow: inset 0 0 0 1px var(--ink-200);
+  font-family: var(--font-sans);
+}
 .mt-stepper-btn {
   width: 34px; height: 34px; flex-shrink: 0; border: 0; border-radius: 50%;
   display: inline-flex; align-items: center; justify-content: center;
@@ -619,7 +630,7 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
 .mt-stepper-btn:disabled { opacity: .5; cursor: not-allowed; box-shadow: var(--shadow-button); }
 .mt-stepper-btn svg { width: 17px; height: 17px; }
 .mt-stepper-value {
-  width: 34px; min-width: 0; border: 0; background: transparent; text-align: center;
+  width: 40px; min-width: 0; border: 0; background: transparent; text-align: center;
   font-family: var(--font-sans); font-size: 17px; font-weight: var(--fw-medium);
   font-variant-numeric: tabular-nums; color: var(--ink-900); padding: 0;
   appearance: none; -webkit-appearance: none;
@@ -630,13 +641,13 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
 .mt-stepper-value::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
 /* Sizes */
-.mt-stepper.is-sm { gap: 10px; }
+.mt-stepper.is-sm { gap: 5px; padding: 4px; }
 .mt-stepper.is-sm .mt-stepper-btn { width: 30px; height: 30px; }
 .mt-stepper.is-sm .mt-stepper-btn svg { width: 15px; height: 15px; }
-.mt-stepper.is-sm .mt-stepper-value { font-size: 15px; }
-.mt-stepper.is-lg { gap: 14px; }
+.mt-stepper.is-sm .mt-stepper-value { font-size: 15px; width: 34px; }
+.mt-stepper.is-lg { gap: 7px; padding: 6px; }
 .mt-stepper.is-lg .mt-stepper-btn { width: 40px; height: 40px; }
-.mt-stepper.is-lg .mt-stepper-value { font-size: 19px; }
+.mt-stepper.is-lg .mt-stepper-value { font-size: 19px; width: 44px; }
 
 /* List-row usage — label (+ icon) on the left, stepper on the right */
 .mt-stepper-field { display: flex; align-items: center; justify-content: space-between; gap: 16px; width: 100%; }
