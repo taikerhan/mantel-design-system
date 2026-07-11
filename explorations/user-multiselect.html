@@ -10,6 +10,9 @@
 
   /* Page background: white for this review page (site default is ink-50) */
   .ds-body { background: #fff; }
+  /* Roomy tail — tall enough that the page can scroll the last section's
+     open menu (~350px) fully into view, plus the 16px scroll margin */
+  .ds-main { padding-bottom: 400px; }
 
   .sc-title-row { display: flex; align-items: center; gap: 20px; }
   .rev-chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: var(--radius-full); font-size: 12px; font-weight: 600; background: var(--accent-amber-bg); color: var(--accent-amber); }
@@ -43,7 +46,7 @@
 
   /* Combo wrapper + floating menu */
   .msx-combo { position: relative; }
-  .msx-menu { position: absolute; top: calc(100% + 6px); left: 0; right: 0; background: #fff; border: 1px solid var(--ink-200); border-radius: var(--radius-lg); box-shadow: var(--shadow-menu); padding: 6px; z-index: 6; }
+  .msx-menu { position: absolute; top: calc(100% + 6px); left: 0; right: 0; background: #fff; border: 1px solid var(--ink-200); border-radius: var(--radius-lg); box-shadow: var(--shadow-menu); padding: 6px; z-index: 6; scroll-margin-bottom: 16px; /* breathing room when the open-anchor scrolls it into view */ }
   .msx-menu.is-anchored { right: auto; width: 340px; }
   .msx-opt { display: flex; align-items: center; gap: 10px; width: 100%; height: 40px; padding: 0 10px; border: 0; background: transparent; border-radius: var(--radius-md); font-family: var(--font-sans); font-size: 14px; font-weight: var(--fw-medium); color: var(--ink-900); cursor: pointer; text-align: left; transition: background-color var(--dur-fast) var(--ease); }
   .msx-opt:hover { background: var(--ink-100); }
@@ -51,6 +54,11 @@
   .msx-opt b { font-weight: var(--fw-bold); }
   .msx-opt-check { margin-left: auto; width: 16px; height: 16px; color: var(--brand-700); flex-shrink: 0; }
   .msx-empty { padding: 12px 10px; font-size: 14px; color: var(--ink-500); }
+
+  /* Long rosters: the row list caps at ~7.5 rows so the cut row signals scroll;
+     search (above) and footer (below) stay pinned outside the scroll region */
+  .msx-scroll { max-height: 300px; overflow-y: auto; overscroll-behavior: contain; } /* 7.5 × 40px opt rows */
+  .msx-scroll.is-checks { max-height: 284px; } /* 7.5 × 36px check rows + 2px gaps */
 
   /* Option 1 — token field: chips wrap inside the input */
   .msx-tokenfield { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 5px 6px; min-height: 40px; position: relative; background: #fff; border: 1px solid var(--ink-400); border-radius: var(--radius-md); cursor: text; transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease); }
@@ -78,6 +86,14 @@
   .mt-check.msx-popcheck { display: flex; align-items: center; height: 36px; padding: 0 8px; border-radius: var(--radius-md); cursor: pointer; }
   .mt-check.msx-popcheck + .mt-check.msx-popcheck { margin-top: 2px; }
   .msx-popcheck:hover { background: var(--ink-50); }
+  .msx-popcheck.is-active { background: var(--ink-100); } /* keyboard highlight (Options 2B/2C) */
+
+  /* Option 2C — overlapping avatar stack + count in the field (same language
+     as Option 2's trigger); removal happens in the checklist / Backspace */
+  .msx-fieldcount { font-size: 14px; font-weight: var(--fw-medium); color: var(--ink-900); font-variant-numeric: tabular-nums; order: 9; margin-left: auto; margin-right: 4px; } /* order + auto margin pin it to the field's right edge */
+  /* keep stack + input + count on one line: tighter overlap, narrower input */
+  #msx-opt2c .msx-stack .msx-avatar + .msx-avatar { margin-left: -8px; }
+  #msx-opt2c .msx-tokenfield input { min-width: 40px; }
   .msx-popcheck.is-selected, .msx-popcheck.is-selected:hover { background: var(--brand-50); }
   .msx-popfoot { display: flex; align-items: center; justify-content: space-between; padding: 8px 8px 4px; }
   .msx-popfoot .n { font-size: 13px; color: var(--ink-500); font-variant-numeric: tabular-nums; }
@@ -118,6 +134,18 @@
   <div class="msx-frame" id="msx-opt2"></div>
 </section>
 
+<!-- ============================================================ Option 2B -->
+<section class="sc-section">
+  <h2 class="sc-option">Option 2B — Token field + checklist</h2>
+  <div class="msx-frame" id="msx-opt2b"></div>
+</section>
+
+<!-- ============================================================ Option 2C -->
+<section class="sc-section">
+  <h2 class="sc-option">Option 2C — Token field + checklist · avatar-only tokens</h2>
+  <div class="msx-frame" id="msx-opt2c"></div>
+</section>
+
 <!-- ============================================================ Option 3 -->
 <section class="sc-section">
   <h2 class="sc-option">Option 3 — Input chips</h2>
@@ -131,12 +159,19 @@
 
   var ROSTER = [
     { name: 'Al Closemaster',     tone: 1 },
+    { name: 'Amara Okafor',       tone: 3 },
     { name: 'César Felipe',  tone: 3 },
+    { name: 'Dmitri Volkov',      tone: 4 },
+    { name: 'Grace Littlefield',  tone: 5 },
+    { name: 'Hannah Choi',        tone: 6 },
     { name: 'Kevin Wang',         tone: 2 },
     { name: 'Kevin WangAdminTest',tone: 2 },
     { name: 'Li Han Huang',       tone: 4 },
+    { name: 'Marcus Aurelio',     tone: 1 },
+    { name: 'Nina Rosales',       tone: 2 },
     { name: 'Peter Brendel',      tone: 5 },
-    { name: 'Sarah Salesnatural', tone: 6 }
+    { name: 'Sarah Salesnatural', tone: 6 },
+    { name: 'Tom Delgado',        tone: 5 }
   ];
   var DEFAULTS = [];
 
@@ -220,14 +255,31 @@
     var el = document.getElementById('msx-opt1');
     var st = makeState();
     function render() {
+      // innerHTML rebuild resets the list's scrollTop — capture & restore so
+      // toggling an option doesn't fling the menu back to the top
+      var prevSc = el.querySelector('.msx-scroll');
+      var keepTop = prevSc ? prevSc.scrollTop : null;
       var html = '<div class="msx-combo"><div class="msx-tokenfield' + (st.open ? ' is-focus' : '') + '" data-trigger-field>' +
         selPeople(st).map(chip).join('') +
         '<input type="text" data-q value="' + st.q.replace(/"/g, '&quot;') + '"' + (st.sel.length ? '' : ' placeholder="Select customer"') + ' aria-label="Select customer">' +
         '</div>' +
-        (st.open ? '<div class="msx-menu" role="listbox" aria-label="Customers">' + listRows(st, 26, st.hi) + '</div>' : '') +
+        (st.open ? '<div class="msx-menu" role="listbox" aria-label="Customers"><div class="msx-scroll">' + listRows(st, 26, st.hi) + '</div></div>' : '') +
         '</div>';
       el.innerHTML = html;
       if (st.open) refocus(el);
+      var sc = el.querySelector('.msx-scroll');
+      if (sc && keepTop != null) sc.scrollTop = keepTop;
+      if (sc && keepTop == null) {
+        // menu just opened — if it pokes past the viewport, scroll the page
+        // minimally so the field AND the whole menu are in view
+        var menu = el.querySelector('.msx-menu');
+        if (menu) menu.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      }
+      if (st.kbd) { // follow the highlight only during keyboard navigation
+        var act = el.querySelector('.msx-opt.is-active');
+        if (act) act.scrollIntoView({ block: 'nearest' });
+        st.kbd = false;
+      }
     }
     bindCommon(el, st, render);
     el.addEventListener('click', function (e) {
@@ -241,8 +293,8 @@
         return;
       }
       var list = filtered(st.q);
-      if (e.key === 'ArrowDown') { st.hi = Math.min(st.hi + 1, list.length - 1); render(); e.preventDefault(); }
-      else if (e.key === 'ArrowUp') { st.hi = Math.max(st.hi - 1, 0); render(); e.preventDefault(); }
+      if (e.key === 'ArrowDown') { st.hi = Math.min(st.hi + 1, list.length - 1); st.kbd = true; render(); e.preventDefault(); }
+      else if (e.key === 'ArrowUp') { st.hi = Math.max(st.hi - 1, 0); st.kbd = true; render(); e.preventDefault(); }
       else if (e.key === 'Enter') { if (list[st.hi]) { toggle(st, list[st.hi].name); st.q = ''; st.hi = 0; render(); } e.preventDefault(); }
       else if (e.key === 'Escape') { st.open = false; st.q = ''; render(); }
       else if (e.key === 'Backspace' && e.target.matches('input[data-q]') && e.target.value === '' && st.sel.length) { st.sel.pop(); render(); }
@@ -256,6 +308,8 @@
     var st = makeState();
     function render() {
       var keep = typingQ(el);
+      var prevSc = el.querySelector('.msx-scroll');
+      var keepTop = prevSc ? prevSc.scrollTop : null;
       var people = selPeople(st);
       var label = people.length ? people.length + ' customer' + (people.length > 1 ? 's' : '') : '<span class="msx-ph">Select customers</span>';
       var shown = people.slice(0, 5);
@@ -273,10 +327,18 @@
         stack + label + (st.open ? SVG_UP : SVG_DOWN) + '</button>' +
         (st.open ? '<div class="msx-menu is-anchored" aria-label="Customers">' +
           '<div class="msx-popsearch"><input class="mt-input is-sm" type="text" data-q value="' + st.q.replace(/"/g, '&quot;') + '" placeholder="Search customers" aria-label="Search customers"></div>' +
-          checks + '<div class="mt-menu-divider"></div>' +
+          '<div class="msx-scroll is-checks">' + checks + '</div><div class="mt-menu-divider"></div>' +
           '<div class="msx-popfoot"><span class="n">' + people.length + ' selected</span><button class="msx-clearall" type="button" data-clear>Clear all</button></div>' +
           '</div>' : '') +
         '</div>';
+      var sc = el.querySelector('.msx-scroll');
+      if (sc && keepTop != null) sc.scrollTop = keepTop;
+      if (sc && keepTop == null) {
+        // menu just opened — if it pokes past the viewport, scroll the page
+        // minimally so the field AND the whole menu are in view
+        var menu = el.querySelector('.msx-menu');
+        if (menu) menu.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      }
       if (st.open && keep) refocus(el);
     }
     bindCommon(el, st, render);
@@ -293,12 +355,109 @@
     render();
   })();
 
+  /* ---- Options 2B / 2C: Option 1's token field + Option 2's checklist panel,
+     no in-menu search — the field itself is the filter. 2B renders name chips
+     in the field; 2C renders Option 2's avatar stack (max 8, then +N — capped
+     so the count never wraps) plus a right-aligned "N customers" count. ---- */
+  function nameChips(people) { return people.map(chip).join(''); }
+  function avStack(people) {
+    if (!people.length) return '';
+    var shown = people.slice(0, 8);
+    var extra = people.length - shown.length;
+    return '<span class="msx-stack">' + shown.map(function (p) { return avatar(p, 26); }).join('') +
+      (extra > 0 ? '<span class="msx-avatar is-26 is-more">+' + extra + '</span>' : '') + '</span>' +
+      '<span class="msx-fieldcount">' + people.length + ' customer' + (people.length > 1 ? 's' : '') + '</span>';
+  }
+  function makeTokenChecklist(id, tokensFn) {
+    var el = document.getElementById(id);
+    var st = makeState();
+    // Carbon-style top-after-reopen: selected people sort to the top of the
+    // list, but ONLY when the menu (re)opens — never while it is open.
+    st.order = ROSTER.slice();
+    st.wasOpen = false;
+    function reorder() {
+      st.order = ROSTER.slice().sort(function (a, b) {
+        return (isSel(st, a.name) ? 0 : 1) - (isSel(st, b.name) ? 0 : 1);
+      });
+    }
+    function visible() {
+      return st.order.filter(function (p) { return p.name.toLowerCase().indexOf(st.q.toLowerCase()) >= 0; });
+    }
+    function checkRows(hi) {
+      var rows = visible().map(function (p, i) {
+        return '<label class="mt-check msx-popcheck' + (i === hi ? ' is-active' : '') + (isSel(st, p.name) ? ' is-selected' : '') + '">' +
+          '<input type="checkbox" data-name="' + p.name + '"' + (isSel(st, p.name) ? ' checked' : '') + '>' +
+          '<span class="mt-check-box">' + SVG_BOXCHECK + '</span>' +
+          avatar(p, 24) + '<span class="mt-check-label">' + highlight(p.name, st.q) + '</span></label>';
+      }).join('');
+      return rows || '<div class="msx-empty">No customers found.</div>';
+    }
+    function render() {
+      var prevSc = el.querySelector('.msx-scroll');
+      var keepTop = prevSc ? prevSc.scrollTop : null;
+      if (st.open && !st.wasOpen) reorder();
+      st.wasOpen = st.open;
+      el.innerHTML = '<div class="msx-combo"><div class="msx-tokenfield' + (st.open ? ' is-focus' : '') + '" data-trigger-field>' +
+        tokensFn(selPeople(st)) +
+        '<input type="text" data-q value="' + st.q.replace(/"/g, '&quot;') + '"' + (st.sel.length ? '' : ' placeholder="Select customer"') + ' aria-label="Select customer">' +
+        '</div>' +
+        (st.open ? '<div class="msx-menu" aria-label="Customers"><div class="msx-scroll is-checks">' + checkRows(st.hi) + '</div>' +
+          '<div class="mt-menu-divider"></div>' +
+          '<div class="msx-popfoot"><span class="n">' + st.sel.length + ' selected</span><button class="msx-clearall" type="button" data-clear>Clear all</button></div>' +
+          '</div>' : '') +
+        '</div>';
+      if (st.open) refocus(el);
+      var sc = el.querySelector('.msx-scroll');
+      if (sc && keepTop != null) sc.scrollTop = keepTop;
+      if (sc && keepTop == null) {
+        // menu just opened — if it pokes past the viewport, scroll the page
+        // minimally so the field AND the whole menu are in view
+        var menu = el.querySelector('.msx-menu');
+        if (menu) menu.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      }
+      if (st.kbd) { // follow the highlight only during keyboard navigation
+        var act = el.querySelector('.msx-popcheck.is-active');
+        if (act) act.scrollIntoView({ block: 'nearest' });
+        st.kbd = false;
+      }
+    }
+    bindCommon(el, st, render);
+    el.addEventListener('click', function (e) {
+      if (e.target.closest('[data-trigger-field]') && !e.target.closest('button') && !st.open) { st.open = true; st.hi = 0; render(); }
+    });
+    // Checkbox rows toggle on change; focus snaps back to the field (render refocuses)
+    el.addEventListener('change', function (e) {
+      if (!e.target.matches('input[data-name]')) return;
+      toggle(st, e.target.getAttribute('data-name'));
+      st.q = ''; st.hi = 0;
+      render();
+    });
+    // Same keyboard contract as Option 1; Enter toggles the highlighted row
+    el.addEventListener('keydown', function (e) {
+      if (!st.open) {
+        if (e.key === 'ArrowDown') { st.open = true; st.hi = 0; render(); e.preventDefault(); }
+        return;
+      }
+      var list = visible();
+      if (e.key === 'ArrowDown') { st.hi = Math.min(st.hi + 1, list.length - 1); st.kbd = true; render(); e.preventDefault(); }
+      else if (e.key === 'ArrowUp') { st.hi = Math.max(st.hi - 1, 0); st.kbd = true; render(); e.preventDefault(); }
+      else if (e.key === 'Enter') { if (list[st.hi]) { toggle(st, list[st.hi].name); st.q = ''; st.hi = 0; render(); } e.preventDefault(); }
+      else if (e.key === 'Escape') { st.open = false; st.q = ''; render(); }
+      else if (e.key === 'Backspace' && e.target.matches('input[data-q]') && e.target.value === '' && st.sel.length) { st.sel.pop(); render(); }
+    });
+    render();
+  }
+  makeTokenChecklist('msx-opt2b', nameChips);
+  makeTokenChecklist('msx-opt2c', avStack);
+
   /* ---- Option 3: dropdown trigger + input-chip row ---- */
   (function () {
     var el = document.getElementById('msx-opt3');
     var st = makeState();
     function render() {
       var keep = typingQ(el);
+      var prevSc = el.querySelector('.msx-scroll');
+      var keepTop = prevSc ? prevSc.scrollTop : null;
       var people = selPeople(st);
       el.innerHTML = '<h3 class="msx-head">Select customers</h3>' +
         '<div class="msx-combo">' +
@@ -307,8 +466,16 @@
         SVG_PLUS + 'Add customer</button></div>' +
         (st.open ? '<div class="msx-menu is-anchored" role="listbox" aria-label="Customers">' +
           '<div class="msx-popsearch"><input class="mt-input is-sm" type="text" data-q value="' + st.q.replace(/"/g, '&quot;') + '" placeholder="Search customers" aria-label="Search customers"></div>' +
-          listRows(st, 24) + '</div>' : '') +
+          '<div class="msx-scroll">' + listRows(st, 24) + '</div></div>' : '') +
         '</div>';
+      var sc = el.querySelector('.msx-scroll');
+      if (sc && keepTop != null) sc.scrollTop = keepTop;
+      if (sc && keepTop == null) {
+        // menu just opened — if it pokes past the viewport, scroll the page
+        // minimally so the field AND the whole menu are in view
+        var menu = el.querySelector('.msx-menu');
+        if (menu) menu.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      }
       if (st.open && keep) refocus(el);
     }
     bindCommon(el, st, render);
