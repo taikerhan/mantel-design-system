@@ -167,7 +167,7 @@
     </div>
     <div class="sdz-panel" role="tabpanel" data-sdz-panel="a">
       <div class="sdz-chart">
-        <div class="sdz-chart-title" data-sdz="charttitle">How the Downstairs system holds 72°</div>
+        <div class="sdz-chart-title" data-sdz="charttitle">How the Downstairs system holds your set temperature</div>
         <div class="sdz-plot">
           <svg viewBox="0 0 514 140" preserveAspectRatio="none" aria-hidden="true" data-sdz="wavebox"></svg>
           <span class="sdz-y" style="top:11.4%">75°</span>
@@ -222,7 +222,7 @@
       <h4 class="sdz-equip-head is-first"><span data-sdz="equiphead">Downstairs equipment</span><span class="sdz-equip-count" data-sdz="equipcount">3 items</span></h4>
       <div data-sdz="equiplist"></div>
       <div class="sdz-chart is-below">
-        <div class="sdz-chart-title" data-sdz="charttitle">How the Downstairs system holds 72°</div>
+        <div class="sdz-chart-title" data-sdz="charttitle">How the Downstairs system holds your set temperature</div>
         <div class="sdz-plot">
           <svg viewBox="0 0 514 140" preserveAspectRatio="none" aria-hidden="true" data-sdz="wavebox"></svg>
           <span class="sdz-y" style="top:11.4%">75°</span>
@@ -343,7 +343,7 @@
     el(panel, 'equiplist').innerHTML = zone.equipment.map(equipRow).join('');
   }
   function renderA(panel, zone) {
-    el(panel, 'charttitle').textContent = 'How the ' + zone.name + ' system holds 72°';
+    el(panel, 'charttitle').textContent = 'How the ' + zone.name + ' system holds your set temperature';
     buildWave(el(panel, 'wavebox'), zone);
     const cool = zone.series.find(s => s.tone === 'cool'), heat = zone.series.find(s => s.tone === 'heat');
     const sc = el(panel, 'swing-cool'), sh = el(panel, 'swing-heat');
