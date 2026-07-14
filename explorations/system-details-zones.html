@@ -1,0 +1,431 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>System details — zones &amp; staging · Design review · Mantel</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="../assets/kit.css"><link rel="stylesheet" href="../assets/shell.css">
+<!--
+  Design rationale — proposal System Details, multi-system discoverability.
+  Bug: "Multi-system proposals: equipment for other systems isn't discoverable in
+  presentation details." The live zone toggle reads as a decorative highlight (dark
+  fill sits on the UNSELECTED side), so homeowners never find the second system.
+  Research: no competitor explains staging with an abstract temperature wave — the
+  industry uses named zones, explicit counts and plain-language ratings.
+  Shared skeleton in both options: the header carries the count ("2 System
+  Details"), the DS brand segmented tabs are numbered ("1. Downstairs /
+  2. Back of Home"), and equipment rows show real product photos.
+  Option A keeps a temperature chart but makes it honest (headed, smaller,
+  swing-quantified: two-stage hugs 72°, single-stage swings to the gridlines).
+  Option B drops the chart for three at-a-glance dash-bar ratings (cool
+  steadiness, heat steadiness, total efficiency).
+  Success bar: without clicking anything, a homeowner can answer "this option has
+  2 systems" from the header and both zone names from the numbered tabs.
+-->
+<style>
+  /* ---------------------------------------------------------------------------
+     SCOPED EXPLORATION CSS (sdz-*) — review only, NOT promoted into tokens yet.
+     Dash-bar meters reuse the od-meter geometry from the Option-details
+     exploration (20×7 segments); product photos live in ../assets/products/.
+     --------------------------------------------------------------------------- */
+
+  .ds-body { background: #fff; }
+
+  .sc-title-row { display: flex; align-items: center; gap: 20px; }
+  .rev-chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: var(--radius-full); font-size: 12px; font-weight: 600; background: var(--accent-amber-bg); color: var(--accent-amber); }
+  .rev-chip .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+
+  .sc-section { margin-top: 76px; }
+  .sc-section:first-of-type { margin-top: 32px; }
+  .sc-option { font-size: 24px; font-weight: 600; letter-spacing: -0.019em; color: var(--ink-900); margin: 0 0 16px; }
+
+  /* Demo canvas — the proposal page's ~720px reading column, framed as a card */
+  .sdz-canvas { max-width: 720px; background: #fff; border-radius: var(--radius-2xl); box-shadow: var(--shadow-card); padding: 26px 28px 28px; }
+
+  .sdz-title { font-size: 18px; font-weight: 700; letter-spacing: -0.014em; color: var(--ink-900); margin: 0 0 18px; font-variant-numeric: tabular-nums; }
+  /* header count (Option A) — same "· N things" idiom as the equipment head, so it
+     can't read as a notification badge */
+  .sdz-title-sub { font-size: 13px; font-weight: var(--fw-medium); color: var(--ink-500); letter-spacing: 0; font-variant-numeric: tabular-nums; margin-left: 5px; }
+  .sdz-title-sub::before, .sdz-equip-count::before { content: "·"; margin-right: 8px; }
+
+  .sdz-zones { margin-bottom: 18px; }
+  .sdz-zones .mt-segmented-option, .sdz-zones .mt-tab { font-variant-numeric: tabular-nums; }
+  /* kit gap: .mt-tab { all: unset } wipes white-space AND the global :focus-visible ring */
+  .sdz-zones .mt-tab { white-space: nowrap; }
+  .sdz-zones .mt-tab:focus-visible { box-shadow: var(--shadow-focus); }
+  /* flush: the first tab's box edge aligns with the content column (drop the bar's own 4px inset) */
+  .mt-tabbar.sdz-zones { padding-left: 0; }
+
+  /* panel swap: leave fast, enter settled */
+  .sdz-panel { transition: opacity 180ms var(--ease), transform 180ms var(--ease); }
+  .sdz-panel.is-leaving { opacity: 0; transform: translateY(3px); transition: opacity 120ms var(--ease-in), transform 120ms var(--ease-in); }
+
+  /* ===== Option A: refined staging chart ===== */
+  .sdz-chart { background: color-mix(in srgb, var(--brand-50) 55%, #fff); border-radius: var(--radius-2xl); padding: 18px 20px 16px; }
+  .sdz-chart-title { font-size: 15px; font-weight: var(--fw-semibold); color: var(--ink-900); margin: 0 0 12px; font-variant-numeric: tabular-nums; }
+  .sdz-plot { position: relative; height: 150px; padding: 0 52px 0 34px; }
+  .sdz-plot svg { position: absolute; inset: 0 52px 0 34px; width: calc(100% - 86px); height: 100%; display: block; overflow: visible; }
+  .sdz-grid { stroke: var(--ink-150); stroke-width: 1; }
+  .sdz-target { stroke: var(--ink-300); stroke-width: 1; stroke-dasharray: 4 5; }
+  /* no non-scaling-stroke: it breaks pathLength dash normalization under the
+     non-uniform viewBox stretch, leaving the line's tail undrawn (~4% short of
+     the end dot). The stretch here is ~5% so the stroke distortion is invisible. */
+  .sdz-line { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  .sdz-line.is-cool { stroke: var(--brand-400); }
+  .sdz-line.is-heat { stroke: var(--accent-red); }
+  .sdz-line.draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: sdz-draw 900ms var(--ease) forwards; }
+  .sdz-line.draw.is-heat { animation-delay: 120ms; }
+  @keyframes sdz-draw { to { stroke-dashoffset: 0; } }
+  .sdz-end { stroke: #fff; stroke-width: 2; }
+  /* end dots land only after their line arrives */
+  .sdz-end.draw { opacity: 0; animation: sdz-dot 200ms var(--ease) forwards 880ms; }
+  .sdz-end.draw.is-heat { animation-delay: 1000ms; }
+  @keyframes sdz-dot { to { opacity: 1; } }
+  .sdz-end.is-cool { fill: var(--brand-400); }
+  .sdz-end.is-heat { fill: var(--accent-red); }
+  .sdz-y { position: absolute; left: 0; transform: translateY(-50%); font-size: 11.5px; font-weight: var(--fw-medium); color: var(--ink-400); font-variant-numeric: tabular-nums; }
+  .sdz-y.is-set { font-weight: var(--fw-semibold); color: var(--ink-700); }
+  .sdz-swing { position: absolute; right: 0; transform: translateY(-50%); font-size: 12px; font-weight: var(--fw-semibold); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .sdz-swing.is-cool { color: var(--brand-600); }
+  .sdz-swing.is-heat { color: var(--accent-red); }
+  .sdz-cap { text-align: left; font-size: 14px; line-height: 1.55; color: var(--ink-800); margin: 20px 0 0; max-width: 58ch; }
+  .sdz-legend { display: flex; justify-content: flex-start; flex-wrap: wrap; gap: 8px 18px; margin-top: 16px; font-size: 12px; font-weight: var(--fw-medium); color: var(--ink-600); }
+  .sdz-legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .sdz-legend i { width: 16px; height: 16px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0; }
+  .sdz-legend i svg { width: 10px; height: 10px; }
+  .sdz-legend i.is-cool { background: var(--brand-400); }
+  .sdz-legend i.is-heat { background: var(--accent-red); }
+
+  /* ===== Option B: at-a-glance ratings (replaces the chart) ===== */
+  .sdz-glance { background: color-mix(in srgb, var(--brand-50) 55%, #fff); border-radius: var(--radius-2xl); padding: 6px 20px; margin-top: 12px; }
+  .sdz-rate { display: flex; align-items: center; gap: 14px; padding: 13px 0; }
+  .sdz-rate + .sdz-rate { border-top: 1px solid color-mix(in srgb, var(--ink-150) 60%, transparent); }
+  .sdz-rate-label { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: var(--fw-medium); color: var(--ink-800); }
+  .sdz-rate-ico { width: 16px; height: 16px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0; }
+  .sdz-rate-ico svg { width: 10px; height: 10px; }
+  .sdz-rate-ico.is-cool { background: var(--brand-400); }
+  .sdz-rate-ico.is-heat { background: var(--accent-red); }
+  .sdz-rate-ico.is-eff { background: var(--accent-green); }
+  .sdz-meter { display: inline-flex; gap: 3px; flex-shrink: 0; }
+  /* empty slots: one step darker on the same brand ramp as the card tint */
+  .sdz-meter i { width: 20px; height: 7px; border-radius: 2px; background: var(--brand-100); }
+  /* two-tone grading, white-mixed in oklch so hue/chroma stay clean (srgb mixing
+     turns the amber muddy); tokens only */
+  .sdz-meter.green i.on { background: color-mix(in oklch, var(--accent-green) 80%, white); }
+  .sdz-meter.amber i.on { background: color-mix(in oklch, var(--accent-amber) 68%, white); }
+  .sdz-rate-cap { flex-shrink: 0; min-width: 52px; text-align: right; font-size: 13px; font-weight: var(--fw-semibold); color: var(--ink-700); }
+
+  /* ===== shared: equipment list — real product photos ===== */
+  .sdz-equip-head { display: flex; align-items: baseline; gap: 8px; font-size: 15px; font-weight: var(--fw-semibold); color: var(--ink-900); margin: 24px 0 4px; }
+  .sdz-equip-head.is-first { margin-top: 24px; }
+  .sdz-chart.is-below { margin-top: 18px; }
+  .sdz-equip-count { font-size: 13px; font-weight: var(--fw-medium); color: var(--ink-500); font-variant-numeric: tabular-nums; }
+  .sdz-item { display: flex; align-items: center; gap: 14px; padding: 13px 0; border-bottom: 1px solid var(--ink-150); }
+  .sdz-item:last-child { border-bottom: 0; }
+  .sdz-item-thumb { width: 48px; height: 48px; flex-shrink: 0; border-radius: var(--radius-lg); background: #fff; box-shadow: inset 0 0 0 1px var(--ink-150); overflow: hidden; }
+  .sdz-item-thumb img { width: 100%; height: 100%; object-fit: contain; padding: 4px; box-sizing: border-box; display: block; }
+  .sdz-item-main { min-width: 0; flex: 1; }
+  .sdz-item-role { font-size: 11px; font-weight: var(--fw-semibold); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-600); }
+  .sdz-item-name { font-size: 14.5px; font-weight: var(--fw-medium); color: var(--ink-900); margin-top: 1px; }
+  .sdz-item-spec { font-size: 12.5px; color: var(--ink-500); margin-top: 1px; font-variant-numeric: tabular-nums; }
+  /* padding/negative-margin pair inflates the touch target to 44px+ without moving layout */
+  .sdz-item-link { flex-shrink: 0; border: 0; background: transparent; padding: 14px 0 14px 14px; margin: -14px 0 -14px -14px; font-family: var(--font-sans); font-size: 12.5px; font-weight: var(--fw-medium); color: var(--brand-600); text-decoration: none; cursor: pointer; }
+  .sdz-item-link:hover { color: var(--brand-700); text-decoration: underline; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sdz-panel, .sdz-panel.is-leaving { transition: none; transform: none; opacity: 1; }
+    .sdz-line.draw { animation: none; stroke-dasharray: none; stroke-dashoffset: 0; }
+    .sdz-end.draw { animation: none; opacity: 1; }
+  }
+
+  @media (max-width: 540px) {
+    .sdz-canvas { padding: 18px 16px 20px; }
+    .sdz-plot { height: 120px; padding-right: 44px; }
+    .sdz-plot svg { inset: 0 44px 0 30px; width: calc(100% - 74px); }
+    .sdz-chart { padding: 14px 14px 14px; }
+    .sdz-glance { padding: 2px 14px; }
+    .sdz-rate { flex-wrap: wrap; gap: 8px 14px; padding: 11px 0; }
+    .sdz-rate-label { flex-basis: 100%; }
+    .sdz-rate-cap { min-width: 0; }
+    .sdz-item-thumb { width: 44px; height: 44px; }
+    .sdz-zones .mt-tab { padding: 0 14px; }
+  }
+</style></head><body class="ds-body"><aside class="ds-nav"><div class="ds-brand"><a class="ds-logo" href="../index.html" aria-label="Mantel — UI Kit home"><img src="../assets/mantel-logo.svg" alt="Mantel"></a><span class="ds-ver">UI Kit · v2.3.3</span></div><input class="ds-search" type="search" placeholder="Search…" aria-label="Search components"><nav class="ds-links"><a class="ds-link" href="../index.html" data-name="home dashboard overview">Overview</a><a class="ds-link" href="../changelog.html" data-name="changelog releases versions history">Changelog</a><div class="ds-group">Design review</div><a class="ds-link is-active" href="../review.html" data-name="review queue">Review queue<span class="ds-wip" title="Items awaiting review">3</span></a><div class="ds-group">Foundations</div><a class="ds-link" href="../components/type.html" data-name="typography">Typography</a><a class="ds-link" href="../components/color.html" data-name="color">Color</a><a class="ds-link" href="../components/spacing.html" data-name="spacing">Spacing</a><a class="ds-link" href="../components/radius.html" data-name="radius">Radius</a><a class="ds-link" href="../components/shadow.html" data-name="shadow">Shadow</a><a class="ds-link" href="../components/motion.html" data-name="motion">Motion</a><div class="ds-group">Components</div><a class="ds-link" href="../components/buttons.html" data-name="buttons">Buttons</a><a class="ds-link" href="../components/form-inputs.html" data-name="form inputs">Form inputs</a><a class="ds-link" href="../components/stepper.html" data-name="stepper number quantity">Stepper</a><a class="ds-link" href="../components/inputs.html" data-name="search &amp; pickers">Search &amp; pickers</a><a class="ds-link" href="../components/data-table.html" data-name="table">Table</a><a class="ds-link" href="../components/modal.html" data-name="modal">Modal</a><a class="ds-link" href="../components/menu.html" data-name="dropdown menu">Dropdown menu</a><a class="ds-link" href="../components/tabs.html" data-name="tabs">Tabs</a><a class="ds-link" href="../components/segmented.html" data-name="segmented control">Segmented control</a><a class="ds-link" href="../components/btn-group.html" data-name="button group">Button group</a><a class="ds-link" href="../components/toasts.html" data-name="toasts">Toasts</a><a class="ds-link" href="../components/alerts.html" data-name="alerts">Alerts</a><a class="ds-link" href="../components/stats.html" data-name="stat card">Stat card</a><a class="ds-link" href="../components/pills.html" data-name="status pills">Status pills</a><a class="ds-link" href="../components/badges.html" data-name="strength badges">Strength badges</a><a class="ds-link" href="../components/avatars.html" data-name="avatars">Avatars</a><a class="ds-link" href="../components/tooltips.html" data-name="tooltips">Tooltips</a><a class="ds-link" href="../components/toggles.html" data-name="switch / checkbox / radio">Switch / checkbox / radio</a><a class="ds-link" href="../components/crumbs.html" data-name="breadcrumbs">Breadcrumbs</a><a class="ds-link" href="../components/pager.html" data-name="pagination">Pagination</a><a class="ds-link" href="../components/activity.html" data-name="activity feed">Activity feed</a><a class="ds-link" href="../components/sheet.html" data-name="sheet / drawer">Sheet / drawer</a><a class="ds-link" href="../components/empty.html" data-name="empty state">Empty state</a><a class="ds-link" href="../components/focus.html" data-name="focus card">Focus card</a><a class="ds-link" href="../components/live.html" data-name="live indicator">Live indicator</a><a class="ds-link" href="../components/loaders.html" data-name="loaders skeleton spinner progress">Loaders</a><a class="ds-link" href="../components/category.html" data-name="category pills">Category pills</a><div class="ds-group">Combos</div><a class="ds-link" href="../components/header.html" data-name="page header combo title description breadcrumb">Page header</a></nav></aside><main class="ds-main">
+
+<div class="ds-page-head">
+  <a class="ds-back" href="../review.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"></path><path d="M12 19l-7-7 7-7"></path></svg>Review queue</a>
+  <div class="ds-eyebrow">Design review · Proposal viewer</div>
+  <div class="sc-title-row">
+    <h1 class="ds-h1">System details — zones &amp; staging</h1>
+    <span class="rev-chip"><span class="dot"></span>Needs a call</span>
+  </div>
+</div>
+
+<!-- ============================================================ Option A -->
+<section class="sc-section">
+  <h2 class="sc-option">Option A — Refined chart</h2>
+  <div class="sdz-canvas" id="sdz-a">
+    <h3 class="sdz-title">System Details <span class="sdz-title-sub">2 systems</span></h3>
+    <div class="mt-segmented is-brand is-stretch sdz-zones" role="tablist" aria-label="Systems in this option" data-sdz-seg="a">
+      <span class="mt-segmented-thumb" aria-hidden="true"></span>
+      <button class="mt-segmented-option is-active" role="tab" aria-selected="true" data-zone="downstairs" id="sdz-a-tab-downstairs">Downstairs</button>
+      <button class="mt-segmented-option" role="tab" aria-selected="false" data-zone="back" id="sdz-a-tab-back">Back of Home</button>
+    </div>
+    <div class="sdz-panel" role="tabpanel" data-sdz-panel="a">
+      <div class="sdz-chart">
+        <div class="sdz-chart-title" data-sdz="charttitle">How the Downstairs system holds 72°</div>
+        <div class="sdz-plot">
+          <svg viewBox="0 0 514 140" preserveAspectRatio="none" aria-hidden="true" data-sdz="wavebox"></svg>
+          <span class="sdz-y" style="top:11.4%">75°</span>
+          <span class="sdz-y is-set" style="top:50%">72°</span>
+          <span class="sdz-y" style="top:88.6%">69°</span>
+          <span class="sdz-swing is-cool" data-sdz="swing-cool"></span>
+          <span class="sdz-swing is-heat" data-sdz="swing-heat"></span>
+        </div>
+        <p class="sdz-cap" data-sdz="caption"></p>
+        <div class="sdz-legend" data-sdz="legend"></div>
+      </div>
+      <h4 class="sdz-equip-head"><span data-sdz="equiphead">Downstairs equipment</span><span class="sdz-equip-count" data-sdz="equipcount">3 items</span></h4>
+      <div data-sdz="equiplist"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ Option B -->
+<section class="sc-section">
+  <h2 class="sc-option">Option B — At-a-glance ratings</h2>
+  <div class="sdz-canvas" id="sdz-b">
+    <h3 class="sdz-title">System Details <span class="sdz-title-sub">2 systems</span></h3>
+    <div class="mt-tabbar sdz-zones">
+      <div class="mt-tabs" role="tablist" aria-label="Systems in this option" data-sdz-seg="b">
+        <button class="mt-tab is-active" role="tab" aria-selected="true" data-zone="downstairs" id="sdz-b-tab-downstairs">1. Downstairs</button>
+        <button class="mt-tab" role="tab" aria-selected="false" data-zone="back" id="sdz-b-tab-back">2. Back of Home</button>
+        <span class="mt-tab-underline" aria-hidden="true"></span>
+      </div>
+    </div>
+    <div class="sdz-panel" role="tabpanel" data-sdz-panel="b">
+      <h4 class="sdz-equip-head is-first"><span data-sdz="equiphead">Downstairs equipment</span><span class="sdz-equip-count" data-sdz="equipcount">3 items</span></h4>
+      <div data-sdz="equiplist"></div>
+      <h4 class="sdz-equip-head"><span data-sdz="perfhead">Downstairs system performance</span></h4>
+      <div class="sdz-glance" data-sdz="glance"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ Option C -->
+<section class="sc-section">
+  <h2 class="sc-option">Option C — Tabs + refined chart</h2>
+  <div class="sdz-canvas" id="sdz-c">
+    <h3 class="sdz-title">System Details</h3>
+    <div class="mt-tabbar sdz-zones">
+      <div class="mt-tabs" role="tablist" aria-label="Systems in this option" data-sdz-seg="c">
+        <button class="mt-tab is-active" role="tab" aria-selected="true" data-zone="downstairs" id="sdz-c-tab-downstairs">1. Downstairs</button>
+        <button class="mt-tab" role="tab" aria-selected="false" data-zone="back" id="sdz-c-tab-back">2. Back of Home</button>
+        <span class="mt-tab-underline" aria-hidden="true"></span>
+      </div>
+    </div>
+    <div class="sdz-panel" role="tabpanel" data-sdz-panel="c">
+      <h4 class="sdz-equip-head is-first"><span data-sdz="equiphead">Downstairs equipment</span><span class="sdz-equip-count" data-sdz="equipcount">3 items</span></h4>
+      <div data-sdz="equiplist"></div>
+      <div class="sdz-chart is-below">
+        <div class="sdz-chart-title" data-sdz="charttitle">How the Downstairs system holds 72°</div>
+        <div class="sdz-plot">
+          <svg viewBox="0 0 514 140" preserveAspectRatio="none" aria-hidden="true" data-sdz="wavebox"></svg>
+          <span class="sdz-y" style="top:11.4%">75°</span>
+          <span class="sdz-y is-set" style="top:50%">72°</span>
+          <span class="sdz-y" style="top:88.6%">69°</span>
+          <span class="sdz-swing is-cool" data-sdz="swing-cool"></span>
+          <span class="sdz-swing is-heat" data-sdz="swing-heat"></span>
+        </div>
+        <p class="sdz-cap" data-sdz="caption"></p>
+        <div class="sdz-legend" data-sdz="legend"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+<script src="../assets/shell.js"></script>
+<script>
+  // ---------------------------------------------------------------- data
+  // Seed data mirrors the live proposal screenshots: Downstairs is a two-stage
+  // AC + two-stage furnace combo; Back of Home is a two-stage heat pump with a
+  // single-stage air handler — so both demos genuinely change on switch.
+  const ZONES = {
+    downstairs: {
+      key: 'downstairs', name: 'Downstairs',
+      series: [
+        { kind: 'sine', amp: 0.5, period: 160, phase: 0,   tone: 'cool', label: 'Two Stage Central AC', swing: '±0.5°' },
+        { kind: 'sine', amp: 1,   period: 230, phase: 3.1, tone: 'heat', label: 'Two Stage Furnace',    swing: '±1°' }
+      ],
+      caption: 'Cooling and heating both run at a low, steady speed — holding 72° within about a degree, year-round, while using less energy than an on/off system.',
+      ratings: [
+        { label: 'Cooling steadiness', icon: 'cool', n: 4, tone: 'green', cap: 'Great' },
+        { label: 'Heating steadiness', icon: 'heat', n: 4, tone: 'green', cap: 'Great' },
+        { label: 'Total efficiency',   icon: 'eff', n: 3, tone: 'green', cap: 'Good' }
+      ],
+      equipment: [
+        { img: 'ac-26tpa8',          role: 'Air conditioner', name: 'Carrier Performance 26TPA8', spec: 'Two-stage · SEER2 16.5 · EER2 13' },
+        { img: 'coil-v',             role: 'Evaporator coil', name: 'Carrier V Coil with Vertex', spec: 'Matched to the 26TPA8' },
+        { img: 'furnace-infinity80', role: 'Gas furnace',     name: 'Carrier Infinity 80',        spec: 'Two-stage · AFUE 80%' }
+      ]
+    },
+    back: {
+      key: 'back', name: 'Back of Home',
+      series: [
+        { kind: 'sine', amp: 0.5, period: 160, phase: 0, tone: 'cool', label: 'Two Stage Central AC',    swing: '±0.5°' },
+        { kind: 'saw',  amp: 3,   period: 200, phase: 0, tone: 'heat', label: 'Single Stage Air Handler', swing: '±3°' }
+      ],
+      caption: 'Cooling runs at a low, steady speed — within about ±0.5°, using less energy than an on/off system. Heating is on-or-off, so it can drift up to ±3° between cycles.',
+      ratings: [
+        { label: 'Cooling steadiness', icon: 'cool', n: 4, tone: 'green', cap: 'Great' },
+        { label: 'Heating steadiness', icon: 'heat', n: 2, tone: 'amber', cap: 'Fair' },
+        { label: 'Total efficiency',   icon: 'eff', n: 4, tone: 'green', cap: 'Great' }
+      ],
+      equipment: [
+        { img: 'hp-27tpa8',      role: 'Heat pump · cools + heats', name: 'Carrier Performance 27TPA8', spec: 'Two-stage · SEER2 17.5 · HSPF2 8.1' },
+        { img: 'airhandler-ft5', role: 'Air handler', name: 'Carrier Performance FT5',         spec: 'Single-stage · FT5ANXB24L00' },
+        { img: 'ecobee-premium', role: 'Thermostat',  name: 'ecobee Smart Thermostat Premium', spec: 'With InteliSense technology' }
+      ]
+    }
+  };
+  const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ---------------------------------------------------------------- waves (Option A)
+  // viewBox 514×140 · 18px per °F · 72° midline at y=70 · waves span x 6→460,
+  // ending exactly on the end dot so line and dot stay connected.
+  const X0 = 6, X1 = 460, MID = 70, PXDEG = 18;
+  function waveY(s, x) {
+    const t = ((x - X0) / s.period + s.phase / (2 * Math.PI)) % 1;
+    if (s.kind === 'sine') return MID - s.amp * PXDEG * Math.sin(2 * Math.PI * t);
+    // rounded sawtooth: slow drift down (temperature falling), quick pull-back up
+    const d = 0.72; // drift fraction of the period
+    const f = (t < d) ? Math.cos(Math.PI * t / d) : -Math.cos(Math.PI * (t - d) / (1 - d));
+    return MID - s.amp * PXDEG * f;
+  }
+  function buildWave(svg, zone) {
+    let inner = '<line class="sdz-grid" x1="0" y1="16" x2="514" y2="16"></line>'
+              + '<line class="sdz-grid" x1="0" y1="124" x2="514" y2="124"></line>'
+              + '<line class="sdz-target" x1="0" y1="70" x2="514" y2="70"></line>';
+    zone.series.forEach(s => {
+      let d = '';
+      for (let x = X0; x < X1; x += 4) d += (x === X0 ? 'M' : 'L') + x.toFixed(1) + ',' + waveY(s, x).toFixed(1);
+      d += 'L' + X1 + ',' + waveY(s, X1).toFixed(1);
+      const draw = REDUCED ? '' : ' draw';
+      inner += '<path class="sdz-line is-' + s.tone + draw + '" pathLength="1" d="' + d + '"></path>';
+      inner += '<circle class="sdz-end is-' + s.tone + draw + '" cx="' + X1 + '" cy="' + waveY(s, X1).toFixed(1) + '" r="4.5"></circle>';
+    });
+    svg.innerHTML = inner;
+  }
+
+  // ---------------------------------------------------------------- render
+  function el(root, key) { return root.querySelector('[data-sdz="' + key + '"]'); }
+  // legend mode icons (inline Lucide paths — snowflake / flame)
+  const MODE_ICONS = {
+    cool: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="2" y1="12" x2="22" y2="12"></line><line x1="12" y1="2" x2="12" y2="22"></line><path d="m20 16-4-4 4-4"></path><path d="m4 8 4 4-4 4"></path><path d="m16 4-4 4-4-4"></path><path d="m8 20 4-4 4 4"></path></svg>',
+    heat: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>',
+    eff: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"></path></svg>'
+  };
+  function meterRow(r) {
+    let bars = '';
+    for (let i = 0; i < 5; i++) bars += '<i class="' + (i < r.n ? 'on' : '') + '"></i>';
+    return '<div class="sdz-rate">'
+      + '<span class="sdz-rate-label"><i class="sdz-rate-ico is-' + r.icon + '" aria-hidden="true">' + MODE_ICONS[r.icon] + '</i>' + r.label + '</span>'
+      + '<span class="sdz-meter ' + r.tone + '" role="img" aria-label="' + r.n + ' out of 5">' + bars + '</span>'
+      + '<span class="sdz-rate-cap">' + r.cap + '</span></div>';
+  }
+  function equipRow(item) {
+    return '<div class="sdz-item">'
+      + '<span class="sdz-item-thumb"><img src="../assets/products/' + item.img + '.png" alt="' + item.name + '"></span>'
+      + '<div class="sdz-item-main">'
+      + '<div class="sdz-item-role">' + item.role + '</div>'
+      + '<div class="sdz-item-name">' + item.name + '</div>'
+      + '<div class="sdz-item-spec">' + item.spec + '</div>'
+      + '</div><button class="sdz-item-link" type="button">Details</button></div>';
+  }
+  function renderShared(panel, zone) {
+    el(panel, 'equiphead').textContent = zone.name + ' equipment';
+    el(panel, 'equipcount').textContent = zone.equipment.length + ' items';
+    el(panel, 'equiplist').innerHTML = zone.equipment.map(equipRow).join('');
+  }
+  function renderA(panel, zone) {
+    el(panel, 'charttitle').textContent = 'How the ' + zone.name + ' system holds 72°';
+    buildWave(el(panel, 'wavebox'), zone);
+    const cool = zone.series.find(s => s.tone === 'cool'), heat = zone.series.find(s => s.tone === 'heat');
+    const sc = el(panel, 'swing-cool'), sh = el(panel, 'swing-heat');
+    // pin each swing label beside its series' end dot (viewBox y → % of plot height),
+    // then push the pair apart if the line ends land too close to read separately
+    let tc = waveY(cool, X1) / 140 * 100, th = waveY(heat, X1) / 140 * 100;
+    const MIN = 11;
+    if (Math.abs(tc - th) < MIN) {
+      const mid = (tc + th) / 2, dir = tc <= th ? 1 : -1;
+      tc = mid - dir * MIN / 2; th = mid + dir * MIN / 2;
+    }
+    sc.textContent = cool.swing; sc.style.top = Math.min(95, Math.max(5, tc)) + '%';
+    sh.textContent = heat.swing; sh.style.top = Math.min(95, Math.max(5, th)) + '%';
+    el(panel, 'legend').innerHTML = zone.series.map(s => '<span><i class="is-' + s.tone + '" aria-hidden="true">' + MODE_ICONS[s.tone] + '</i>' + s.label + '</span>').join('');
+    el(panel, 'caption').textContent = zone.caption;
+    renderShared(panel, zone);
+  }
+  function renderB(panel, zone) {
+    el(panel, 'perfhead').textContent = zone.name + ' system performance';
+    el(panel, 'glance').innerHTML = zone.ratings.map(meterRow).join('');
+    renderShared(panel, zone);
+  }
+
+  // ---------------------------------------------------------------- wiring
+  // Segmented init mirrors the kit contract: measure offsetLeft/offsetWidth,
+  // drive the thumb, add .is-ready a frame later so there is no slide-in.
+  function initDemo(id, render) {
+    const seg = document.querySelector('[data-sdz-seg="' + id + '"]');
+    const panel = document.querySelector('[data-sdz-panel="' + id + '"]');
+    const thumb = seg.querySelector('.mt-segmented-thumb');       // segmented mode (Option A)
+    const underline = seg.querySelector('.mt-tab-underline');     // tab mode (Option B)
+    const opts = [...seg.querySelectorAll('.mt-segmented-option, .mt-tab')];
+    let active = opts[0];
+
+    function moveThumb(opt) {
+      if (thumb) {
+        thumb.style.width = opt.offsetWidth + 'px';
+        thumb.style.transform = 'translateX(' + opt.offsetLeft + 'px)';
+      }
+      if (underline) {
+        underline.style.left = opt.offsetLeft + 'px';
+        underline.style.width = opt.offsetWidth + 'px';
+      }
+      opts.forEach(o => {
+        o.classList.toggle('is-active', o === opt);
+        o.setAttribute('aria-selected', o === opt ? 'true' : 'false');
+        o.tabIndex = o === opt ? 0 : -1;
+      });
+    }
+    function select(opt, focus) {
+      if (opt === active) return;
+      active = opt;
+      moveThumb(opt);
+      panel.setAttribute('aria-labelledby', opt.id);
+      const zone = ZONES[opt.dataset.zone];
+      if (focus) opt.focus();
+      if (REDUCED) { render(panel, zone); return; }
+      panel.classList.add('is-leaving');
+      setTimeout(() => { render(panel, zone); panel.classList.remove('is-leaving'); }, 130);
+    }
+    opts.forEach(o => o.addEventListener('click', () => select(o)));
+    seg.addEventListener('keydown', e => {
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+      e.preventDefault();
+      const i = opts.indexOf(active), d = e.key === 'ArrowRight' ? 1 : -1;
+      select(opts[(i + d + opts.length) % opts.length], true);
+    });
+
+    panel.setAttribute('aria-labelledby', active.id);
+    render(panel, ZONES[active.dataset.zone]);
+    moveThumb(active);
+    // kit contract: segmented gates the thumb transition via .is-ready on the
+    // CONTAINER (.mt-segmented.is-ready .mt-segmented-thumb), but tabs gate it
+    // on the UNDERLINE itself (.mt-tab-underline.is-ready)
+    requestAnimationFrame(() => (underline || seg).classList.add('is-ready'));
+    window.addEventListener('resize', () => moveThumb(active));
+    // Geist loads async (display=swap) — re-measure once the real font is in
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => moveThumb(active));
+  }
+
+  initDemo('a', renderA);
+  initDemo('b', renderB);
+  initDemo('c', renderA);
+</script>
+</body></html>
