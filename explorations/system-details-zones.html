@@ -126,6 +126,32 @@
   .sdz-item-link { flex-shrink: 0; border: 0; background: transparent; padding: 14px 0 14px 14px; margin: -14px 0 -14px -14px; font-family: var(--font-sans); font-size: 12.5px; font-weight: var(--fw-medium); color: var(--brand-600); text-decoration: none; cursor: pointer; }
   .sdz-item-link:hover { color: var(--brand-700); text-decoration: underline; }
 
+  /* ===== Edge case — multi-zone home in a phone frame ===== */
+  .sc-edge-title { font-size: 17px; font-weight: var(--fw-semibold); letter-spacing: -0.014em; color: var(--ink-900); margin: 40px 0 6px; }
+  .sc-edge-lede { font-size: 14px; line-height: 1.55; color: var(--ink-600); max-width: 58ch; margin: 0 0 20px; }
+  .sc-edge-stage { display: flex; justify-content: flex-start; }
+  /* Phone screen hosts the same panel machinery as the desktop cards, just at a
+     tighter reading width — the tab bar overflows and scrolls, the chart reflows. */
+  .sdz-phone { padding: 16px 0 20px; overflow-y: auto; }
+  .sdz-phone .sdz-title { padding: 0 16px; margin-bottom: 14px; }
+  /* .is-scroll already sets compact 14px tabs; drop the bar's own inset so the
+     first tab lines up with the screen edge, and give it breathing room L/R */
+  .sdz-phone .mt-tabbar.is-scroll { padding: 0 16px; }
+  /* desktop cards space the panel via the bar's 18px margin; in the phone that
+     margin would inflate the .mt-scroll-fade wrapper (pushing fades/arrows off
+     the bar) — the panel's own top padding provides the gap instead */
+  .sdz-phone .mt-tabbar.sdz-zones { margin-bottom: 0; }
+  .sdz-phone .mt-scroll-fade::after { right: 0; }
+  /* rhythm: bar → head = 24px pad; list end → chart = 13px item pad + 10px
+     margin ≈ the same optical gap (the desktop 18px reads too far here) */
+  .sdz-phone .sdz-panel { padding: 24px 16px 0; }
+  .sdz-phone .sdz-equip-head.is-first { margin-top: 0; }
+  .sdz-phone .sdz-chart.is-below { margin-top: 10px; }
+  .sdz-phone .sdz-chart { padding: 14px 14px 14px; }
+  .sdz-phone .sdz-plot { height: 118px; padding: 0 44px 0 30px; }
+  .sdz-phone .sdz-plot svg { inset: 0 44px 0 30px; width: calc(100% - 74px); }
+  .sdz-phone .sdz-cap { font-size: 14px; }
+
   @media (prefers-reduced-motion: reduce) {
     .sdz-panel, .sdz-panel.is-leaving { transition: none; transform: none; opacity: 1; }
     .sdz-line.draw { animation: none; stroke-dasharray: none; stroke-dashoffset: 0; }
@@ -144,7 +170,7 @@
     .sdz-item-thumb { width: 44px; height: 44px; }
     .sdz-zones .mt-tab { padding: 0 14px; }
   }
-</style></head><body class="ds-body"><aside class="ds-nav"><div class="ds-brand"><a class="ds-logo" href="../index.html" aria-label="Mantel — UI Kit home"><img src="../assets/mantel-logo.svg" alt="Mantel"></a><span class="ds-ver">UI Kit · v2.3.4</span></div><input class="ds-search" type="search" placeholder="Search…" aria-label="Search components"><nav class="ds-links"><a class="ds-link" href="../index.html" data-name="home dashboard overview">Overview</a><a class="ds-link" href="../changelog.html" data-name="changelog releases versions history">Changelog</a><div class="ds-group">Design review</div><a class="ds-link is-active" href="../review.html" data-name="review queue">Review queue<span class="ds-wip" title="Items awaiting review">2</span></a><div class="ds-group">Foundations</div><a class="ds-link" href="../components/type.html" data-name="typography">Typography</a><a class="ds-link" href="../components/color.html" data-name="color">Color</a><a class="ds-link" href="../components/spacing.html" data-name="spacing">Spacing</a><a class="ds-link" href="../components/radius.html" data-name="radius">Radius</a><a class="ds-link" href="../components/shadow.html" data-name="shadow">Shadow</a><a class="ds-link" href="../components/motion.html" data-name="motion">Motion</a><div class="ds-group">Components</div><a class="ds-link" href="../components/buttons.html" data-name="buttons">Buttons</a><a class="ds-link" href="../components/form-inputs.html" data-name="form inputs">Form inputs</a><a class="ds-link" href="../components/stepper.html" data-name="stepper number quantity">Stepper</a><a class="ds-link" href="../components/inputs.html" data-name="search &amp; select multi-select people picker combobox token chip">Search &amp; select</a><a class="ds-link" href="../components/data-table.html" data-name="table">Table</a><a class="ds-link" href="../components/modal.html" data-name="modal">Modal</a><a class="ds-link" href="../components/menu.html" data-name="dropdown menu">Dropdown menu</a><a class="ds-link" href="../components/tabs.html" data-name="tabs">Tabs</a><a class="ds-link" href="../components/segmented.html" data-name="segmented control">Segmented control</a><a class="ds-link" href="../components/btn-group.html" data-name="button group">Button group</a><a class="ds-link" href="../components/toasts.html" data-name="toasts">Toasts</a><a class="ds-link" href="../components/alerts.html" data-name="alerts">Alerts</a><a class="ds-link" href="../components/stats.html" data-name="stat card">Stat card</a><a class="ds-link" href="../components/pills.html" data-name="status pills">Status pills</a><a class="ds-link" href="../components/badges.html" data-name="strength badges">Strength badges</a><a class="ds-link" href="../components/avatars.html" data-name="avatars">Avatars</a><a class="ds-link" href="../components/tooltips.html" data-name="tooltips">Tooltips</a><a class="ds-link" href="../components/toggles.html" data-name="switch / checkbox / radio">Switch / checkbox / radio</a><a class="ds-link" href="../components/crumbs.html" data-name="breadcrumbs">Breadcrumbs</a><a class="ds-link" href="../components/pager.html" data-name="pagination">Pagination</a><a class="ds-link" href="../components/activity.html" data-name="activity feed">Activity feed</a><a class="ds-link" href="../components/sheet.html" data-name="sheet / drawer">Sheet / drawer</a><a class="ds-link" href="../components/empty.html" data-name="empty state">Empty state</a><a class="ds-link" href="../components/focus.html" data-name="focus card">Focus card</a><a class="ds-link" href="../components/live.html" data-name="live indicator">Live indicator</a><a class="ds-link" href="../components/loaders.html" data-name="loaders skeleton spinner progress">Loaders</a><a class="ds-link" href="../components/category.html" data-name="category pills">Category pills</a><div class="ds-group">Combos</div><a class="ds-link" href="../components/header.html" data-name="page header combo title description breadcrumb">Page header</a></nav></aside><main class="ds-main">
+</style></head><body class="ds-body"><aside class="ds-nav"><div class="ds-brand"><a class="ds-logo" href="../index.html" aria-label="Mantel — UI Kit home"><img src="../assets/mantel-logo.svg" alt="Mantel"></a><span class="ds-ver">UI Kit · v2.3.5</span></div><input class="ds-search" type="search" placeholder="Search…" aria-label="Search components"><nav class="ds-links"><a class="ds-link" href="../index.html" data-name="home dashboard overview">Overview</a><a class="ds-link" href="../changelog.html" data-name="changelog releases versions history">Changelog</a><div class="ds-group">Design review</div><a class="ds-link is-active" href="../review.html" data-name="review queue">Review queue<span class="ds-wip" title="Items awaiting review">2</span></a><div class="ds-group">Foundations</div><a class="ds-link" href="../components/type.html" data-name="typography">Typography</a><a class="ds-link" href="../components/color.html" data-name="color">Color</a><a class="ds-link" href="../components/spacing.html" data-name="spacing">Spacing</a><a class="ds-link" href="../components/radius.html" data-name="radius">Radius</a><a class="ds-link" href="../components/shadow.html" data-name="shadow">Shadow</a><a class="ds-link" href="../components/motion.html" data-name="motion">Motion</a><div class="ds-group">Components</div><a class="ds-link" href="../components/buttons.html" data-name="buttons">Buttons</a><a class="ds-link" href="../components/form-inputs.html" data-name="form inputs">Form inputs</a><a class="ds-link" href="../components/stepper.html" data-name="stepper number quantity">Stepper</a><a class="ds-link" href="../components/inputs.html" data-name="search &amp; select multi-select people picker combobox token chip">Search &amp; select</a><a class="ds-link" href="../components/data-table.html" data-name="table">Table</a><a class="ds-link" href="../components/modal.html" data-name="modal">Modal</a><a class="ds-link" href="../components/menu.html" data-name="dropdown menu">Dropdown menu</a><a class="ds-link" href="../components/tabs.html" data-name="tabs">Tabs</a><a class="ds-link" href="../components/segmented.html" data-name="segmented control">Segmented control</a><a class="ds-link" href="../components/btn-group.html" data-name="button group">Button group</a><a class="ds-link" href="../components/toasts.html" data-name="toasts">Toasts</a><a class="ds-link" href="../components/alerts.html" data-name="alerts">Alerts</a><a class="ds-link" href="../components/stats.html" data-name="stat card">Stat card</a><a class="ds-link" href="../components/pills.html" data-name="status pills">Status pills</a><a class="ds-link" href="../components/badges.html" data-name="strength badges">Strength badges</a><a class="ds-link" href="../components/avatars.html" data-name="avatars">Avatars</a><a class="ds-link" href="../components/tooltips.html" data-name="tooltips">Tooltips</a><a class="ds-link" href="../components/toggles.html" data-name="switch / checkbox / radio">Switch / checkbox / radio</a><a class="ds-link" href="../components/crumbs.html" data-name="breadcrumbs">Breadcrumbs</a><a class="ds-link" href="../components/pager.html" data-name="pagination">Pagination</a><a class="ds-link" href="../components/activity.html" data-name="activity feed">Activity feed</a><a class="ds-link" href="../components/sheet.html" data-name="sheet / drawer">Sheet / drawer</a><a class="ds-link" href="../components/empty.html" data-name="empty state">Empty state</a><a class="ds-link" href="../components/focus.html" data-name="focus card">Focus card</a><a class="ds-link" href="../components/live.html" data-name="live indicator">Live indicator</a><a class="ds-link" href="../components/loaders.html" data-name="loaders skeleton spinner progress">Loaders</a><a class="ds-link" href="../components/category.html" data-name="category pills">Category pills</a><div class="ds-group">Combos</div><a class="ds-link" href="../components/header.html" data-name="page header combo title description breadcrumb">Page header</a></nav></aside><main class="ds-main">
 
 <div class="ds-page-head">
   <a class="ds-back" href="../review.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"></path><path d="M12 19l-7-7 7-7"></path></svg>Review queue</a>
@@ -236,9 +262,63 @@
       </div>
     </div>
   </div>
+
+  <!-- Edge case: a house with many zones. The numbered tabs overflow the width,
+       so the bar scrolls horizontally (the DS .is-scroll pattern). Shown in a
+       390px phone frame — the true worst case for tab count on a proposal. -->
+  <h3 class="sc-edge-title">Edge case — a multi-zone home on mobile</h3>
+  <p class="sc-edge-lede">Four zones don't fit the width. The bar scrolls sideways (compact 14px tabs, hidden scrollbar, edge fades) and the underline keeps tracking the active tab. Edge arrows page the bar for mouse users and hide at each end of travel; swiping the bar never nudges it vertically. The header count says how many systems there are before you scroll.</p>
+  <div class="sc-edge-stage">
+    <div class="device">
+      <div class="device-bar">
+        <span class="time">9:41</span>
+        <span class="island"></span>
+        <span class="status">
+          <svg width="18" height="11" viewBox="0 0 18 11" fill="currentColor" aria-hidden="true"><rect x="0" y="7" width="3" height="4" rx="1"></rect><rect x="5" y="5" width="3" height="6" rx="1"></rect><rect x="10" y="2.5" width="3" height="8.5" rx="1"></rect><rect x="15" y="0" width="3" height="11" rx="1"></rect></svg>
+          <svg width="16" height="12" viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M2 6.5a15 15 0 0 1 20 0"></path><path d="M6 11a9 9 0 0 1 12 0"></path><path d="M12 15.4h.01"></path></svg>
+          <svg width="24" height="12" viewBox="0 0 24 12" fill="none" aria-hidden="true"><rect x="0.5" y="0.5" width="20" height="11" rx="3" stroke="currentColor"></rect><rect x="2" y="2" width="15" height="8" rx="1.5" fill="currentColor"></rect><rect x="22" y="4" width="1.6" height="4" rx="0.8" fill="currentColor"></rect></svg>
+        </span>
+      </div>
+      <div class="device-screen sdz-phone">
+        <h3 class="sdz-title">System Details <span class="sdz-title-sub">4 systems</span></h3>
+        <div class="mt-scroll-fade">
+          <button class="mt-scroll-btn is-prev is-hidden" type="button" aria-label="Scroll tabs left"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></button>
+          <button class="mt-scroll-btn is-next" type="button" aria-label="Scroll tabs right"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg></button>
+          <div class="mt-tabbar is-scroll is-sm sdz-zones">
+            <div class="mt-tabs" role="tablist" aria-label="Systems in this option" data-sdz-seg="edge">
+              <button class="mt-tab is-active" role="tab" aria-selected="true"  data-zone="downstairs" id="sdz-edge-tab-downstairs">1. Downstairs</button>
+              <button class="mt-tab"           role="tab" aria-selected="false" data-zone="back"       id="sdz-edge-tab-back">2. Back of Home</button>
+              <button class="mt-tab"           role="tab" aria-selected="false" data-zone="upstairs"   id="sdz-edge-tab-upstairs">3. Upstairs</button>
+              <button class="mt-tab"           role="tab" aria-selected="false" data-zone="primary"    id="sdz-edge-tab-primary">4. Primary Suite</button>
+              <span class="mt-tab-underline" aria-hidden="true"></span>
+            </div>
+          </div>
+        </div>
+        <div class="sdz-panel" role="tabpanel" data-sdz-panel="edge">
+          <h4 class="sdz-equip-head is-first"><span data-sdz="equiphead">Downstairs equipment</span><span class="sdz-equip-count" data-sdz="equipcount">3 items</span></h4>
+          <div data-sdz="equiplist"></div>
+          <div class="sdz-chart is-below">
+            <div class="sdz-chart-title" data-sdz="charttitle">How the Downstairs system holds your set temperature</div>
+            <div class="sdz-plot">
+              <svg viewBox="0 0 514 140" preserveAspectRatio="none" aria-hidden="true" data-sdz="wavebox"></svg>
+              <span class="sdz-y" style="top:11.4%">75°</span>
+              <span class="sdz-y is-set" style="top:50%">72°</span>
+              <span class="sdz-y" style="top:88.6%">69°</span>
+              <span class="sdz-swing is-cool" data-sdz="swing-cool"></span>
+              <span class="sdz-swing is-heat" data-sdz="swing-heat"></span>
+            </div>
+            <p class="sdz-cap" data-sdz="caption"></p>
+            <div class="sdz-legend" data-sdz="legend"></div>
+          </div>
+        </div>
+      </div>
+      <div class="device-home"></div>
+    </div>
+  </div>
 </section>
 
 </main>
+<script src="../assets/kit.js"></script>
 <script src="../assets/shell.js"></script>
 <script>
   // ---------------------------------------------------------------- data
@@ -283,6 +363,11 @@
       ]
     }
   };
+  // Edge-case demo only: two more zones so the tab bar overflows. Content is
+  // intentionally cloned from downstairs/back — this demo showcases the tab bar's
+  // horizontal-scroll behaviour at 4 tabs, not four distinct systems.
+  ZONES.upstairs = Object.assign({}, ZONES.downstairs, { key: 'upstairs', name: 'Upstairs' });
+  ZONES.primary  = Object.assign({}, ZONES.back,       { key: 'primary',  name: 'Primary Suite' });
   const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // ---------------------------------------------------------------- waves (Option A)
@@ -427,5 +512,8 @@
   initDemo('a', renderA);
   initDemo('b', renderB);
   initDemo('c', renderA);
+  // Edge-case phone demo: same underline + panel wiring as the cards. kit.js
+  // handles the horizontal scroll-fade off .mt-tabbar.is-scroll independently.
+  initDemo('edge', renderA);
 </script>
 </body></html>

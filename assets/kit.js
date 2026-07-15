@@ -337,14 +337,33 @@
   })();
 
   // Mobile tab bar (.mt-tabbar.is-scroll) — drop the right-edge fade once
-  // scrolled to the end so it doesn't sit over the last tab's label.
+  // scrolled to the end so it doesn't sit over the last tab's label. Mirrors a
+  // left-edge fade (.is-start) once scrolled away from the start. Optional edge
+  // arrows (.mt-scroll-btn.is-prev / .is-next inside the .mt-scroll-fade wrap)
+  // page the bar by ~60% width and hide at their end of travel.
   (function () {
     function sync(bar) {
       var fade = bar.closest('.mt-scroll-fade');
       if (!fade) return;
-      fade.classList.toggle('is-end', bar.scrollLeft + bar.clientWidth >= bar.scrollWidth - 1);
+      var atStart = bar.scrollLeft <= 1;
+      var atEnd = bar.scrollLeft + bar.clientWidth >= bar.scrollWidth - 1;
+      var fits = bar.scrollWidth <= bar.clientWidth + 1;
+      fade.classList.toggle('is-start', atStart);
+      fade.classList.toggle('is-end', atEnd);
+      var prev = fade.querySelector('.mt-scroll-btn.is-prev');
+      var next = fade.querySelector('.mt-scroll-btn.is-next');
+      if (prev) prev.classList.toggle('is-hidden', atStart || fits);
+      if (next) next.classList.toggle('is-hidden', atEnd || fits);
     }
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     document.querySelectorAll('.mt-tabbar.is-scroll').forEach(function (bar) {
+      var fade = bar.closest('.mt-scroll-fade');
+      if (fade) fade.querySelectorAll('.mt-scroll-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var d = btn.classList.contains('is-prev') ? -1 : 1;
+          bar.scrollBy({ left: d * bar.clientWidth * 0.6, behavior: reduced ? 'auto' : 'smooth' });
+        });
+      });
       bar.addEventListener('scroll', function () { sync(bar); }, { passive: true });
       window.addEventListener('resize', function () { sync(bar); });
       sync(bar);
