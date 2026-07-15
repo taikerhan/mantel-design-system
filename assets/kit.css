@@ -1284,6 +1284,89 @@ a:hover { color: var(--brand-700); text-decoration: underline; text-underline-of
 }
 
 /* =========================================================================
+   Multi-select — .mt-multiselect
+   An avatar-token field that opens a searchable checklist popover. The field's
+   "tokens" are an overlapping avatar stack (max 8, then +N) plus a right-aligned
+   count; the inline input IS the filter (no in-menu search box). Checklist rows
+   are the kit checkbox (label.mt-check.mt-multiselect-row) so Space-toggle and
+   focus come free. Driven by kit.js off [data-mt-multiselect].
+   Promoted from the Review queue — User multi-select, Option 2C.
+   ========================================================================= */
+.mt-multiselect { position: relative; }
+
+/* avatar token — maps onto the --av-* tones (same as the avatars page) */
+.mt-multiselect-avatar {
+  border-radius: var(--radius-full);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-weight: var(--fw-semibold); flex-shrink: 0;
+}
+.mt-multiselect-avatar.is-24 { width: 24px; height: 24px; font-size: 10.5px; }
+.mt-multiselect-avatar.is-26 { width: 26px; height: 26px; font-size: 10.5px; }
+.mt-multiselect-avatar.t1 { background: var(--av-1-bg); color: var(--av-1-fg); }
+.mt-multiselect-avatar.t2 { background: var(--av-2-bg); color: var(--av-2-fg); }
+.mt-multiselect-avatar.t3 { background: var(--av-3-bg); color: var(--av-3-fg); }
+.mt-multiselect-avatar.t4 { background: var(--av-4-bg); color: var(--av-4-fg); }
+.mt-multiselect-avatar.t5 { background: var(--av-5-bg); color: var(--av-5-fg); }
+.mt-multiselect-avatar.t6 { background: var(--av-6-bg); color: var(--av-6-fg); }
+
+/* the token field — avatar stack + count + inline filter input */
+.mt-multiselect-field {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+  padding: 5px 6px; min-height: 40px; position: relative;
+  background: var(--surface); border: 1px solid var(--ink-400);
+  border-radius: var(--radius-md); cursor: text;
+  transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+.mt-multiselect-field:hover { border-color: var(--ink-500); }
+.mt-multiselect-field.is-focus { border-color: var(--brand-600); box-shadow: var(--shadow-focus); }
+.mt-multiselect-field input {
+  flex: 1; min-width: 40px; border: 0; outline: 0; height: 28px; background: transparent;
+  font-family: var(--font-sans); font-size: 14px; color: var(--ink-900);
+}
+.mt-multiselect-field input::placeholder { color: var(--ink-400); }
+/* the field carries the focus ring; suppress the global :focus-visible ring on the inline input */
+.mt-multiselect-field input:focus-visible { box-shadow: none; }
+
+/* overlapping avatar stack + "N customers" count pinned to the field's right edge */
+.mt-multiselect-stack { display: inline-flex; }
+.mt-multiselect-stack .mt-multiselect-avatar { box-shadow: 0 0 0 2px var(--surface); }
+.mt-multiselect-stack .mt-multiselect-avatar + .mt-multiselect-avatar { margin-left: -8px; }
+.mt-multiselect-stack .is-more { background: var(--ink-100); color: var(--ink-700); font-variant-numeric: tabular-nums; }
+.mt-multiselect-count {
+  font-size: 14px; font-weight: var(--fw-medium); color: var(--ink-900);
+  font-variant-numeric: tabular-nums; order: 9; margin-left: auto; margin-right: 4px;
+}
+
+/* floating popover */
+.mt-multiselect-menu {
+  position: absolute; top: calc(100% + 6px); left: 0; right: 0;
+  background: var(--surface); border: 1px solid var(--ink-200);
+  border-radius: var(--radius-lg); box-shadow: var(--shadow-menu);
+  padding: 6px; z-index: 6; scroll-margin-bottom: 16px;
+}
+.mt-multiselect-scroll { max-height: 284px; overflow-y: auto; overscroll-behavior: contain; } /* ~7.5 × 36px rows */
+.mt-multiselect-empty { padding: 12px 10px; font-size: 14px; color: var(--ink-500); }
+
+/* checklist row — IS the kit checkbox so Space-toggle + focus hold */
+.mt-check.mt-multiselect-row { display: flex; align-items: center; height: 36px; padding: 0 8px; border-radius: var(--radius-md); cursor: pointer; }
+.mt-check.mt-multiselect-row + .mt-check.mt-multiselect-row { margin-top: 2px; }
+.mt-multiselect-row:hover { background: var(--ink-50); }
+.mt-multiselect-row.is-active { background: var(--ink-100); }          /* keyboard highlight */
+.mt-multiselect-row.is-selected,
+.mt-multiselect-row.is-selected:hover { background: var(--brand-50); } /* selected tint */
+.mt-multiselect-row .mt-check-label b { font-weight: var(--fw-bold); } /* search-match highlight */
+
+/* footer — count + clear all */
+.mt-multiselect-foot { display: flex; align-items: center; justify-content: space-between; padding: 8px 8px 4px; }
+.mt-multiselect-foot .n { font-size: 13px; color: var(--ink-500); font-variant-numeric: tabular-nums; }
+.mt-multiselect-clear {
+  border: 0; background: transparent; padding: 4px 8px; border-radius: var(--radius-md);
+  font-family: var(--font-sans); font-size: 13px; font-weight: var(--fw-semibold); color: var(--brand-600); cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+.mt-multiselect-clear:hover { background: var(--brand-50); color: var(--brand-700); }
+
+/* =========================================================================
    Breadcrumbs
    ========================================================================= */
 

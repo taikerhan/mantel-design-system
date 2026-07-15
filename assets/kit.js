@@ -530,3 +530,135 @@
       sync();
     });
   })();
+
+  /* Multi-select — [data-mt-multiselect]: an avatar-token field that opens a
+     searchable checklist popover. Options come from a <script type="application/json">
+     inside the mount: [{ "name": "Al Closemaster", "tone": 1 }, …] (tone 1–6 → --av-*).
+     Optional data-noun (default "customer") labels the count + placeholder.
+     Keyboard: ArrowDown opens / moves, ArrowUp moves, Enter toggles, Escape closes,
+     Backspace on empty input removes the last selected, Space toggles via the native
+     checkbox. Promoted from the Review queue — Option 2C. */
+  (function () {
+    var BOXCHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>';
+
+    function initials(name) {
+      var parts = name.trim().split(/\s+/);
+      return (parts[0][0] + (parts[1] ? parts[1][0] : '')).toUpperCase();
+    }
+    function avatar(p, size) {
+      return '<span class="mt-multiselect-avatar is-' + size + ' t' + p.tone + '">' + initials(p.name) + '</span>';
+    }
+    function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+    function highlight(name, q) {
+      if (!q) return esc(name);
+      var i = name.toLowerCase().indexOf(q.toLowerCase());
+      if (i < 0) return esc(name);
+      return esc(name.slice(0, i)) + '<b>' + esc(name.slice(i, i + q.length)) + '</b>' + esc(name.slice(i + q.length));
+    }
+
+    function init(el) {
+      var roster;
+      try {
+        var seed = el.querySelector('script[type="application/json"]');
+        roster = seed ? JSON.parse(seed.textContent) : [];
+      } catch (err) { roster = []; }
+      if (!roster.length) return;
+      var noun = el.getAttribute('data-noun') || 'customer';
+
+      var st = { sel: [], q: '', open: false, hi: 0, order: roster.slice(), wasOpen: false, kbd: false };
+      function isSel(name) { return st.sel.indexOf(name) >= 0; }
+      function toggle(name) { var i = st.sel.indexOf(name); if (i >= 0) st.sel.splice(i, 1); else st.sel.push(name); }
+      function selPeople() { return roster.filter(function (p) { return isSel(p.name); }); }
+      // Carbon-style: selected sort to the top, but only on (re)open.
+      function reorder() {
+        st.order = roster.slice().sort(function (a, b) {
+          return (isSel(a.name) ? 0 : 1) - (isSel(b.name) ? 0 : 1);
+        });
+      }
+      function visible() {
+        return st.order.filter(function (p) { return p.name.toLowerCase().indexOf(st.q.toLowerCase()) >= 0; });
+      }
+      function tokens(people) {
+        if (!people.length) return '';
+        var shown = people.slice(0, 8);
+        var extra = people.length - shown.length;
+        return '<span class="mt-multiselect-stack">' + shown.map(function (p) { return avatar(p, 26); }).join('') +
+          (extra > 0 ? '<span class="mt-multiselect-avatar is-26 is-more">+' + extra + '</span>' : '') + '</span>' +
+          '<span class="mt-multiselect-count">' + people.length + ' ' + noun + (people.length > 1 ? 's' : '') + '</span>';
+      }
+      function checkRows(hi) {
+        var rows = visible().map(function (p, i) {
+          return '<label class="mt-check mt-multiselect-row' + (i === hi ? ' is-active' : '') + (isSel(p.name) ? ' is-selected' : '') + '">' +
+            '<input type="checkbox" data-name="' + esc(p.name) + '"' + (isSel(p.name) ? ' checked' : '') + '>' +
+            '<span class="mt-check-box">' + BOXCHECK + '</span>' +
+            avatar(p, 24) + '<span class="mt-check-label">' + highlight(p.name, st.q) + '</span></label>';
+        }).join('');
+        return rows || '<div class="mt-multiselect-empty">No ' + noun + 's found.</div>';
+      }
+      function refocus() {
+        var inp = el.querySelector('input[data-q]');
+        if (inp) { inp.focus(); inp.setSelectionRange(inp.value.length, inp.value.length); }
+      }
+      function render() {
+        var prevSc = el.querySelector('.mt-multiselect-scroll');
+        var keepTop = prevSc ? prevSc.scrollTop : null;
+        if (st.open && !st.wasOpen) reorder();
+        st.wasOpen = st.open;
+        el.innerHTML = '<div class="mt-multiselect-field' + (st.open ? ' is-focus' : '') + '" data-trigger-field>' +
+          tokens(selPeople()) +
+          '<input type="text" data-q value="' + st.q.replace(/"/g, '&quot;') + '"' +
+            (st.sel.length ? '' : ' placeholder="Select ' + noun + '"') + ' aria-label="Select ' + noun + '">' +
+          '</div>' +
+          (st.open ? '<div class="mt-multiselect-menu" aria-label="Options"><div class="mt-multiselect-scroll">' + checkRows(st.hi) + '</div>' +
+            '<div class="mt-menu-divider"></div>' +
+            '<div class="mt-multiselect-foot"><span class="n">' + st.sel.length + ' selected</span>' +
+            '<button class="mt-multiselect-clear" type="button" data-clear>Clear all</button></div>' +
+            '</div>' : '');
+        if (st.open) refocus();
+        var sc = el.querySelector('.mt-multiselect-scroll');
+        if (sc && keepTop != null) sc.scrollTop = keepTop;
+        if (sc && keepTop == null) {
+          var menu = el.querySelector('.mt-multiselect-menu');
+          if (menu) menu.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        }
+        if (st.kbd) {
+          var act = el.querySelector('.mt-multiselect-row.is-active');
+          if (act) act.scrollIntoView({ block: 'nearest' });
+          st.kbd = false;
+        }
+      }
+
+      el.addEventListener('click', function (e) {
+        if (e.target.closest('[data-clear]')) { st.sel = []; render(); return; }
+        if (e.target.closest('[data-trigger-field]') && !e.target.closest('button') && !st.open) { st.open = true; st.hi = 0; render(); }
+      });
+      el.addEventListener('input', function (e) {
+        if (e.target.matches('input[data-q]')) { st.q = e.target.value; st.hi = 0; st.open = true; render(); }
+      });
+      el.addEventListener('change', function (e) {
+        if (!e.target.matches('input[data-name]')) return;
+        toggle(e.target.getAttribute('data-name'));
+        st.q = ''; st.hi = 0; render();
+      });
+      el.addEventListener('keydown', function (e) {
+        if (!st.open) {
+          if (e.key === 'ArrowDown') { st.open = true; st.hi = 0; render(); e.preventDefault(); }
+          return;
+        }
+        var list = visible();
+        if (e.key === 'ArrowDown') { st.hi = Math.min(st.hi + 1, list.length - 1); st.kbd = true; render(); e.preventDefault(); }
+        else if (e.key === 'ArrowUp') { st.hi = Math.max(st.hi - 1, 0); st.kbd = true; render(); e.preventDefault(); }
+        else if (e.key === 'Enter') { if (list[st.hi]) { toggle(list[st.hi].name); st.q = ''; st.hi = 0; render(); } e.preventDefault(); }
+        else if (e.key === 'Escape') { st.open = false; st.q = ''; render(); }
+        else if (e.key === 'Backspace' && e.target.matches('input[data-q]') && e.target.value === '' && st.sel.length) { st.sel.pop(); render(); }
+      });
+      // Outside click closes — composedPath, not contains(): render() swaps the DOM mid-bubble.
+      document.addEventListener('click', function (e) {
+        if (st.open && e.composedPath().indexOf(el) < 0) { st.open = false; st.q = ''; render(); }
+      });
+
+      render();
+    }
+
+    document.querySelectorAll('[data-mt-multiselect]').forEach(init);
+  })();
