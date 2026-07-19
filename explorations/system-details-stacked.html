@@ -1,0 +1,520 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>System details — stacked zones · Design review · Mantel</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="../assets/kit.css"><link rel="stylesheet" href="../assets/shell.css">
+<!--
+  Design rationale — proposal System Details, stacked zones (follow-up to
+  zones & staging). Field feedback: per-zone tab views hide every other
+  system, while other surfaces show all items at once — people lose track.
+  New direction from Zac: don't switch, stack. Every zone's full equipment
+  lists on one longer card; nothing is ever hidden behind a control.
+  Navigation inverts from tabs to a scrollspy: past one system, a small
+  numbered tab row pins to the top of the view, tracks the zone under
+  the reading line, and jumps on click. It is an anchor nav (content never
+  hides), so the markup is nav + links, not a tablist.
+  Success bar: at any scroll position the pinned bar names the zone you are
+  in; clicking "3. Upstairs" lands that zone's heading just below the bar;
+  a single-system home gets zero added chrome.
+-->
+<style>
+  /* ---------------------------------------------------------------------------
+     SCOPED EXPLORATION CSS (sds-*) — review only, NOT promoted into tokens yet.
+     Equipment rows reuse the sdz-item geometry from the zones & staging
+     exploration; product photos live in ../assets/products/.
+     --------------------------------------------------------------------------- */
+
+  .ds-body { background: #fff; }
+
+  .sc-title-row { display: flex; align-items: center; gap: 20px; }
+  .rev-chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: var(--radius-full); font-size: 12px; font-weight: 600; background: var(--accent-amber-bg); color: var(--accent-amber); }
+  .rev-chip .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+
+  .sc-section { margin-top: 76px; }
+  .sc-section:first-of-type { margin-top: 32px; }
+  .sc-option { font-size: 24px; font-weight: 600; letter-spacing: -0.019em; color: var(--ink-900); margin: 0 0 16px; }
+  .sc-lede { font-size: 14px; line-height: 1.55; color: var(--ink-600); max-width: 58ch; margin: 0 0 20px; }
+
+  /* ===== Example 1 — static proposal column, single system ===== */
+  .sds-canvas { max-width: 720px; background: #fff; border-radius: var(--radius-2xl); box-shadow: var(--shadow-card); padding: 26px 28px 28px; }
+
+  .sds-title { font-size: 18px; font-weight: 700; letter-spacing: -0.014em; color: var(--ink-900); margin: 0 0 18px; font-variant-numeric: tabular-nums; }
+  /* header count — same "· N things" idiom as the zone heads, so it can't read
+     as a notification badge */
+  .sds-title-sub { font-size: 13px; font-weight: var(--fw-medium); color: var(--ink-500); letter-spacing: 0; font-variant-numeric: tabular-nums; margin-left: 5px; }
+  .sds-title-sub::before, .sds-equip-count::before, .sds-zone-count::before { content: "·"; margin-right: 8px; }
+
+  .sds-equip-head { display: flex; align-items: baseline; gap: 8px; font-size: 15px; font-weight: var(--fw-semibold); color: var(--ink-900); margin: 0 0 4px; }
+  .sds-equip-count { font-size: 13px; font-weight: var(--fw-medium); color: var(--ink-500); font-variant-numeric: tabular-nums; }
+
+  /* equipment rows — sdz-item geometry, verbatim */
+  .sds-item { display: flex; align-items: center; gap: 14px; padding: 13px 0; border-bottom: 1px solid var(--ink-150); }
+  .sds-item:last-child { border-bottom: 0; }
+  .sds-item-thumb { width: 48px; height: 48px; flex-shrink: 0; border-radius: var(--radius-lg); background: #fff; box-shadow: inset 0 0 0 1px var(--ink-150); overflow: hidden; }
+  .sds-item-thumb img { width: 100%; height: 100%; object-fit: contain; padding: 4px; box-sizing: border-box; display: block; }
+  .sds-item-main { min-width: 0; flex: 1; }
+  .sds-item-role { font-size: 11px; font-weight: var(--fw-semibold); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-600); }
+  .sds-item-name { font-size: 14.5px; font-weight: var(--fw-medium); color: var(--ink-900); margin-top: 1px; }
+  .sds-item-spec { font-size: 12.5px; color: var(--ink-500); margin-top: 1px; font-variant-numeric: tabular-nums; }
+  /* padding/negative-margin pair inflates the touch target to 44px+ without moving layout */
+  .sds-item-link { flex-shrink: 0; border: 0; background: transparent; padding: 14px 0 14px 14px; margin: -14px 0 -14px -14px; font-family: var(--font-sans); font-size: 12.5px; font-weight: var(--fw-medium); color: var(--brand-600); text-decoration: none; cursor: pointer; scroll-margin-top: 48px; }
+  .sds-item-link:hover { color: var(--brand-700); text-decoration: underline; }
+
+  /* staging chart — sdz-chart geometry from zones & staging Option A, verbatim
+     (headed, swing-quantified: two-stage hugs 72°, single-stage swings wide) */
+  .sds-chart { background: color-mix(in srgb, var(--brand-50) 55%, #fff); border-radius: var(--radius-2xl); padding: 18px 20px 16px; }
+  .sds-chart.is-below { margin-top: 18px; }
+  .sds-chart-title { font-size: 15px; font-weight: var(--fw-semibold); color: var(--ink-900); margin: 0 0 12px; font-variant-numeric: tabular-nums; }
+  .sds-plot { position: relative; height: 150px; padding: 0 52px 0 34px; }
+  .sds-plot svg { position: absolute; inset: 0 52px 0 34px; width: calc(100% - 86px); height: 100%; display: block; overflow: visible; }
+  .sds-grid { stroke: var(--ink-150); stroke-width: 1; }
+  .sds-target { stroke: var(--ink-300); stroke-width: 1; stroke-dasharray: 4 5; }
+  /* no non-scaling-stroke: it breaks pathLength dash normalization under the
+     non-uniform viewBox stretch (sibling's lesson — the tail is left undrawn) */
+  .sds-line { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  .sds-line.is-cool { stroke: var(--brand-400); }
+  .sds-line.is-heat { stroke: var(--accent-red); }
+  .sds-line.draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: sds-draw 900ms var(--ease) forwards; }
+  .sds-line.draw.is-heat { animation-delay: 120ms; }
+  @keyframes sds-draw { to { stroke-dashoffset: 0; } }
+  .sds-end { stroke: #fff; stroke-width: 2; }
+  /* end dots land only after their line arrives */
+  .sds-end.draw { opacity: 0; animation: sds-dot 200ms var(--ease) forwards 880ms; }
+  .sds-end.draw.is-heat { animation-delay: 1000ms; }
+  @keyframes sds-dot { to { opacity: 1; } }
+  .sds-end.is-cool { fill: var(--brand-400); }
+  .sds-end.is-heat { fill: var(--accent-red); }
+  .sds-y { position: absolute; left: 0; transform: translateY(-50%); font-size: 11.5px; font-weight: var(--fw-medium); color: var(--ink-400); font-variant-numeric: tabular-nums; }
+  .sds-y.is-set { font-weight: var(--fw-semibold); color: var(--ink-700); }
+  .sds-swing { position: absolute; right: 0; transform: translateY(-50%); font-size: 12px; font-weight: var(--fw-semibold); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .sds-swing.is-cool { color: var(--brand-600); }
+  .sds-swing.is-heat { color: var(--accent-red); }
+  .sds-cap { text-align: left; font-size: 14px; line-height: 1.55; color: var(--ink-800); margin: 20px 0 0; max-width: 58ch; }
+  .sds-legend { display: flex; justify-content: flex-start; flex-wrap: wrap; gap: 8px 18px; margin-top: 16px; font-size: 12px; font-weight: var(--fw-medium); color: var(--ink-600); }
+  .sds-legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .sds-legend i { width: 16px; height: 16px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0; }
+  .sds-legend i svg { width: 10px; height: 10px; }
+  .sds-legend i.is-cool { background: var(--brand-400); }
+  .sds-legend i.is-heat { background: var(--accent-red); }
+
+  /* ===== Example 2 — stacked zones in a self-scrolling proposal frame ===== */
+  /* The frame is its own scroll container so both sticky layers pin against the
+     mock, not the document — reviewers watch the behaviour inside the card. */
+  .sds-frame { max-width: 720px; background: #fff; border-radius: var(--radius-2xl); box-shadow: var(--shadow-card); overflow: hidden; }
+  /* overflow-x: clip — a few stray px of tab row on very narrow viewports must
+     not grow a horizontal scrollbar (which would detach the sticky bar) */
+  .sds-scroller { height: 620px; overflow-y: auto; overflow-x: clip; }
+
+  .sds-card { padding: 20px 0 0; }
+  .sds-card .sds-title { padding: 0 28px; margin-bottom: 14px; }
+
+  /* pinned zone navigator — anchor nav in tab clothing; translucent + blur so
+     content scrolling under it stays legible. Padding lives on the tabbar, not
+     the wrapper, so its 1px ink-200 border-bottom runs full-bleed like the
+     zone dividers below. The solid var(--surface) line first is the fallback
+     for engines without color-mix (invalid-value drop would leave no bg). */
+  .sds-sticky { position: sticky; top: 0; z-index: 5; background: var(--surface); background: color-mix(in srgb, var(--surface) 92%, transparent); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+  @supports not ((backdrop-filter: blur(8px)) or (-webkit-backdrop-filter: blur(8px))) { .sds-sticky { background: var(--surface); } }
+  /* the first tab's box edge aligns with the 28px content column */
+  .sds-sticky .mt-tabbar { padding: 0 28px; }
+  /* kit gap: .mt-tab { all: unset } wipes white-space AND the global :focus-visible ring */
+  .sds-sticky .mt-tab { white-space: nowrap; font-variant-numeric: tabular-nums; text-decoration: none; }
+  /* these tabs are anchors: the global a:hover underline outranks .mt-tab's
+     all:unset (pseudo-class beats it on specificity) — pin it off so hover
+     matches the DS tab spec (bg tint + 3px border, no text underline) */
+  .sds-sticky .mt-tab:hover { text-decoration: none; }
+  .sds-sticky .mt-tab:focus-visible { box-shadow: var(--shadow-focus); }
+
+  /* zone sections — full detail, boundaries unmistakable while scrolling:
+     generous top padding + a full-bleed ink-200 rule + an 18px title-scale head.
+     scroll-margin-top = pinned bar (38) + 10 breathing room, matching the spy's
+     activation line — and it keeps no-JS anchor jumps honest. */
+  .sds-zone { padding: 32px 28px 16px; scroll-margin-top: 48px; }
+  /* click-jump target (JS sets tabindex=-1 and moves focus here) — the zone
+     heading is the visible indicator, no ring on the whole section */
+  .sds-zone:focus { outline: none; }
+  .sds-zone + .sds-zone { border-top: 1px solid var(--ink-200); }
+  .sds-zone-head { display: flex; align-items: baseline; gap: 8px; font-size: 18px; font-weight: var(--fw-semibold); letter-spacing: -0.014em; color: var(--ink-900); margin: 0 0 6px; font-variant-numeric: tabular-nums; }
+  .sds-zone-count { font-size: 13px; font-weight: var(--fw-medium); color: var(--ink-500); font-variant-numeric: tabular-nums; }
+
+  /* the foot gives the last zone's heading room to reach the activation line
+     (the spy's bottom clamp covers the residue) */
+  .sds-pagefoot { padding: 22px 28px 30px; font-size: 12.5px; color: var(--ink-500); border-top: 1px solid var(--ink-150); font-variant-numeric: tabular-nums; }
+
+  /* ===== Edge case — four-zone home in a phone frame ===== */
+  .sc-edge-title { font-size: 17px; font-weight: var(--fw-semibold); letter-spacing: -0.014em; color: var(--ink-900); margin: 40px 0 6px; }
+  .sc-edge-lede { font-size: 14px; line-height: 1.55; color: var(--ink-600); max-width: 58ch; margin: 0 0 20px; }
+  .sc-edge-stage { display: flex; justify-content: flex-start; }
+  /* The screen is the scroll container; no mock header here, so the bar pins at
+     the very top. Keep the screen itself unpadded (padding lives on children)
+     so sticky sits flush with the screen edge. */
+  .sds-phone { overflow-y: auto; padding: 0; }
+  .sds-phone .sds-title { padding: 16px 16px 0; margin-bottom: 14px; }
+  /* the scroll-fade gradients (shell.css) resolve to solid #fff — keep the
+     phone bar opaque so the fade edges match, and skip the blur */
+  .sds-phone .sds-sticky { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; }
+  /* .is-scroll already sets compact 14px tabs; the bar's own padding gives the
+     first tab its 16px inset from the screen edge */
+  .sds-phone .mt-tabbar.is-scroll { padding: 0 16px; }
+  .sds-phone .sds-zone { padding: 26px 16px 10px; scroll-margin-top: 48px; }
+  .sds-phone .sds-chart.is-below { margin-top: 10px; }
+  .sds-phone .sds-chart { padding: 14px 14px 14px; }
+  .sds-phone .sds-plot { height: 118px; padding: 0 44px 0 30px; }
+  .sds-phone .sds-plot svg { inset: 0 44px 0 30px; width: calc(100% - 74px); }
+  .sds-phone .sds-item-thumb { width: 44px; height: 44px; }
+  .sds-phone .sds-pagefoot { padding: 20px 16px 26px; }
+
+  @media (max-width: 540px) {
+    .sds-canvas { padding: 18px 16px 20px; }
+    .sds-card .sds-title, .sds-zone, .sds-pagefoot { padding-left: 16px; padding-right: 16px; }
+    .sds-sticky .mt-tabbar { padding: 0 16px; }
+    /* three tabs must fit a ~355px card — tighten the tab boxes (selector
+       carries .mt-tabbar.is-sm to outrank the kit's own is-sm sizing) */
+    .sds-sticky .mt-tabbar.is-sm .mt-tab { padding: 0 6px; font-size: 12.5px; }
+    .sds-sticky .mt-tabs { gap: 2px; }
+    .sds-chart { padding: 14px 14px 14px; }
+    .sds-plot { height: 120px; padding-right: 44px; }
+    .sds-plot svg { inset: 0 44px 0 30px; width: calc(100% - 74px); }
+    .sds-item-thumb { width: 44px; height: 44px; }
+  }
+</style></head><body class="ds-body"><aside class="ds-nav"><div class="ds-brand"><a class="ds-logo" href="../index.html" aria-label="Mantel — UI Kit home"><img src="../assets/mantel-logo.svg" alt="Mantel"></a><span class="ds-ver">UI Kit · v2.3.6</span></div><input class="ds-search" type="search" placeholder="Search…" aria-label="Search components"><nav class="ds-links"><a class="ds-link" href="../index.html" data-name="home dashboard overview">Overview</a><a class="ds-link" href="../changelog.html" data-name="changelog releases versions history">Changelog</a><div class="ds-group">Design review</div><a class="ds-link is-active" href="../review.html" data-name="review queue">Review queue<span class="ds-wip" title="Items awaiting review">3</span></a><div class="ds-group">Foundations</div><a class="ds-link" href="../components/type.html" data-name="typography">Typography</a><a class="ds-link" href="../components/color.html" data-name="color">Color</a><a class="ds-link" href="../components/spacing.html" data-name="spacing">Spacing</a><a class="ds-link" href="../components/radius.html" data-name="radius">Radius</a><a class="ds-link" href="../components/shadow.html" data-name="shadow">Shadow</a><a class="ds-link" href="../components/motion.html" data-name="motion">Motion</a><div class="ds-group">Components</div><a class="ds-link" href="../components/buttons.html" data-name="buttons">Buttons</a><a class="ds-link" href="../components/form-inputs.html" data-name="form inputs">Form inputs</a><a class="ds-link" href="../components/stepper.html" data-name="stepper number quantity">Stepper</a><a class="ds-link" href="../components/inputs.html" data-name="search &amp; select multi-select people picker combobox token chip">Search &amp; select</a><a class="ds-link" href="../components/data-table.html" data-name="table">Table</a><a class="ds-link" href="../components/modal.html" data-name="modal">Modal</a><a class="ds-link" href="../components/menu.html" data-name="dropdown menu">Dropdown menu</a><a class="ds-link" href="../components/tabs.html" data-name="tabs">Tabs</a><a class="ds-link" href="../components/segmented.html" data-name="segmented control">Segmented control</a><a class="ds-link" href="../components/btn-group.html" data-name="button group">Button group</a><a class="ds-link" href="../components/toasts.html" data-name="toasts">Toasts</a><a class="ds-link" href="../components/alerts.html" data-name="alerts">Alerts</a><a class="ds-link" href="../components/stats.html" data-name="stat card">Stat card</a><a class="ds-link" href="../components/pills.html" data-name="status pills">Status pills</a><a class="ds-link" href="../components/badges.html" data-name="strength badges">Strength badges</a><a class="ds-link" href="../components/avatars.html" data-name="avatars">Avatars</a><a class="ds-link" href="../components/tooltips.html" data-name="tooltips">Tooltips</a><a class="ds-link" href="../components/toggles.html" data-name="switch / checkbox / radio">Switch / checkbox / radio</a><a class="ds-link" href="../components/crumbs.html" data-name="breadcrumbs">Breadcrumbs</a><a class="ds-link" href="../components/pager.html" data-name="pagination">Pagination</a><a class="ds-link" href="../components/activity.html" data-name="activity feed">Activity feed</a><a class="ds-link" href="../components/sheet.html" data-name="sheet / drawer">Sheet / drawer</a><a class="ds-link" href="../components/empty.html" data-name="empty state">Empty state</a><a class="ds-link" href="../components/focus.html" data-name="focus card">Focus card</a><a class="ds-link" href="../components/live.html" data-name="live indicator">Live indicator</a><a class="ds-link" href="../components/loaders.html" data-name="loaders skeleton spinner progress">Loaders</a><a class="ds-link" href="../components/category.html" data-name="category pills">Category pills</a><div class="ds-group">Combos</div><a class="ds-link" href="../components/header.html" data-name="page header combo title description breadcrumb">Page header</a></nav></aside><main class="ds-main">
+
+<div class="ds-page-head">
+  <a class="ds-back" href="../review.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"></path><path d="M12 19l-7-7 7-7"></path></svg>Review queue</a>
+  <div class="ds-eyebrow">Design review · Proposal viewer</div>
+  <div class="sc-title-row">
+    <h1 class="ds-h1">System details — stacked zones</h1>
+    <span class="rev-chip"><span class="dot"></span>Needs a call</span>
+  </div>
+</div>
+
+<!-- ============================================================ Example 1 -->
+<section class="sc-section">
+  <h2 class="sc-option">Example 1 — Single system, no navigator</h2>
+  <p class="sc-lede">Most homes have one system, so most proposals never see the navigator. The card is just the equipment list and staging chart — no tabs, no pinned bar, zero added chrome.</p>
+  <div class="sds-canvas">
+    <h3 class="sds-title">System Details <span class="sds-title-sub">1 system</span></h3>
+    <h4 class="sds-equip-head">Equipment<span class="sds-equip-count">3 items</span></h4>
+    <div data-sds-list="downstairs"></div>
+    <div class="sds-chart is-below" data-sds-chart="downstairs" data-sds-title="How this system holds your set temperature"></div>
+  </div>
+</section>
+
+<!-- ============================================================ Example 2 -->
+<section class="sc-section">
+  <h2 class="sc-option">Example 2 — Three systems, stacked + scroll navigator</h2>
+  <p class="sc-lede">Every system's full equipment and staging chart stay on the page — nothing hides behind a switcher. Past one system, a small numbered tab row pins to the top as a scroll navigator: it tracks the zone under the reading line and jumps on click. Scroll the card to try it.</p>
+  <div class="sds-frame">
+    <div class="sds-scroller" data-sds-demo="d" data-sds-offset="38">
+      <div class="sds-card">
+        <h3 class="sds-title">System Details <span class="sds-title-sub">3 systems</span></h3>
+        <div class="sds-sticky">
+          <div class="mt-tabbar is-sm">
+            <nav class="mt-tabs" aria-label="Systems on this page (desktop demo)" data-sds-nav>
+              <a class="mt-tab is-active" href="#sds-d-downstairs" aria-current="true">1. Downstairs</a>
+              <a class="mt-tab" href="#sds-d-back">2. Back of Home</a>
+              <a class="mt-tab" href="#sds-d-upstairs">3. Upstairs</a>
+              <span class="mt-tab-underline" aria-hidden="true"></span>
+            </nav>
+          </div>
+        </div>
+        <section class="sds-zone" id="sds-d-downstairs">
+          <h4 class="sds-zone-head">1. Downstairs<span class="sds-zone-count">3 items</span></h4>
+          <div data-sds-list="downstairs"></div>
+          <div class="sds-chart is-below" data-sds-chart="downstairs"></div>
+        </section>
+        <section class="sds-zone" id="sds-d-back">
+          <h4 class="sds-zone-head">2. Back of Home<span class="sds-zone-count">3 items</span></h4>
+          <div data-sds-list="back"></div>
+          <div class="sds-chart is-below" data-sds-chart="back"></div>
+        </section>
+        <section class="sds-zone" id="sds-d-upstairs">
+          <h4 class="sds-zone-head">3. Upstairs<span class="sds-zone-count">3 items</span></h4>
+          <div data-sds-list="upstairs"></div>
+          <div class="sds-chart is-below" data-sds-chart="upstairs"></div>
+        </section>
+      </div>
+      <div class="sds-pagefoot">Prepared by Mantel Comfort Co. · Valid through Aug 17</div>
+    </div>
+  </div>
+
+  <!-- Edge case: a house with many zones. The pinned bar reuses the DS
+       horizontal-scroll pattern (.is-scroll) and auto-centers the active tab
+       as the page scrolls. Shown in a 390px phone frame — the true worst case
+       for zone count on a proposal. -->
+  <h3 class="sc-edge-title">Edge case — a four-zone home on mobile</h3>
+  <p class="sc-edge-lede">Four zones overflow the width, so the pinned bar scrolls sideways (compact 14px tabs, hidden scrollbar, edge fades, arrows for mouse users) while it keeps tracking the page: as you scroll into a zone, its tab auto-centers in the bar. Jumps work the same as on desktop.</p>
+  <div class="sc-edge-stage">
+    <div class="device">
+      <div class="device-bar">
+        <span class="time">9:41</span>
+        <span class="island"></span>
+        <span class="status">
+          <svg width="18" height="11" viewBox="0 0 18 11" fill="currentColor" aria-hidden="true"><rect x="0" y="7" width="3" height="4" rx="1"></rect><rect x="5" y="5" width="3" height="6" rx="1"></rect><rect x="10" y="2.5" width="3" height="8.5" rx="1"></rect><rect x="15" y="0" width="3" height="11" rx="1"></rect></svg>
+          <svg width="16" height="12" viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M2 6.5a15 15 0 0 1 20 0"></path><path d="M6 11a9 9 0 0 1 12 0"></path><path d="M12 15.4h.01"></path></svg>
+          <svg width="24" height="12" viewBox="0 0 24 12" fill="none" aria-hidden="true"><rect x="0.5" y="0.5" width="20" height="11" rx="3" stroke="currentColor"></rect><rect x="2" y="2" width="15" height="8" rx="1.5" fill="currentColor"></rect><rect x="22" y="4" width="1.6" height="4" rx="0.8" fill="currentColor"></rect></svg>
+        </span>
+      </div>
+      <div class="device-screen sds-phone" data-sds-demo="p" data-sds-offset="38">
+        <h3 class="sds-title">System Details <span class="sds-title-sub">4 systems</span></h3>
+        <div class="sds-sticky">
+          <div class="mt-scroll-fade">
+            <button class="mt-scroll-btn is-prev is-hidden" type="button" aria-label="Scroll systems left"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></button>
+            <button class="mt-scroll-btn is-next" type="button" aria-label="Scroll systems right"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg></button>
+            <div class="mt-tabbar is-scroll is-sm">
+              <nav class="mt-tabs" aria-label="Systems on this page (phone demo)" data-sds-nav>
+                <a class="mt-tab is-active" href="#sds-p-downstairs" aria-current="true">1. Downstairs</a>
+                <a class="mt-tab" href="#sds-p-back">2. Back of Home</a>
+                <a class="mt-tab" href="#sds-p-upstairs">3. Upstairs</a>
+                <a class="mt-tab" href="#sds-p-primary">4. Primary Suite</a>
+                <span class="mt-tab-underline" aria-hidden="true"></span>
+              </nav>
+            </div>
+          </div>
+        </div>
+        <section class="sds-zone" id="sds-p-downstairs">
+          <h4 class="sds-zone-head">1. Downstairs<span class="sds-zone-count">3 items</span></h4>
+          <div data-sds-list="downstairs"></div>
+          <div class="sds-chart is-below" data-sds-chart="downstairs"></div>
+        </section>
+        <section class="sds-zone" id="sds-p-back">
+          <h4 class="sds-zone-head">2. Back of Home<span class="sds-zone-count">3 items</span></h4>
+          <div data-sds-list="back"></div>
+          <div class="sds-chart is-below" data-sds-chart="back"></div>
+        </section>
+        <section class="sds-zone" id="sds-p-upstairs">
+          <h4 class="sds-zone-head">3. Upstairs<span class="sds-zone-count">3 items</span></h4>
+          <div data-sds-list="upstairs"></div>
+          <div class="sds-chart is-below" data-sds-chart="upstairs"></div>
+        </section>
+        <section class="sds-zone" id="sds-p-primary">
+          <h4 class="sds-zone-head">4. Primary Suite<span class="sds-zone-count">2 items</span></h4>
+          <div data-sds-list="primary"></div>
+          <div class="sds-chart is-below" data-sds-chart="primary"></div>
+        </section>
+        <div class="sds-pagefoot">Prepared by Mantel Comfort Co. · Valid through Aug 17</div>
+      </div>
+      <div class="device-home"></div>
+    </div>
+  </div>
+</section>
+
+</main>
+<script src="../assets/kit.js"></script>
+<script src="../assets/shell.js"></script>
+<script>
+  // ---------------------------------------------------------------- data
+  // Same seed systems as the zones & staging exploration (series drive the
+  // staging chart). Photo reuse across zones is intentional — six product
+  // photos exist; the demos exercise the stacked layout and the navigator,
+  // not a real four-system catalogue.
+  const ZONES = {
+    downstairs: {
+      name: 'Downstairs',
+      series: [
+        { kind: 'sine', amp: 0.5, period: 160, phase: 0,   tone: 'cool', label: 'Two Stage Central AC', swing: '±0.5°' },
+        { kind: 'sine', amp: 1,   period: 230, phase: 3.1, tone: 'heat', label: 'Two Stage Furnace',    swing: '±1°' }
+      ],
+      caption: 'Cooling and heating both run at a low, steady speed — holding 72° within about a degree, year-round, while using less energy than an on/off system.',
+      equipment: [
+        { img: 'ac-26tpa8',          role: 'Air conditioner', name: 'Carrier Performance 26TPA8', spec: 'Two-stage · SEER2 16.5 · EER2 13' },
+        { img: 'coil-v',             role: 'Evaporator coil', name: 'Carrier V Coil with Vertex', spec: 'Matched to the 26TPA8' },
+        { img: 'furnace-infinity80', role: 'Gas furnace',     name: 'Carrier Infinity 80',        spec: 'Two-stage · AFUE 80%' }
+      ]
+    },
+    back: {
+      name: 'Back of Home',
+      series: [
+        { kind: 'sine', amp: 0.5, period: 160, phase: 0, tone: 'cool', label: 'Two Stage Central AC',     swing: '±0.5°' },
+        { kind: 'saw',  amp: 3,   period: 200, phase: 0, tone: 'heat', label: 'Single Stage Air Handler', swing: '±3°' }
+      ],
+      caption: 'Cooling runs at a low, steady speed — within about ±0.5°, using less energy than an on/off system. Heating is on-or-off, so it can drift up to ±3° between cycles.',
+      equipment: [
+        { img: 'hp-27tpa8',      role: 'Heat pump · cools + heats', name: 'Carrier Performance 27TPA8', spec: 'Two-stage · SEER2 17.5 · HSPF2 8.1' },
+        { img: 'airhandler-ft5', role: 'Air handler', name: 'Carrier Performance FT5',         spec: 'Single-stage · FT5ANXB24L00' },
+        { img: 'ecobee-premium', role: 'Thermostat',  name: 'ecobee Smart Thermostat Premium', spec: 'With InteliSense technology' }
+      ]
+    },
+    upstairs: {
+      name: 'Upstairs',
+      equipment: [
+        { img: 'ac-26tpa8',      role: 'Air conditioner', name: 'Carrier Performance 26TPA8', spec: 'Two-stage · SEER2 16.5 · EER2 13' },
+        { img: 'coil-v',         role: 'Evaporator coil', name: 'Carrier V Coil with Vertex', spec: 'Matched to the 26TPA8' },
+        { img: 'ecobee-premium', role: 'Thermostat',      name: 'ecobee Smart Thermostat Premium', spec: 'With InteliSense technology' }
+      ]
+    },
+    primary: {
+      name: 'Primary Suite',
+      equipment: [
+        { img: 'hp-27tpa8',      role: 'Heat pump · cools + heats', name: 'Carrier Performance 27TPA8', spec: 'Two-stage · SEER2 17.5 · HSPF2 8.1' },
+        { img: 'airhandler-ft5', role: 'Air handler', name: 'Carrier Performance FT5', spec: 'Single-stage · FT5ANXB24L00' }
+      ]
+    }
+  };
+  // Chart series/captions for the extra zones are cloned from the two real
+  // ones — same convention as the sibling exploration's edge-case zones.
+  ZONES.upstairs.series = ZONES.downstairs.series; ZONES.upstairs.caption = ZONES.downstairs.caption;
+  ZONES.primary.series  = ZONES.back.series;       ZONES.primary.caption  = ZONES.back.caption;
+  const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ---------------------------------------------------------------- render
+  function equipRow(item) {
+    // photo alt is empty — the product name sits right beside it, so the image
+    // is decorative; the Details button carries the name for the buttons list
+    return '<div class="sds-item">'
+      + '<span class="sds-item-thumb"><img src="../assets/products/' + item.img + '.png" alt=""></span>'
+      + '<div class="sds-item-main">'
+      + '<div class="sds-item-role">' + item.role + '</div>'
+      + '<div class="sds-item-name">' + item.name + '</div>'
+      + '<div class="sds-item-spec">' + item.spec + '</div>'
+      + '</div><button class="sds-item-link" type="button" aria-label="Details — ' + item.name + '">Details</button></div>';
+  }
+  document.querySelectorAll('[data-sds-list]').forEach(el => {
+    el.innerHTML = ZONES[el.dataset.sdsList].equipment.map(equipRow).join('');
+  });
+
+  // ---------------------------------------------------------------- chart
+  // Staging chart from zones & staging Option A, verbatim: viewBox 514×140 ·
+  // 18px per °F · 72° midline at y=70 · waves span x 6→460, ending exactly on
+  // the end dot so line and dot stay connected.
+  const X0 = 6, X1 = 460, MID = 70, PXDEG = 18;
+  function waveY(s, x) {
+    const t = ((x - X0) / s.period + s.phase / (2 * Math.PI)) % 1;
+    if (s.kind === 'sine') return MID - s.amp * PXDEG * Math.sin(2 * Math.PI * t);
+    // rounded sawtooth: slow drift down (temperature falling), quick pull-back up
+    const d = 0.72; // drift fraction of the period
+    const f = (t < d) ? Math.cos(Math.PI * t / d) : -Math.cos(Math.PI * (t - d) / (1 - d));
+    return MID - s.amp * PXDEG * f;
+  }
+  function buildWave(svg, zone) {
+    let inner = '<line class="sds-grid" x1="0" y1="16" x2="514" y2="16"></line>'
+              + '<line class="sds-grid" x1="0" y1="124" x2="514" y2="124"></line>'
+              + '<line class="sds-target" x1="0" y1="70" x2="514" y2="70"></line>';
+    zone.series.forEach(s => {
+      let d = '';
+      for (let x = X0; x < X1; x += 4) d += (x === X0 ? 'M' : 'L') + x.toFixed(1) + ',' + waveY(s, x).toFixed(1);
+      d += 'L' + X1 + ',' + waveY(s, X1).toFixed(1);
+      const draw = REDUCED ? '' : ' draw';
+      inner += '<path class="sds-line is-' + s.tone + draw + '" pathLength="1" d="' + d + '"></path>';
+      inner += '<circle class="sds-end is-' + s.tone + draw + '" cx="' + X1 + '" cy="' + waveY(s, X1).toFixed(1) + '" r="4.5"></circle>';
+    });
+    svg.innerHTML = inner;
+  }
+  // legend mode icons (inline Lucide paths — snowflake / flame)
+  const MODE_ICONS = {
+    cool: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="2" y1="12" x2="22" y2="12"></line><line x1="12" y1="2" x2="12" y2="22"></line><path d="m20 16-4-4 4-4"></path><path d="m4 8 4 4-4 4"></path><path d="m16 4-4 4-4-4"></path><path d="m8 20 4-4 4 4"></path></svg>',
+    heat: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>'
+  };
+  function renderChart(el) {
+    const zone = ZONES[el.dataset.sdsChart];
+    const title = el.dataset.sdsTitle || ('How the ' + zone.name + ' system holds your set temperature');
+    el.innerHTML = '<div class="sds-chart-title">' + title + '</div>'
+      + '<div class="sds-plot">'
+      + '<svg viewBox="0 0 514 140" preserveAspectRatio="none" aria-hidden="true"></svg>'
+      + '<span class="sds-y" style="top:11.4%">75°</span>'
+      + '<span class="sds-y is-set" style="top:50%">72°</span>'
+      + '<span class="sds-y" style="top:88.6%">69°</span>'
+      + '<span class="sds-swing is-cool"></span><span class="sds-swing is-heat"></span>'
+      + '</div><p class="sds-cap">' + zone.caption + '</p>'
+      + '<div class="sds-legend">' + zone.series.map(s => '<span><i class="is-' + s.tone + '" aria-hidden="true">' + MODE_ICONS[s.tone] + '</i>' + s.label + '</span>').join('') + '</div>';
+    buildWave(el.querySelector('svg'), zone);
+    // pin each swing label beside its series' end dot (viewBox y → % of plot
+    // height), then push the pair apart if the ends land too close to read
+    const cool = zone.series.find(s => s.tone === 'cool'), heat = zone.series.find(s => s.tone === 'heat');
+    let tc = waveY(cool, X1) / 140 * 100, th = waveY(heat, X1) / 140 * 100;
+    const MIN = 11;
+    if (Math.abs(tc - th) < MIN) {
+      const mid = (tc + th) / 2, dir = tc <= th ? 1 : -1;
+      tc = mid - dir * MIN / 2; th = mid + dir * MIN / 2;
+    }
+    const sc = el.querySelector('.sds-swing.is-cool'), sh = el.querySelector('.sds-swing.is-heat');
+    sc.textContent = cool.swing; sc.style.top = Math.min(95, Math.max(5, tc)) + '%';
+    sh.textContent = heat.swing; sh.style.top = Math.min(95, Math.max(5, th)) + '%';
+  }
+  document.querySelectorAll('[data-sds-chart]').forEach(renderChart);
+
+  // ---------------------------------------------------------------- scrollspy
+  // Anchor nav, not tabs: content never hides, so no tablist roles and no
+  // roving tabindex — links are natively tabbable, aria-current marks place.
+  // Active rule: the last zone whose heading has crossed 10px under the pinned
+  // bar (line = scrollTop + offset + 10) — plain rect math per scroll frame,
+  // which an IntersectionObserver's rootMargin can't express cleanly inside a
+  // fixed-height scrollport (and the short last zone needs a bottom clamp anyway).
+  function initSpy(root) {
+    const OFFSET = +root.dataset.sdsOffset;     // pinned bar height: 38 in both demos
+    const nav = root.querySelector('[data-sds-nav]');
+    const underline = nav.querySelector('.mt-tab-underline');
+    const tabs = [...nav.querySelectorAll('.mt-tab')];
+    const zones = tabs.map(t => root.querySelector(t.getAttribute('href')));
+    zones.forEach(z => { z.tabIndex = -1; });   // focus target for click-jumps
+    const bar = nav.closest('.mt-tabbar');
+    let active = tabs[0], suppress = false, settle = 0, ticking = false;
+
+    // fresh rect math each call — immune to offsetParent chains and late layout
+    const zoneTop = z => z.getBoundingClientRect().top
+                       - root.getBoundingClientRect().top + root.scrollTop;
+
+    function moveUnderline(t) {
+      underline.style.left = t.offsetLeft + 'px';
+      underline.style.width = t.offsetWidth + 'px';
+    }
+    function setActive(t) {
+      if (t === active) return;
+      active = t;
+      tabs.forEach(o => {
+        o.classList.toggle('is-active', o === t);
+        if (o === t) o.setAttribute('aria-current', 'true');
+        else o.removeAttribute('aria-current');
+      });
+      moveUnderline(t);
+      // phone: keep the active tab centered in the scrolling bar — rect math,
+      // because offsetLeft is relative to .mt-tabs, which sits the bar's own
+      // padding away from its scroll origin
+      if (bar.classList.contains('is-scroll')) {
+        const left = t.getBoundingClientRect().left - bar.getBoundingClientRect().left + bar.scrollLeft;
+        bar.scrollTo({ left: Math.max(0, left - (bar.clientWidth - t.offsetWidth) / 2),
+                       behavior: REDUCED ? 'auto' : 'smooth' });
+      }
+    }
+    function spy() {
+      const line = root.scrollTop + OFFSET + 10;
+      let cur = 0;
+      zones.forEach((z, i) => { if (zoneTop(z) <= line) cur = i; });
+      // bottom clamp: a short last zone may never reach the line
+      if (root.scrollTop + root.clientHeight >= root.scrollHeight - 2)
+        cur = zones.length - 1;
+      setActive(tabs[cur]);
+    }
+    root.addEventListener('scroll', () => {
+      if (suppress) {
+        // programmatic flight: hold the spy, re-arm 140ms after events stop
+        clearTimeout(settle);
+        settle = setTimeout(() => { suppress = false; spy(); }, 140);
+        return;
+      }
+      if (!ticking) {
+        ticking = true;
+        // re-check suppress in the callback: a click can land between the
+        // scroll event and its rAF, and the stale spy() would snap the
+        // underline back to the pre-click zone
+        requestAnimationFrame(() => { ticking = false; if (!suppress) spy(); });
+      }
+    }, { passive: true });
+    tabs.forEach((t, i) => t.addEventListener('click', e => {
+      e.preventDefault();   // a real hash jump would scroll the DOCUMENT too
+      setActive(t);         // one underline glide, then the spy holds its fire
+      suppress = true;
+      clearTimeout(settle);
+      settle = setTimeout(() => { suppress = false; }, 600); // already-at-target: no scroll events fire
+      // move focus with the jump, or the next Tab would scroll back to zone 1
+      zones[i].focus({ preventScroll: true });
+      root.scrollTo({ top: zoneTop(zones[i]) - OFFSET, behavior: REDUCED ? 'auto' : 'smooth' });
+    }));
+
+    moveUnderline(active);
+    spy();
+    // kit contract: tabs gate the slide transition on the underline itself
+    requestAnimationFrame(() => underline.classList.add('is-ready'));
+    window.addEventListener('resize', () => { moveUnderline(active); if (!suppress) spy(); });
+    // Geist loads async (display=swap) — re-measure once the real font is in
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => moveUnderline(active));
+  }
+  document.querySelectorAll('[data-sds-demo]').forEach(initSpy);
+</script>
+</body></html>
