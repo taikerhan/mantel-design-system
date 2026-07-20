@@ -22,8 +22,13 @@
   upgrades, Select payment method. Section copy mirrors the live proposal
   (app.usemantel.com Details sheet); prices are demo arithmetic, noted inline.
   The ribbon carries two demo toggles: systems (1 / 3 / 4) and device preview.
-  Upgrades are one flat list (the live page groups them per zone) — grouping
-  would couple the list to the systems variant for no review benefit here.
+  Per Zac's follow-up (items are part-of-home specific in the product), every
+  zone now carries its own "Also included" list under its equipment, in the
+  equipment-row idiom (photo slot + name + Details; placeholder thumb when the
+  item has no product photo — mirroring the live page), and its own
+  "Recommended upgrades" (Add buttons are delegated; addon state is keyed per
+  zone and pruned when a variant drops the zone, so the Review & Sign figure
+  always matches what's on the page).
 -->
 <style>
   .sds-body, .sds-body *, .sds-body *::before, .sds-body *::after { box-sizing: border-box; }
@@ -188,6 +193,20 @@
   .sds-item-link { flex-shrink: 0; border: 0; background: transparent; padding: 14px 0 14px 14px; margin: -14px 0 -14px -14px; font-family: var(--font-sans); font-size: 12.5px; font-weight: var(--fw-medium); color: var(--brand-600); text-decoration: none; cursor: pointer; scroll-margin-top: 48px; }
   .sds-item-link:hover { color: var(--brand-700); text-decoration: underline; }
 
+  /* Also included — the system's line items, part-of-home specific (Zac's
+     field feedback). Rows share the equipment-row idiom: photo slot + name +
+     Details; items without product photos get a neutral placeholder thumb,
+     same as the live page. */
+  .sds-items-head { display: flex; align-items: baseline; gap: 8px; font-size: 15px; font-weight: var(--fw-semibold); letter-spacing: -0.008em; color: var(--ink-900); margin: 20px 0 2px; }
+  /* recommended upgrades — a soft amber merchandising panel so the up-sell
+     moment reads apart from the informational blue chart */
+  .sds-upgrades { margin-top: 20px; padding: 14px 20px 4px; background: color-mix(in srgb, var(--accent-amber-bg) 50%, #fff); border-radius: var(--radius-2xl); }
+  .sds-upgrades .sds-items-head { margin: 0 0 2px; }
+  .sds-upgrades .sds-item-thumb.is-ph { background: #fff; }
+  .sds-toppick { display: inline-flex; align-items: center; padding: 2px 9px; border-radius: var(--radius-full); font-size: 12px; font-weight: 600; letter-spacing: 0.01em; background: var(--accent-amber-bg); color: var(--accent-amber); }
+  .sds-item-thumb.is-ph { display: inline-flex; align-items: center; justify-content: center; color: var(--ink-300); background: var(--ink-50); }
+  .sds-item-thumb.is-ph svg { width: 22px; height: 22px; }
+
   /* ===== staging chart — sdz-chart geometry from zones & staging, verbatim ===== */
   .sds-chart { background: color-mix(in srgb, var(--brand-50) 55%, #fff); border-radius: var(--radius-2xl); padding: 18px 20px 16px; }
   .sds-chart.is-below { margin-top: 18px; }
@@ -228,7 +247,7 @@
      .sds-scroll, but its containing block is the System-details section, so it
      pins while that section is in view and is released by the section's end.
      Solid var(--surface) first = fallback for engines without color-mix. ===== */
-  .sds-sticky { position: sticky; top: var(--toolbar-h); z-index: 5; background: var(--surface); background: color-mix(in srgb, var(--surface) 92%, transparent); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+  .sds-sticky { position: sticky; top: var(--toolbar-h); z-index: 5; margin-top: 10px; background: var(--surface); background: color-mix(in srgb, var(--surface) 92%, transparent); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
   @supports not ((backdrop-filter: blur(8px)) or (-webkit-backdrop-filter: blur(8px))) { .sds-sticky, .sds-toolbar { background: var(--surface); } }
   .sds-sticky .mt-tabbar { padding: 0; }
   /* kit gap: .mt-tab { all: unset } wipes white-space AND the global :focus-visible ring */
@@ -241,7 +260,7 @@
   /* zone sections — generous top padding + ink-200 rule + title-scale head.
      scroll-margin-top = toolbar + pinned bar (38) + 10, matching the spy's
      activation line — and it keeps no-JS anchor jumps honest. */
-  .sds-zone { padding: 32px 0 16px; scroll-margin-top: calc(var(--toolbar-h) + 48px); }
+  .sds-zone { padding: 44px 0 28px; scroll-margin-top: calc(var(--toolbar-h) + 56px); }
   /* click-jump target (JS sets tabindex=-1 and moves focus here) */
   .sds-zone:focus { outline: none; }
   .sds-zone + .sds-zone { border-top: 1px solid var(--ink-200); }
@@ -340,8 +359,9 @@
        bar (hidden scrollbar); the spy auto-centers the active tab */
     .sds-sticky .mt-tabbar { overflow-x: auto; overflow-y: hidden; scrollbar-width: none; touch-action: pan-x; }
     .sds-sticky .mt-tabbar::-webkit-scrollbar { display: none; }
-    .sds-sticky .mt-tabbar.is-sm .mt-tab { padding: 0 10px; }
+    .sds-sticky .mt-tabbar .mt-tab { padding: 0 12px; }
     .sds-chart { padding: 14px 14px 14px; }
+    .sds-upgrades { padding: 12px 14px 2px; }
     .sds-plot { height: 120px; padding-right: 44px; }
     .sds-plot svg { inset: 0 44px 0 30px; width: calc(100% - 74px); }
     .sds-item-thumb { width: 44px; height: 44px; }
@@ -537,36 +557,12 @@
       <section class="sds-details" id="sds-details">
         <h2 class="sds-block-title">System details<span class="sds-block-count" data-sds-count>3 systems</span></h2>
         <div class="sds-sticky" data-sds-stickywrap>
-          <div class="mt-tabbar is-sm">
+          <div class="mt-tabbar">
             <nav class="mt-tabs" aria-label="Systems on this page" data-sds-nav></nav>
           </div>
         </div>
         <div data-sds-zones></div>
       </section>
-
-      <div class="sds-divider"></div>
-
-      <h2 class="sds-block-title">Recommended upgrades</h2>
-      <div class="sds-row">
-        <span class="sds-row-ico"><i data-lucide="droplets"></i></span>
-        <div class="sds-row-main"><div class="sds-row-label">Bypass Humidifier<span class="mt-category is-primary">Top pick</span></div><a class="sds-detail-link" href="#" aria-label="Details — Bypass Humidifier">Details</a></div>
-        <div class="sds-row-val"><span class="sds-up-price">+$1,499</span><button class="btn btn-secondary btn-sm sds-addbtn" data-sds-addon="1499" aria-pressed="false"><svg class="chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span class="lbl">Add</span></button></div>
-      </div>
-      <div class="sds-row">
-        <span class="sds-row-ico"><i data-lucide="air-vent"></i></span>
-        <div class="sds-row-main"><div class="sds-row-label">Cold Air Return Kit</div><a class="sds-detail-link" href="#" aria-label="Details — Cold Air Return Kit">Details</a></div>
-        <div class="sds-row-val"><span class="sds-up-price">+$319</span><button class="btn btn-secondary btn-sm sds-addbtn" data-sds-addon="319" aria-pressed="false"><svg class="chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span class="lbl">Add</span></button></div>
-      </div>
-      <div class="sds-row">
-        <span class="sds-row-ico"><i data-lucide="fan"></i></span>
-        <div class="sds-row-main"><div class="sds-row-label">Duct Cleaning</div><a class="sds-detail-link" href="#" aria-label="Details — Duct Cleaning">Details</a></div>
-        <div class="sds-row-val"><span class="sds-up-price">+$500</span><button class="btn btn-secondary btn-sm sds-addbtn" data-sds-addon="500" aria-pressed="false"><svg class="chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span class="lbl">Add</span></button></div>
-      </div>
-      <div class="sds-row">
-        <span class="sds-row-ico"><i data-lucide="zap"></i></span>
-        <div class="sds-row-main"><div class="sds-row-label">Surge Protector AG3000 installation</div><a class="sds-detail-link" href="#" aria-label="Details — Surge Protector AG3000 installation">Details</a></div>
-        <div class="sds-row-val"><span class="sds-up-price">+$349</span><button class="btn btn-secondary btn-sm sds-addbtn" data-sds-addon="349" aria-pressed="false"><svg class="chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span class="lbl">Add</span></button></div>
-      </div>
 
       <div class="sds-divider"></div>
 
@@ -646,6 +642,17 @@
         { img: 'ac-26tpa8',          role: 'Air conditioner', name: 'Carrier Performance 26TPA8', spec: 'Two-stage · SEER2 16.5 · EER2 13' },
         { img: 'coil-v',             role: 'Evaporator coil', name: 'Carrier V Coil with Vertex', spec: 'Matched to the 26TPA8' },
         { img: 'furnace-infinity80', role: 'Gas furnace',     name: 'Carrier Infinity 80',        spec: 'Two-stage · AFUE 80%' }
+      ],
+      items: [
+        ['Ductwork modification & transitions', 1, 'airhandler-ft5'],
+        ['Supply registers — replace', 4, 'coil-v'],
+        ['Refrigerant line set — 25 ft', 1, 'hp-27tpa8'],
+        ['Condensate drain & safety switch', 1, 'ecobee-premium'],
+        ['Permit & city inspection', 1, null]
+      ],
+      upgrades: [
+        ['Bypass Humidifier', 1499, 'droplets', true, 'airhandler-ft5'],
+        ['Duct Cleaning', 500, 'fan', false, null]
       ]
     },
     back: {
@@ -659,6 +666,15 @@
         { img: 'hp-27tpa8',      role: 'Heat pump · cools + heats', name: 'Carrier Performance 27TPA8', spec: 'Two-stage · SEER2 17.5 · HSPF2 8.1' },
         { img: 'airhandler-ft5', role: 'Air handler', name: 'Carrier Performance FT5',         spec: 'Single-stage · FT5ANXB24L00' },
         { img: 'ecobee-premium', role: 'Thermostat',  name: 'ecobee Smart Thermostat Premium', spec: 'With InteliSense technology' }
+      ],
+      items: [
+        ['Refrigerant line set — 40 ft', 1, 'hp-27tpa8'],
+        ['Equipment pad & wall bracket', 1, 'airhandler-ft5'],
+        ['Electrical — dedicated circuit', 1, null],
+        ['Condensate pump', 1, 'coil-v']
+      ],
+      upgrades: [
+        ['Surge Protector AG3000 installation', 349, 'zap', false, 'ecobee-premium']
       ]
     },
     upstairs: {
@@ -667,6 +683,14 @@
         { img: 'ac-26tpa8',      role: 'Air conditioner', name: 'Carrier Performance 26TPA8', spec: 'Two-stage · SEER2 16.5 · EER2 13' },
         { img: 'coil-v',         role: 'Evaporator coil', name: 'Carrier V Coil with Vertex', spec: 'Matched to the 26TPA8' },
         { img: 'ecobee-premium', role: 'Thermostat',      name: 'ecobee Smart Thermostat Premium', spec: 'With InteliSense technology' }
+      ],
+      items: [
+        ['Return-air upsize', 1, 'ac-26tpa8'],
+        ['Supply registers — replace', 3, 'coil-v'],
+        ['Attic service platform & light', 1, null]
+      ],
+      upgrades: [
+        ['Cold Air Return Kit', 319, 'vent', false, 'coil-v']
       ]
     },
     primary: {
@@ -674,6 +698,13 @@
       equipment: [
         { img: 'hp-27tpa8',      role: 'Heat pump · cools + heats', name: 'Carrier Performance 27TPA8', spec: 'Two-stage · SEER2 17.5 · HSPF2 8.1' },
         { img: 'airhandler-ft5', role: 'Air handler', name: 'Carrier Performance FT5', spec: 'Single-stage · FT5ANXB24L00' }
+      ],
+      items: [
+        ['Line-hide kit', 1, 'coil-v'],
+        ['Electrical — dedicated circuit', 1, null]
+      ],
+      upgrades: [
+        ['Surge Protector AG3000 installation', 349, 'zap', false, 'ecobee-premium']
       ]
     }
   };
@@ -687,9 +718,10 @@
     three: ['downstairs', 'back', 'upstairs'],
     four:  ['downstairs', 'back', 'upstairs', 'primary']
   };
-  const OFFSET = 38;   // pinned bar height
+  const OFFSET = 46;   // pinned bar height (full-size mt-tabbar)
   const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const scroller = document.querySelector('.sds-scroll');
+  let addonsSync;   // assigned once pricing exists; renderVariant guards on it
 
   // ---------------------------------------------------------------- render
   function equipRow(item) {
@@ -763,17 +795,66 @@
     sh.textContent = heat.swing; sh.style.top = Math.min(95, Math.max(5, th)) + '%';
   }
 
+  // inline package glyph — createIcons() never re-scans re-rendered zones
+  const PKG_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="m7.5 4.27 9 5.15"/></svg>';
+  function itemRow(it) {
+    // stand-in photos reuse the six product shots (same intentional-reuse
+    // convention as the zones); service items keep the placeholder glyph
+    const thumb = it[2]
+      ? '<span class="sds-item-thumb"><img src="../assets/products/' + it[2] + '.png" alt=""></span>'
+      : '<span class="sds-item-thumb is-ph">' + PKG_ICON + '</span>';
+    return '<div class="sds-item">'
+      + thumb
+      + '<div class="sds-item-main">'
+      + '<div class="sds-item-name">' + it[0] + '</div>'
+      + (it[1] > 1 ? '<div class="sds-item-spec">Qty ' + it[1] + '</div>' : '')
+      + '</div><button class="sds-item-link" type="button" aria-label="Details — ' + it[0] + '">Details</button></div>';
+  }
+  function itemsBlock(z) {
+    if (!z.items || !z.items.length) return '';
+    return '<h4 class="sds-items-head">Also included</h4>'
+      + '<div>' + z.items.map(itemRow).join('') + '</div>';
+  }
+  // per-zone recommended upgrades — optional add-ons priced into the bar
+  const UPG_ICONS = {
+    droplets: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 6.75 7 5.3c-.29 1.45-1.14 2.84-2.29 3.76S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z"/><path d="M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97"/></svg>',
+    fan: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.827 16.379a6.082 6.082 0 0 1-8.618-7.002l5.412 1.45a6.082 6.082 0 0 1 7.002-8.618l-1.45 5.412a6.082 6.082 0 0 1 8.618 7.002l-5.412-1.45a6.082 6.082 0 0 1-7.002 8.618l1.45-5.412Z"/><path d="M12 12v.01"/></svg>',
+    zap: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
+    vent: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 12H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 8h12"/><path d="M18.3 17.7a2.5 2.5 0 0 1-3.16 3.83 2.53 2.53 0 0 1-1.14-2V12"/><path d="M6.6 15.6A2 2 0 1 0 10 17v-5"/></svg>'
+  };
+  const CHK_ICON = '<svg class="chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+  function upgradesBlock(zKey, z) {
+    if (!z.upgrades || !z.upgrades.length) return '';
+    return '<div class="sds-upgrades"><h4 class="sds-items-head">Recommended upgrades</h4>'
+      + '<div>' + z.upgrades.map((u, i) => {
+        const id = zKey + ':' + i;
+        // photo when the upgrade is a product; service upgrades keep the icon
+        // in the same 48px thumb slot so rows stay aligned
+        const thumb = u[4]
+          ? '<span class="sds-item-thumb"><img src="../assets/products/' + u[4] + '.png" alt=""></span>'
+          : '<span class="sds-item-thumb is-ph">' + UPG_ICONS[u[2]] + '</span>';
+        return '<div class="sds-row">'
+          + thumb
+          + '<div class="sds-row-main"><div class="sds-row-label">' + u[0] + (u[3] ? '<span class="sds-toppick">Top pick</span>' : '') + '</div><a class="sds-detail-link" href="#" aria-label="Details — ' + u[0] + '">Details</a></div>'
+          + '<div class="sds-row-val"><span class="sds-up-price">+$' + u[1].toLocaleString('en-US') + '</span>'
+          + '<button class="btn btn-secondary btn-sm sds-addbtn" data-sds-id="' + id + '" data-sds-addon="' + u[1] + '" aria-pressed="false">' + CHK_ICON + '<span class="lbl">Add</span></button></div>'
+          + '</div>';
+      }).join('') + '</div></div>';
+  }
   function zoneSection(key, i, total) {
     const z = ZONES[key];
+    const count = z.equipment.length + (z.items ? z.items.length : 0);
     // single system: no numbering, no navigator — the generic equipment head
     const head = (total === 1)
-      ? '<h3 class="sds-equip-head">Equipment<span class="sds-equip-count">' + z.equipment.length + ' items</span></h3>'
-      : '<h3 class="sds-zone-head">' + (i + 1) + '. ' + z.name + '<span class="sds-zone-count">' + z.equipment.length + ' items</span></h3>';
+      ? '<h3 class="sds-equip-head">Equipment<span class="sds-equip-count">' + z.equipment.length + '</span></h3>'
+      : '<h3 class="sds-zone-head">' + (i + 1) + '. ' + z.name + '<span class="sds-zone-count">' + count + ' items</span></h3>';
     const chartTitle = (total === 1) ? ' data-sds-title="How this system holds your set temperature"' : '';
     return '<section class="sds-zone" id="sds-z-' + key + '">'
       + head
       + '<div>' + z.equipment.map(equipRow).join('') + '</div>'
       + '<div class="sds-chart is-below" data-sds-chart="' + key + '"' + chartTitle + '></div>'
+      + itemsBlock(z)
+      + upgradesBlock(key, z)
       + '</section>';
   }
 
@@ -882,6 +963,7 @@
     countEl.textContent = keys.length + (keys.length === 1 ? ' system' : ' systems');
     zonesWrap.innerHTML = keys.map((k, i) => zoneSection(k, i, keys.length)).join('');
     zonesWrap.querySelectorAll('[data-sds-chart]').forEach(renderChart);
+    if (typeof addonsSync === 'function') addonsSync(keys);
     if (keys.length === 1) {
       stickyWrap.style.display = 'none';
       nav.innerHTML = '';
@@ -928,11 +1010,11 @@
   };
   const fmt = n => '$' + n.toLocaleString('en-US');
   const pricing = {
-    baseMonthly: 686, addons: new Set(), method: 'p120',
+    baseMonthly: 686, addons: new Map(), method: 'p120',   // addon id -> price (per-zone upgrades)
     setBase(m) { this.baseMonthly = m; this.render(); },
-    toggleAddon(price, on) { on ? this.addons.add(price) : this.addons.delete(price); this.render(); },
+    toggleAddon(id, price, on) { on ? this.addons.set(id, price) : this.addons.delete(id); this.render(); },
     setMethod(m) { this.method = m; this.render(); },
-    total() { return this.baseMonthly * 120 + [...this.addons].reduce((s, p) => s + p, 0); },
+    total() { return this.baseMonthly * 120 + [...this.addons.values()].reduce((s, p) => s + p, 0); },
     monthly(term) { return Math.round(this.total() / term); },
     render() {
       const k = document.getElementById('sdsInvestK');
@@ -963,14 +1045,28 @@
     }
   };
 
-  // upgrades: Add ⇄ Added
-  document.querySelectorAll('.sds-addbtn').forEach(btn => btn.addEventListener('click', () => {
+  // upgrades: Add ⇄ Added — delegated, since zone re-renders rebuild the buttons
+  document.addEventListener('click', e => {
+    const btn = e.target.closest('.sds-addbtn');
+    if (!btn) return;
     const on = !btn.classList.contains('is-added');
     btn.classList.toggle('is-added', on);
     btn.setAttribute('aria-pressed', on ? 'true' : 'false');
     btn.querySelector('.lbl').textContent = on ? 'Added' : 'Add';
-    pricing.toggleAddon(Number(btn.dataset.sdsAddon), on);
-  }));
+    pricing.toggleAddon(btn.dataset.sdsId, Number(btn.dataset.sdsAddon), on);
+  });
+  // variant switches re-render the zones: drop addons whose zone left the
+  // page, then restore the Added state on the fresh buttons
+  addonsSync = function (keys) {
+    [...pricing.addons.keys()].forEach(id => { if (!keys.includes(id.split(':')[0])) pricing.addons.delete(id); });
+    zonesWrap.querySelectorAll('.sds-addbtn').forEach(b => {
+      const on = pricing.addons.has(b.dataset.sdsId);
+      b.classList.toggle('is-added', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      b.querySelector('.lbl').textContent = on ? 'Added' : 'Add';
+    });
+    pricing.render();
+  };
 
   // payment method radios
   document.querySelectorAll('input[name="sds-pay"]').forEach(input => input.addEventListener('change', () => {
