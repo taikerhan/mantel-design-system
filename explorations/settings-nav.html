@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Settings navigation · Design review · Mantel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/kit.css">
+<!--
+  Design rationale — Settings navigation hierarchy, three directions.
+  The live settings surface (app.usemantel.com/Sunrise/settings) is a hub
+  card grid with no persistent nav: 8 categories x up to 6 children, plus a
+  third level under Proposal Settings > Proposal Presentation — one step in
+  and you've lost the map. Reps also open settings mid-proposal-edit and
+  need a guaranteed way back. Three directions share ONE real IA tree and
+  one placeholder-pane renderer (framework first, page content later):
+  A full page, primary-only side nav + one-page stacked sections — tabs
+  appear only where a tertiary level exists (Proposal Presentation);
+  A2 the same stacked sections inside a large settings modal — the page
+  beneath stays unspecified in the demo (neutral canvas + reopen button);
+  B full page, side nav + Squarespace-style hub cards + breadcrumb drill-in;
+  B2 the hub-and-crumbs pattern inside the same modal shell.
+  All four share one side-nav recipe — caps group headers + icons +
+  light-blue active pill — and the modal rail adds a settings search.
+  Third level: A/C drill inside the pane under a breadcrumb (no second tab
+  row — stacked switchers are the ambiguity this queue item exists to kill);
+  B recurses its one hub-and-crumbs move. Mobile converges on a drill-down
+  list for all three. Ribbon carries the option toggle + device preview
+  (iframe at true device width, same rig as system-details-stacked).
+-->
+<style>
+  .stn-body, .stn-body *, .stn-body *::before, .stn-body *::after { box-sizing: border-box; }
+  html, body { margin: 0; }
+  .stn-body {
+    display: flex; flex-direction: column;
+    height: 100vh; height: 100dvh; overflow: hidden;
+    background: var(--ink-50); color: var(--ink-800);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01", "ss03", "cv11";
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+  .stn-i { width: 16px; height: 16px; flex: none; }
+  /* classed display (flex/grid) outranks the UA [hidden] rule — pin it back */
+  .stn-body [hidden] { display: none !important; }
+
+  /* ===== return-to-queue ribbon (preview chrome, not part of the product) ===== */
+  .stn-ribbon { flex: none; position: relative; z-index: 90; display: flex; align-items: center; justify-content: space-between; gap: 10px; height: 36px; padding: 0 16px; background: var(--ink-900); color: #fff; font-size: 12.5px; }
+  .stn-ribbon a { display: inline-flex; align-items: center; gap: 6px; color: #fff; text-decoration: none; font-weight: 500; opacity: .92; white-space: nowrap; }
+  .stn-ribbon a:hover { opacity: 1; text-decoration: none; }
+  .stn-ribbon a svg { width: 14px; height: 14px; }
+  .stn-ribbon .sep { width: 1px; height: 14px; background: rgba(255,255,255,.22); }
+  .stn-ribbon .tag { color: rgba(255,255,255,.55); font-size: 12px; }
+  .stn-ribbon-r { display: flex; align-items: center; gap: 12px; }
+  .stn-dev { display: inline-flex; gap: 2px; background: rgba(255,255,255,.09); border-radius: 9px; padding: 2px; }
+  .stn-dev button { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 24px; border: 0; border-radius: 7px; background: transparent; color: rgba(255,255,255,.6); cursor: pointer; transition: color .18s var(--ease), background-color .18s var(--ease); }
+  .stn-dev button:hover { color: #fff; }
+  .stn-dev button.is-active { background: #fff; color: var(--ink-900); }
+  .stn-dev button svg { width: 15px; height: 15px; }
+  .stn-opts button { width: auto; min-width: 32px; padding: 0 10px; font-size: 12px; font-weight: 600; }
+
+  /* ===== stage — everything below the ribbon ===== */
+  .stn-stage { position: relative; flex: 1 1 auto; min-height: 0; }
+
+
+  /* neutral canvas behind the modal pair */
+  .stn-blank { position: absolute; inset: 0; z-index: 1; background: var(--ink-50); display: flex; align-items: center; justify-content: center; }
+
+  /* ===== shared settings side nav (options A + B) ===== */
+  .stn-page { position: absolute; inset: 0; z-index: 2; display: flex; background: var(--ink-50); opacity: 0; transform: translateY(12px); pointer-events: none; transition: opacity .22s var(--ease), transform .28s var(--ease); }
+  .stn-page.is-shown { opacity: 1; transform: none; pointer-events: auto; }
+  .stn-nav { width: 248px; flex: none; display: flex; flex-direction: column; min-height: 0; background: #fff; border-right: 1px solid var(--ink-150); }
+  /* Back = the kit's outline icon button (white fill, brand border), same as
+     the stacked-zones toolbar */
+  .stn-exit { margin: 14px 12px 0 20px; align-self: flex-start; flex: none; }
+  .stn-drill .stn-exit { margin: 12px 0 0 16px; }
+  /* the big "Settings" — the word the current product hides at 13px */
+  .stn-nav-title { font-size: 24px; line-height: 30px; font-weight: 600; letter-spacing: -0.019em; color: var(--ink-900); padding: 8px 22px 14px; }
+  .stn-nav-list { flex: 1; min-height: 0; overflow-y: auto; padding: 0 12px 18px; display: flex; flex-direction: column; gap: 2px; }
+  .stn-navitem { position: relative; display: flex; align-items: center; gap: 10px; min-height: 38px; padding: 0 10px 0 12px; border: 0; background: transparent; border-radius: var(--radius-md); font-family: inherit; font-size: 14px; font-weight: 500; color: var(--ink-700); cursor: pointer; text-align: left; transition: background-color .14s var(--ease), color .14s var(--ease); }
+  .stn-navitem .stn-i { width: 17px; height: 17px; color: var(--ink-500); transition: color .14s var(--ease); }
+  .stn-navitem:hover { background: var(--ink-100); color: var(--ink-900); }
+  /* active = tinted pill + weight + icon color; no accent bar — a bar floating
+     beside a rounded pill reads as two competing indicators */
+  .stn-navitem.is-active { background: color-mix(in srgb, var(--brand-100) 55%, #fff); color: var(--brand-700); font-weight: 600; }
+  .stn-navitem.is-active .stn-i { color: var(--brand-600); }
+
+  /* nav style "group" (option B) — Stripe-flavored: text-only under tiny caps
+     group labels; active is the soft light-blue pill */
+  .stn-nav-group { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-400); padding: 16px 10px 5px; }
+  .stn-nav-list.is-group .stn-nav-group:first-child, .stn-nav-list.is-igroup .stn-nav-group:first-child { padding-top: 6px; }
+
+  /* ===== main content column (A + B) ===== */
+  .stn-main { flex: 1; min-width: 0; overflow-y: auto; }
+  .stn-main-inner { max-width: 880px; margin: 0 auto; padding: 20px 36px 64px; }
+  .stn-pagehead h1 { font-size: 22px; line-height: 1.2; font-weight: 600; letter-spacing: -0.017em; color: var(--ink-900); margin: 0; }
+  .stn-lede { font-size: 13.5px; color: var(--ink-500); line-height: 1.55; margin: 4px 0 0; }
+  .stn-crumbrow { margin: 0 0 10px; }
+
+  /* option A — one-page stacked sections, tabs only at the tertiary level */
+  /* rhythm: title+lede pairs stay tight (2–4px); the break BETWEEN blocks
+     carries the separation */
+  .stn-sec { margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--ink-150); }
+  .stn-sec:first-of-type { margin-top: 24px; padding-top: 0; border-top: 0; }
+  .stn-sec-title { font-size: 17px; font-weight: 600; letter-spacing: -0.012em; color: var(--ink-900); margin: 0; }
+  .stn-sec .stn-lede { margin-top: 2px; }
+  .stn-sec .stn-card { margin-top: 14px; }
+  .stn-sec-subhead { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-400); margin: 22px 0 0; }
+  .stn-tabwrap.is-static { position: static; padding-top: 8px; }
+
+  /* second level = DS filter tabs, pinned while the pane scrolls */
+  .stn-tabwrap { position: sticky; top: 0; z-index: 5; background: var(--ink-50); padding-top: 16px; }
+  .stn-tabwrap .mt-tabbar { padding: 0 2px; }
+  .stn-tabwrap .mt-tab { white-space: nowrap; }
+  .stn-more-wrap { position: relative; margin-left: auto; align-self: center; }
+  .stn-more { display: inline-flex; align-items: center; gap: 4px; border: 0; background: none; padding: 6px 10px; border-radius: var(--radius-md); font-family: inherit; font-size: 13px; font-weight: 500; color: var(--ink-500); cursor: pointer; transition: background-color .14s var(--ease), color .14s var(--ease); }
+  .stn-more:hover { background: var(--ink-100); color: var(--ink-900); }
+  .stn-more .stn-i { width: 14px; height: 14px; }
+  .stn-more-menu { position: absolute; right: 0; top: calc(100% + 6px); z-index: 30; box-shadow: var(--shadow-menu); }
+
+  /* ===== placeholder panes ===== */
+  .stn-pane { padding-top: 2px; }
+  .stn-card { background: #fff; border-radius: var(--radius-2xl); box-shadow: var(--shadow-card); padding: 8px 20px; margin-top: 16px; }
+  .stn-card-head { font-size: 15px; font-weight: 600; color: var(--ink-900); letter-spacing: -0.011em; padding: 12px 0 4px; }
+  .stn-row { display: flex; align-items: center; gap: 16px; padding: 13px 0; border-bottom: 1px solid var(--ink-150); }
+  .stn-card .stn-row:last-child { border-bottom: 0; }
+  .stn-row-main { flex: 1; min-width: 0; }
+  .stn-row-label { font-size: 14px; font-weight: 500; color: var(--ink-900); }
+  .stn-row-desc { font-size: 12.5px; color: var(--ink-500); margin-top: 1px; line-height: 1.45; }
+  .stn-w200 { width: 200px; flex: none; }
+  .stn-listbar { display: flex; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--ink-150); }
+  .stn-search { flex: 1; max-width: 320px; }
+  .stn-listbar .btn { margin-left: auto; }
+  .stn-lrow { display: flex; align-items: center; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--ink-150); color: var(--ink-400); }
+  .stn-av { width: 32px; height: 32px; flex: none; border-radius: var(--radius-full); display: inline-flex; align-items: center; justify-content: center; font-size: 12.5px; font-weight: 600; letter-spacing: 0.01em; }
+  .stn-listfoot { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 12.5px; color: var(--ink-500); padding: 9px 0 10px; font-variant-numeric: tabular-nums; }
+  .stn-showall { border: 0; background: none; font-family: inherit; font-size: 13px; font-weight: 500; color: var(--brand-600); padding: 3px 8px; border-radius: var(--radius-md); cursor: pointer; transition: color .14s var(--ease), background-color .14s var(--ease); }
+  .stn-showall:hover { color: var(--brand-700); background: var(--brand-50); }
+  .stn-sublink { display: flex; align-items: center; gap: 14px; width: 100%; padding: 13px 0; border: 0; border-bottom: 1px solid var(--ink-150); background: none; font-family: inherit; cursor: pointer; text-align: left; color: var(--ink-400); transition: color .14s var(--ease); }
+  .stn-card .stn-sublink:last-child { border-bottom: 0; }
+  .stn-sublink:hover { color: var(--brand-600); }
+  .stn-sublink:hover .stn-row-label { color: var(--brand-700); }
+  .stn-placeholder-note { font-size: 12px; color: var(--ink-400); margin: 18px 2px 0; }
+  .stn-pane-title { font-size: 22px; line-height: 1.2; font-weight: 600; letter-spacing: -0.017em; color: var(--ink-900); margin: 6px 0 0; }
+
+  /* ===== option B — hub cards ===== */
+  .stn-hub { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; margin-top: 20px; }
+  .stn-hub.is-sub { margin-top: 16px; }
+  .stn-hubcard { display: flex; align-items: center; gap: 14px; background: #fff; border: 0; border-radius: var(--radius-2xl); box-shadow: var(--shadow-card); padding: 16px 18px; font-family: inherit; cursor: pointer; text-align: left; transition: box-shadow .22s var(--ease), transform .22s var(--ease); }
+  .stn-hubcard:hover { box-shadow: inset 0 0 0 1.5px var(--brand-300), var(--shadow-hover); background: color-mix(in srgb, var(--brand-50) 45%, #fff); transform: translateY(-2px); }
+  .stn-hubcard:hover .chev { color: var(--brand-600); }
+  .stn-hubcard .bub { width: 38px; height: 38px; flex: none; border-radius: 11px; background: var(--brand-50); color: var(--brand-600); display: inline-flex; align-items: center; justify-content: center; }
+  .stn-hubcard .bub .stn-i { width: 18px; height: 18px; }
+  .stn-hubcard .txt { flex: 1; min-width: 0; }
+  .stn-hubcard .t { display: block; font-size: 14.5px; font-weight: 600; color: var(--ink-900); letter-spacing: -0.008em; }
+  .stn-hubcard .d { display: block; font-size: 12.5px; color: var(--ink-500); margin-top: 2px; line-height: 1.45; }
+  .stn-hubcard .chev { color: var(--ink-400); }
+
+  /* ===== option C — settings modal over the editor ===== */
+  .stn-backdrop { position: absolute; inset: 0; z-index: 3; background: rgba(14,16,20,.42); -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px); opacity: 0; pointer-events: none; transition: opacity var(--dur) var(--ease); }
+  .stn-backdrop.is-open { opacity: 1; pointer-events: auto; }
+  .stn-modal { position: absolute; left: 50%; top: 50%; z-index: 4; width: min(1040px, calc(100% - 48px)); height: min(720px, calc(100% - 48px)); transform: translate(-50%, calc(-50% + 48px)); background: #fff; border-radius: var(--radius-2xl); box-shadow: var(--shadow-pop); display: flex; overflow: hidden; opacity: 0; pointer-events: none; transition: opacity var(--dur) var(--ease), transform var(--dur-card) cubic-bezier(0.16, 1, 0.3, 1); }
+  .stn-modal.is-open { transform: translate(-50%, -50%); opacity: 1; pointer-events: auto; }
+  /* white rail + ink-50 content well — the same two-tone as the full-page pair */
+  .stn-modal-nav { width: 224px; flex: none; display: flex; flex-direction: column; min-height: 0; background: #fff; border-right: 1px solid var(--ink-150); }
+  .stn-modal-nav .stn-nav-title { font-size: 19px; line-height: 26px; letter-spacing: -0.014em; padding: 18px 20px 10px; }
+  .stn-modal-nav .stn-nav-list { padding: 0 10px 14px; }
+  .stn-nav-search { padding: 2px 14px 10px; }
+  .stn-nav-search .mt-input { width: 100%; background: #fff; }
+  .stn-modal-right { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .stn-modal-head { flex: none; display: flex; align-items: center; gap: 12px; padding: 16px 20px 8px; background: var(--ink-50); }
+  /* page title steps up to the A page-header scale so sections read a clear
+     level below it */
+  .stn-modal-head h3 { flex: 1; min-width: 0; font-size: 22px; line-height: 1.2; font-weight: 600; letter-spacing: -0.017em; color: var(--ink-900); margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .stn-modal-body > .stn-lede { margin-top: 0; }
+  .stn-modal-body .stn-sec-title { font-size: 16px; }
+  .stn-modal-body .stn-pane-title { font-size: 18px; }
+  .stn-modal-body .stn-sec { margin-top: 22px; padding-top: 20px; }
+  /* first section keeps a single gap under the lede — no doubled margin+padding */
+  .stn-modal-body .stn-sec:first-of-type { margin-top: 18px; padding-top: 0; }
+  /* soft grey close — the kit's overlay-head treatment, not the brand-outline icon button */
+  .stn-modal .btn-icon.stn-close, .stn-drill .btn-icon.stn-close { background: #fff; color: var(--ink-600); border: 1px solid var(--ink-200); box-shadow: 0 1px 1px rgba(16,24,40,0.04); }
+  .stn-modal .btn-icon.stn-close:hover, .stn-drill .btn-icon.stn-close:hover { background: var(--ink-50); border-color: var(--ink-400); color: var(--ink-900); box-shadow: 0 1px 3px rgba(16,24,40,0.12); }
+  /* content well = the page background, so cards keep the same shadow-card
+     treatment as the full-page pair */
+  .stn-modal-body { flex: 1; min-height: 0; overflow-y: auto; padding: 4px 20px 26px; background: var(--ink-50); }
+  .stn-modal [data-drill] { display: none; }
+
+  /* ===== mobile drill-down (shared by A, B, and C's sheet) ===== */
+  .stn-drill { position: absolute; inset: 0; overflow: hidden; background: var(--ink-50); display: none; }
+  .stn-drill-pane { position: absolute; inset: 0; display: flex; flex-direction: column; background: var(--ink-50); transition: transform .3s var(--ease), opacity .3s var(--ease); }
+  .stn-drill-hd { flex: none; display: flex; align-items: center; gap: 2px; min-height: 52px; padding: 6px 12px; background: #fff; border-bottom: 1px solid var(--ink-150); }
+  .stn-drill-back { display: inline-flex; align-items: center; gap: 2px; border: 0; background: none; color: var(--brand-600); font-family: inherit; font-size: 15px; font-weight: 500; padding: 8px 10px 8px 2px; border-radius: var(--radius-md); cursor: pointer; }
+  .stn-drill-back .stn-i { width: 19px; height: 19px; }
+  .stn-drill-ttl { flex: 1; min-width: 0; font-size: 16px; font-weight: 600; letter-spacing: -0.011em; color: var(--ink-900); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .stn-drill-bd { flex: 1; min-height: 0; overflow-y: auto; padding-bottom: 30px; }
+  .stn-drill-bd .stn-card { margin: 14px 16px 0; }
+  .stn-drill-bd .stn-placeholder-note { margin: 16px 18px 0; }
+  .stn-drill-bighead { padding: 18px 20px 4px; }
+  .stn-drill-bighead .stn-nav-title { font-size: 27px; line-height: 32px; padding: 2px 0 0; }
+  .stn-drill .stn-exit { margin: 10px 8px 0; }
+  .stn-mgroup { margin: 14px 16px; background: #fff; border-radius: var(--radius-2xl); box-shadow: var(--shadow-card); overflow: hidden; }
+  .stn-mrow { display: flex; align-items: center; gap: 12px; width: 100%; padding: 13px 16px; border: 0; border-bottom: 1px solid var(--ink-150); background: none; font-family: inherit; font-size: 15px; font-weight: 500; color: var(--ink-900); cursor: pointer; text-align: left; }
+  .stn-mgroup .stn-mrow:last-child { border-bottom: 0; }
+  .stn-mrow .stn-i { width: 18px; height: 18px; color: var(--ink-500); }
+  .stn-mrow .chev { margin-left: auto; color: var(--ink-400); }
+  .stn-mrow .chev .stn-i { width: 16px; height: 16px; }
+  .stn-mrow .sub { display: block; font-size: 12.5px; font-weight: 400; color: var(--ink-500); margin-top: 1px; }
+  .stn-grabber { position: absolute; top: 8px; left: 50%; transform: translateX(-50%); width: 40px; height: 4px; border-radius: var(--radius-full); background: var(--ink-200); }
+
+  /* ===== toast — shown when settings hand you back to the proposal ===== */
+  .stn-toast { position: absolute; left: 50%; bottom: 26px; z-index: 6; transform: translate(-50%, 8px); background: var(--ink-900); color: #fff; font-size: 13px; font-weight: 500; padding: 9px 15px; border-radius: 10px; box-shadow: var(--shadow-pop); opacity: 0; transition: opacity .22s var(--ease), transform .22s var(--ease); pointer-events: none; white-space: nowrap; }
+  .stn-toast.is-show { opacity: 1; transform: translate(-50%, 0); }
+
+  /* ===== device-preview overlay — iframe at the real device width ===== */
+  .stn-vp { position: fixed; inset: 0; z-index: 80; display: none; align-items: center; justify-content: center; background: rgba(14,16,20,.5); backdrop-filter: blur(5px); }
+  .stn-vp.is-open { display: flex; }
+  .stn-vp-scale { transform-origin: center center; }
+  .stn-vp-frame { position: relative; background: var(--ink-900); box-shadow: 0 50px 90px -25px rgba(0,0,0,.65); }
+  .stn-vp[data-mode="mobile"] .stn-vp-frame { border-radius: 46px; padding: 12px; }
+  .stn-vp[data-mode="pad"] .stn-vp-frame { border-radius: 30px; padding: 16px; }
+  .stn-vp-frame iframe { display: block; border: 0; background: #fff; }
+  .stn-vp[data-mode="mobile"] iframe { width: 390px; height: 844px; border-radius: 34px; }
+  .stn-vp[data-mode="pad"] iframe { width: 834px; height: 1112px; border-radius: 14px; }
+  .stn-vp-label { position: absolute; left: 50%; top: -38px; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 8px; color: #fff; font-size: 13px; font-weight: 600; white-space: nowrap; }
+  .stn-vp-label .dim { color: rgba(255,255,255,.55); font-variant-numeric: tabular-nums; }
+  .stn-vp[data-mode="mobile"] .stn-vp-frame::before { content: ""; position: absolute; top: 22px; left: 50%; transform: translateX(-50%); width: 120px; height: 5px; border-radius: var(--radius-full); background: rgba(255,255,255,.22); z-index: 2; }
+  .stn-vp-close { position: absolute; right: -2px; top: -40px; width: 30px; height: 30px; border-radius: var(--radius-full); border: 0; cursor: pointer; background: rgba(255,255,255,.14); color: #fff; display: inline-flex; align-items: center; justify-content: center; transition: background-color .15s var(--ease); }
+  .stn-vp-close:hover { background: rgba(255,255,255,.26); }
+  .stn-vp-close svg { width: 16px; height: 16px; }
+
+  /* embedded inside the device iframe: hide all preview chrome */
+  body.is-embed .stn-ribbon, body.is-embed .stn-vp { display: none !important; }
+
+  .stn-reduced .stn-page, .stn-reduced .stn-modal, .stn-reduced .stn-backdrop, .stn-reduced .stn-drill-pane { transition: none !important; }
+
+  /* ===== responsive ===== */
+  @media (max-width: 920px) {
+    .stn-nav { width: 204px; }
+    .stn-main-inner { padding: 16px 18px 44px; }
+    .stn-hub { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+    .stn-modal { width: calc(100% - 40px); }
+  }
+  @media (max-width: 640px) {
+    .stn-ribbon .tag { display: none; }
+    /* full-page options collapse to the drill-down */
+    .stn-page .stn-nav, .stn-page .stn-main { display: none; }
+    .stn-page .stn-drill { display: block; }
+    /* the modal becomes a bottom sheet holding the same drill-down */
+    .stn-modal { left: 0; top: auto; bottom: 0; width: 100%; height: 92%; border-radius: var(--radius-2xl) var(--radius-2xl) 0 0; transform: translateY(100%); }
+    .stn-modal.is-open { transform: translateY(0); }
+    .stn-modal-nav, .stn-modal-right { display: none; }
+    .stn-modal [data-drill] { display: block; }
+    .stn-modal .stn-drill { border-radius: var(--radius-2xl) var(--radius-2xl) 0 0; }
+  }
+  @media (max-width: 460px) {
+    .stn-ribbon a .lbl { display: none; }
+  }
+</style>
+</head>
+<body class="stn-body">
+
+  <!-- preview chrome: back to the review queue + option toggle + device preview -->
+  <div class="stn-ribbon">
+    <a href="../review.html" aria-label="Back to Review queue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg><span class="lbl">Back to Review queue</span></a>
+    <div class="stn-ribbon-r">
+      <span class="tag">Preview · Settings navigation</span>
+      <span class="tag">Option</span>
+      <div class="stn-dev stn-opts" role="group" aria-label="Navigation option">
+        <button data-stn-opt="a" aria-pressed="false" title="A — Full page, side nav + one-page sections">A</button>
+        <button data-stn-opt="a2" aria-pressed="false" title="A2 — The same stacked sections in a settings modal">A2</button>
+        <button data-stn-opt="b" aria-pressed="false" title="B — Full page, side nav + hub cards &amp; breadcrumbs">B</button>
+        <button data-stn-opt="b2" aria-pressed="false" title="B2 — The hub cards &amp; breadcrumbs in a settings modal">B2</button>
+      </div>
+      <div class="sep"></div>
+      <div class="stn-dev" role="group" aria-label="Preview device">
+        <button data-dev="desktop" class="is-active" title="Desktop view" aria-label="Desktop view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg></button>
+        <button data-dev="pad" title="iPad view" aria-label="iPad view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg></button>
+        <button data-dev="mobile" title="Mobile view" aria-label="Mobile view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2.5"/><path d="M11 18h2"/></svg></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="stn-stage" id="stnStage">
+
+
+    <!-- neutral canvas under the modal options — the demo deliberately does
+         not specify which page settings opened from -->
+    <div class="stn-blank" id="stnBlank" hidden>
+      <button type="button" class="btn btn-secondary" data-stn-gear><i data-lucide="settings"></i>Open settings</button>
+    </div>
+
+    <!-- Option A: full page, side nav + one-page stacked sections (tabs only at the third level) -->
+    <section class="stn-page" id="stnPageA2" aria-label="Settings — option A" hidden>
+      <aside class="stn-nav" data-nav></aside>
+      <main class="stn-main" data-main></main>
+      <div class="stn-drill" data-drill></div>
+    </section>
+
+    <!-- Option B: full page, side nav + hub cards + breadcrumb drill-in -->
+    <section class="stn-page" id="stnPageB" aria-label="Settings — option B" hidden>
+      <aside class="stn-nav" data-nav></aside>
+      <main class="stn-main" data-main></main>
+      <div class="stn-drill" data-drill></div>
+    </section>
+
+    <!-- Option C: settings modal over the live editor -->
+    <div class="stn-backdrop" id="stnBackdrop" hidden></div>
+    <div class="stn-modal" id="stnModal" role="dialog" aria-modal="true" aria-label="Settings" hidden>
+      <aside class="stn-modal-nav" data-nav></aside>
+      <div class="stn-modal-right">
+        <header class="stn-modal-head">
+          <h3 data-c-title>Settings</h3>
+          <button class="btn btn-icon stn-close" data-stn-close title="Close settings" aria-label="Close settings"><svg class="stn-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+        </header>
+        <div class="stn-modal-body" data-c-body></div>
+      </div>
+      <div class="stn-drill" data-drill></div>
+    </div>
+
+    <div class="stn-toast" id="stnToast" role="status"></div>
+  </div>
+
+  <div class="stn-vp" id="stnVp" data-mode="mobile" hidden>
+    <div class="stn-vp-scale" id="stnVpScale">
+      <div class="stn-vp-frame">
+        <div class="stn-vp-label"><b id="stnVpName">Mobile</b> <span class="dim" id="stnVpSize">390 × 844</span></div>
+        <button class="stn-vp-close" id="stnVpClose" title="Exit preview" aria-label="Exit preview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+        <iframe id="stnVpFrame" title="Device preview"></iframe>
+      </div>
+    </div>
+  </div>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+  if (window.lucide) lucide.createIcons();
+
+  // ---- embed mode (running inside the device-preview iframe) ----
+  const PARAMS = new URLSearchParams(location.search);
+  const IS_EMBED = PARAMS.get('embed') === '1';
+  if (IS_EMBED) document.body.classList.add('is-embed');
+  const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (REDUCED) document.body.classList.add('stn-reduced');
+  const mqMobile = window.matchMedia('(max-width: 640px)');
+  const isMobile = () => mqMobile.matches;
+
+  // ---------------------------------------------------------------- icons
+  // Inline Lucide paths — dynamic renders can't rely on createIcons() re-scans.
+  const svg = (inner, cls) => '<svg class="stn-i' + (cls ? ' ' + cls : '') + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + inner + '</svg>';
+  const I = {
+    arrowLeft: svg('<path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>'),
+    x: svg('<path d="M18 6 6 18"/><path d="m6 6 12 12"/>'),
+    chevRight: svg('<path d="m9 18 6-6-6-6"/>'),
+    chevLeft: svg('<path d="m15 18-6-6 6-6"/>'),
+    chevDown: svg('<path d="m6 9 6 6 6-6"/>'),
+    search: svg('<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>'),
+    plus: svg('<path d="M5 12h14"/><path d="M12 5v14"/>'),
+    users: svg('<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>'),
+    zap: svg('<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>'),
+    card: svg('<rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/>'),
+    fan: svg('<path d="M10.827 16.379a6.082 6.082 0 0 1-8.618-7.002l5.412 1.45a6.082 6.082 0 0 1 7.002-8.618l-1.45 5.412a6.082 6.082 0 0 1 8.618 7.002l-5.412-1.45a6.082 6.082 0 0 1-7.002 8.618l1.45-5.412Z"/><path d="M12 12v.01"/>'),
+    pkg: svg('<path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="m7.5 4.27 9 5.15"/>'),
+    file: svg('<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/>'),
+    mega: svg('<path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>'),
+    msg: svg('<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'),
+    sliders: svg('<line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/>'),
+    list: svg('<line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/>')
+  };
+  const CAT_ICON = { accounts: 'users', servicetitan: 'zap', payments: 'card', equipment: 'fan', catalog: 'pkg', proposal: 'file', marketing: 'mega', messaging: 'msg' };
+
+  // ---------------------------------------------------------------- IA
+  // The real tree, transcribed from app.usemantel.com/Sunrise/settings.
+  // type drives the placeholder pane: 'list' = manage-table page, 'form' =
+  // switches + fields. Page content itself is placeholder by design.
+  const IA = [
+    { key: 'accounts', label: 'Accounts', desc: 'Manage user accounts, roles and organization details.', children: [
+      { key: 'accounts', label: 'Accounts', type: 'list', desc: 'User accounts, roles, and access.' }
+    ]},
+    { key: 'servicetitan', label: 'ServiceTitan', desc: 'Configure integration settings, business units, and pricebook sync.', children: [
+      { key: 'business-units', label: 'Business Units', type: 'list', desc: 'Map ServiceTitan business units.' },
+      { key: 'integration-settings', label: 'Integration Settings', type: 'form', desc: 'Connection, sync cadence, and credentials.' },
+      { key: 'pricebook', label: 'ServiceTitan Pricebook', type: 'list', desc: 'Pricebook sync and matching rules.' }
+    ]},
+    { key: 'payments', label: 'Payments', desc: 'Set up payment methods, discounts, and billing preferences.', children: [
+      { key: 'discounts', label: 'Discounts & Incentives', type: 'list', desc: 'Discounts and incentive programs.' },
+      { key: 'payment-methods', label: 'Payment Methods', type: 'list', desc: 'Financing plans and payment options.' }
+    ]},
+    { key: 'equipment', label: 'Comfort Equipment', desc: 'Manage HVAC equipment catalog and component options.', children: [
+      { key: 'equipment', label: 'Equipment', type: 'list', desc: 'HVAC equipment catalog and components.' }
+    ]},
+    { key: 'catalog', label: 'Product Catalog', desc: 'Manage items, templates, warranties, and product flows.', children: [
+      { key: 'auto-templates', label: 'Auto HVAC System Templates', type: 'list', desc: 'Rules that auto-build system templates.' },
+      { key: 'system-templates', label: 'HVAC System Templates', type: 'list', desc: 'Reusable HVAC system templates.' },
+      { key: 'item-groups', label: 'Item Groups', type: 'list', desc: 'Group items for quoting.' },
+      { key: 'items', label: 'Items', type: 'list', desc: 'Every sellable item and its pricing.' },
+      { key: 'product-flows', label: 'Product Flows', type: 'list', desc: 'Guided flows that assemble products.' },
+      { key: 'warranties', label: 'Warranties', type: 'list', desc: 'Warranty terms shown on proposals.' }
+    ]},
+    { key: 'proposal', label: 'Proposal Settings', desc: 'Customize proposal options, presentation, and contracts.', children: [
+      { key: 'option-tiers', label: 'Option Tiers', type: 'list', desc: 'Good-better-best tier structure.' },
+      { key: 'backgrounds', label: 'Proposal Background Images', type: 'list', desc: 'Cover and section background images.' },
+      { key: 'contract', label: 'Proposal Contract', type: 'form', desc: 'Contract copy and signature blocks.' },
+      { key: 'generation', label: 'Proposal Generation', type: 'form', desc: 'Defaults applied when proposals are generated.' },
+      { key: 'presentation', label: 'Proposal Presentation', type: 'form', desc: 'What homeowners see when viewing a proposal.', children: [
+        { key: 'education-pages', label: 'Manage Education Pages', type: 'list', desc: 'Education pages shown inside proposals.' },
+        { key: 'embed-pdf', label: 'Manage Embed PDF', type: 'list', desc: 'PDFs embedded into the proposal.' }
+      ]},
+      { key: 'terms', label: 'Proposal Terms', type: 'form', desc: 'Fine print and terms of acceptance.' }
+    ]},
+    { key: 'marketing', label: 'Marketing Materials', desc: 'Configure business profiles and customer-facing content.', children: [
+      { key: 'business-profiles', label: 'Business Profiles', type: 'list', desc: 'Business profiles shown to customers.' },
+      { key: 'served-map', label: 'Customer Served Map Settings', type: 'form', desc: 'Service-area map on customer pages.' }
+    ]},
+    { key: 'messaging', label: 'Messaging Settings', desc: 'Set up messaging channels, templates, and automated followups.', children: [
+      { key: 'follow-up', label: 'Follow-Up', type: 'form', desc: 'Reminder cadence for customer follow-ups.' },
+      { key: 'followup-schedule', label: 'Automated Followup Schedule', type: 'form', desc: 'Automated follow-up timing.' },
+      { key: 'message-templates', label: 'Message Templates', type: 'list', desc: 'Reusable SMS and email templates.' },
+      { key: 'messaging', label: 'Messaging', type: 'form', desc: 'Channels, sender identity, and routing.' }
+    ]}
+  ];
+
+  const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  function resolve(path) {
+    const cat = IA.find(c => c.key === path[0]) || null;
+    const child = cat ? (cat.children.find(c => c.key === path[1]) || null) : null;
+    const grand = (child && child.children) ? (child.children.find(g => g.key === path[2]) || null) : null;
+    return { cat, child, grand };
+  }
+  function validatePath(arr) {
+    const out = [];
+    const { cat, child, grand } = resolve(arr);
+    if (cat) out.push(cat.key);
+    if (cat && child) out.push(child.key);
+    if (child && grand) out.push(grand.key);
+    return out;
+  }
+
+  // ---------------------------------------------------------------- state
+  // One state object, one setState() door. path encodes up to three levels;
+  // it survives option switches untouched — the same position rendered three
+  // ways is the whole point of the demo.
+  const state = {
+    opt: ['a', 'a2', 'b', 'b2'].includes(PARAMS.get('opt')) ? PARAMS.get('opt') : 'a',
+    path: validatePath((PARAMS.get('path') || 'accounts').split('/')),
+    view: PARAMS.get('view') === 'editor' ? 'editor' : 'settings'
+  };
+  function setState(patch) {
+    if (patch.path) patch.path = validatePath(patch.path);
+    Object.assign(state, patch);
+    render();
+    syncURL();
+    if (typeof vpRefresh === 'function') vpRefresh();
+  }
+  function syncURL() {
+    if (IS_EMBED) return;
+    try {
+      const q = new URLSearchParams();
+      q.set('opt', state.opt);
+      if (state.path.length) q.set('path', state.path.join('/'));
+      if (state.view !== 'settings') q.set('view', state.view);
+      history.replaceState(null, '', location.pathname + '?' + q.toString());
+    } catch (e) { /* file:// in some engines */ }
+  }
+
+  // effective position per option: A/C always need a child (tabs), B can sit
+  // on the category hub. The stored path is never mutated by coercion.
+  function effective(opt) {
+    let { cat, child, grand } = resolve(state.path);
+    if (!cat) cat = IA[0];
+    // B/B2 coerce a child only for single-page categories (hub is the default);
+    // A/A2 stack everything, so a child is only meaningful for the tertiary tabs
+    if (!child && (opt === 'b' || opt === 'b2') && cat.children.length === 1) child = cat.children[0];
+    return { cat, child, grand };
+  }
+
+  // ---------------------------------------------------------------- shared builders
+  // side-nav groups for the "group" style (Stripe-flavored)
+  const NAV_GROUPS = [
+    { label: 'Workspace', keys: ['accounts', 'servicetitan', 'payments'] },
+    { label: 'Catalog', keys: ['equipment', 'catalog'] },
+    { label: 'Customer facing', keys: ['proposal', 'marketing', 'messaging'] }
+  ];
+  function navHTML(activeKey, variant, style) {
+    style = style || 'pill';
+    const exit = variant === 'page'
+      ? '<a class="btn btn-icon stn-exit" href="../review.html" title="Back" aria-label="Back">' + I.arrowLeft + '</a>'
+      : '';
+    // one nav recipe everywhere: 'igroup' = caps group headers + icons +
+    // light-blue active pill ('pill' flat and 'group' text-only kept for ref)
+    const item = c => '<button type="button" class="stn-navitem' + (style !== 'pill' ? ' is-' + style : '') + (c.key === activeKey ? ' is-active' : '') + '" data-nav-key="' + c.key + '">'
+      + (style !== 'group' ? I[CAT_ICON[c.key]] : '')
+      + '<span class="lb">' + esc(c.label) + '</span></button>';
+    let list;
+    if (style === 'group' || style === 'igroup') {
+      list = NAV_GROUPS.map(g => '<div class="stn-nav-group">' + esc(g.label) + '</div>'
+        + g.keys.map(k => item(IA.find(c => c.key === k))).join('')).join('');
+    } else {
+      list = IA.map(item).join('');
+    }
+    // the modal nav gets a settings search under the title (Intercom/Notion
+    // manner) — it live-filters the category list
+    const search = variant === 'modal'
+      ? '<div class="stn-nav-search"><div class="mt-input-wrap"><span class="mt-icon-lead">' + I.search + '</span><input class="mt-input is-sm has-lead" type="search" placeholder="Search settings" aria-label="Search settings" data-stn-navfilter></div></div>'
+      : '';
+    return exit
+      + '<div class="stn-nav-title">Settings</div>'
+      + search
+      + '<nav class="stn-nav-list is-' + style + '" aria-label="Settings sections">' + list + '</nav>';
+  }
+  function crumbsHTML(items) {
+    // kit contract: the separator is its OWN <li>, so the list gap pads the
+    // chevron evenly on both sides
+    return '<nav class="mt-crumbs stn-crumbrow" aria-label="Breadcrumb"><ol class="mt-crumb-list">'
+      + items.map((it, i) => i === items.length - 1
+        ? '<li class="mt-crumb-item"><span class="mt-crumb-current" aria-current="page">' + esc(it.label) + '</span></li>'
+        : '<li class="mt-crumb-item"><a href="#" class="mt-crumb" data-goto="' + it.goto + '">' + esc(it.label) + '</a></li><li class="mt-crumb-sep" role="presentation" aria-hidden="true">' + I.chevRight + '</li>'
+      ).join('')
+      + '</ol></nav>';
+  }
+  function switchRow(label, desc, on) {
+    return '<div class="stn-row"><div class="stn-row-main"><div class="stn-row-label">' + esc(label) + '</div><div class="stn-row-desc">' + esc(desc) + '</div></div>'
+      + '<label class="mt-switch"><input type="checkbox"' + (on ? ' checked' : '') + ' aria-label="' + esc(label) + '"><span class="mt-switch-track"></span></label></div>';
+  }
+  function inputRow(label, value) {
+    return '<div class="stn-row"><div class="stn-row-main"><div class="stn-row-label">' + esc(label) + '</div></div>'
+      + '<input class="mt-input is-sm stn-w200" value="' + esc(value) + '" aria-label="' + esc(label) + '"></div>';
+  }
+  function formCards(leaf) {
+    return '<div class="stn-card"><div class="stn-card-head">General</div>'
+      + switchRow('Enable ' + leaf.label.toLowerCase(), 'Placeholder toggle — real controls land with page content.', true)
+      + inputRow('Display label', leaf.label)
+      + switchRow('Show on proposals', 'Visible to homeowners when enabled.', false)
+      + '</div>'
+      + '<div class="stn-card"><div class="stn-card-head">Defaults</div>'
+      + switchRow('Apply to new proposals', 'Existing proposals keep their current values.', true)
+      + inputRow('Default value', '14')
+      + '</div>';
+  }
+  // truncated = option A's stacked sections (4 rows + Show all expands in
+  // place); B's dedicated pages list everything, no truncation
+  function listCard(leaf, opts) {
+    opts = opts || {};
+    const TOTAL = 8;
+    let rows = '', foot;
+    if (leaf.key === 'accounts') {
+      // people list: DS avatar treatment — warm pastel tone + initials
+      const PEOPLE = [['Alex Rivera', 'Admin'], ['Jamie Chen', 'Sales rep'], ['Morgan Patel', 'Sales rep'], ['Sam Whitfield', 'Office']];
+      rows = PEOPLE.map((p, i) => {
+        const init = p[0].split(' ').map(w => w[0]).join('');
+        return '<div class="stn-lrow"><span class="stn-av" style="background:var(--av-' + (i + 1) + '-bg);color:var(--av-' + (i + 1) + '-fg)">' + init + '</span>'
+          + '<div class="stn-row-main"><div class="stn-row-label">' + p[0] + '</div><div class="stn-row-desc">' + p[1] + ' · Updated Jul 1' + (i + 1) + '</div></div>' + I.chevRight + '</div>';
+      }).join('');
+      foot = '<div class="stn-listfoot"><span>Showing 4 of 4</span></div>';
+    } else {
+      for (let n = 1; n <= TOTAL; n++) {
+        rows += '<div class="stn-lrow"' + (opts.truncate && n > 4 ? ' hidden' : '') + '><div class="stn-row-main"><div class="stn-row-label">Sample entry ' + n + '</div><div class="stn-row-desc">Updated Jul ' + (10 + n) + '</div></div>' + I.chevRight + '</div>';
+      }
+      foot = opts.truncate
+        ? '<div class="stn-listfoot"><span data-stn-count>Showing 4 of ' + TOTAL + '</span><button type="button" class="stn-showall" data-stn-showall>Show all</button></div>'
+        : '<div class="stn-listfoot"><span>Showing ' + TOTAL + ' of ' + TOTAL + '</span></div>';
+    }
+    // quiet = secondary Add — option A stacks many list sections on one page, and the
+    // kit allows at most one elevated primary per surface
+    return '<div class="stn-card">'
+      + '<div class="stn-listbar"><div class="mt-input-wrap stn-search"><span class="mt-icon-lead">' + I.search + '</span><input class="mt-input is-sm has-lead" placeholder="Search ' + esc(leaf.label.toLowerCase()) + '…" aria-label="Search ' + esc(leaf.label) + '"></div>'
+      + '<button type="button" class="btn ' + (opts.quiet ? 'btn-secondary' : 'btn-default') + ' btn-compact">' + I.plus + 'Add</button></div>'
+      + rows + foot + '</div>';
+  }
+  function sublinksCard(leaf, basePath) {
+    return '<div class="stn-card"><div class="stn-card-head">Pages</div>'
+      + leaf.children.map(g =>
+        '<button type="button" class="stn-sublink" data-goto="' + basePath + '/' + g.key + '"><div class="stn-row-main"><div class="stn-row-label">' + esc(g.label) + '</div><div class="stn-row-desc">' + esc(g.desc) + '</div></div>' + I.chevRight + '</button>'
+      ).join('')
+      + '</div>';
+  }
+  // one placeholder pane for every leaf — framework first, content later
+  function paneHTML(leaf, opts) {
+    opts = opts || {};
+    let h = '';
+    if (opts.crumbs) h += crumbsHTML(opts.crumbs);
+    // h2 by default — options A/C already carry the category h1 in the page head
+    const tt = opts.titleTag || 'h2';
+    if (opts.title) h += '<' + tt + ' class="stn-pane-title">' + esc(opts.title) + '</' + tt + '>' + (leaf.desc ? '<p class="stn-lede">' + esc(leaf.desc) + '</p>' : '');
+    h += (leaf.type === 'list') ? listCard(leaf) : formCards(leaf);
+    if (leaf.children && opts.subHub) {
+      h += '<div class="stn-hub is-sub">' + leaf.children.map(g => hubCard(g, opts.subHub + '/' + g.key)).join('') + '</div>';
+    } else if (leaf.children && opts.subLinks) {
+      h += sublinksCard(leaf, opts.subLinks);
+    }
+    h += '<p class="stn-placeholder-note">Placeholder content — the real ' + esc(leaf.label) + ' page lands here later.</p>';
+    return h;
+  }
+  function hubCard(leaf, goto) {
+    return '<button type="button" class="stn-hubcard" data-goto="' + goto + '">'
+      + '<span class="bub">' + (leaf.type === 'list' ? I.list : I.sliders) + '</span>'
+      + '<span class="txt"><span class="t">' + esc(leaf.label) + '</span><span class="d">' + esc(leaf.desc) + '</span></span>'
+      + '<span class="chev">' + I.chevRight + '</span></button>';
+  }
+
+  // ---------------------------------------------------------------- tabs (tertiary level)
+  function positionUnderline(tabsEl) {
+    const u = tabsEl.querySelector('.mt-tab-underline');
+    const a = tabsEl.querySelector('.mt-tab.is-active:not([hidden])');
+    if (!u) return;
+    if (!a) { u.style.width = '0px'; return; }
+    u.style.left = a.offsetLeft + 'px';
+    u.style.width = a.offsetWidth + 'px';
+    if (!u.classList.contains('is-ready')) requestAnimationFrame(() => u.classList.add('is-ready'));
+  }
+  // Product Catalog's six long labels overflow every width tier: hide from the
+  // end into a "More" menu, and if the active tab fell off, swap it back in.
+  function layoutTabs(wrap) {
+    if (!wrap || wrap.offsetParent === null) return;
+    const tabsEl = wrap.querySelector('[data-tabs]');
+    const bar = wrap.querySelector('.mt-tabbar');
+    const moreWrap = wrap.querySelector('.stn-more-wrap');
+    const more = wrap.querySelector('[data-stn-more]');
+    const menu = wrap.querySelector('.stn-more-menu');
+    const tabs = [...tabsEl.querySelectorAll('.mt-tab')];
+    if (!tabs.length) return;
+    tabs.forEach(t => { t.hidden = false; });
+    more.hidden = true; menu.hidden = true;
+    const gap = 4;
+    const w = tabs.map(t => t.offsetWidth);
+    const total = w.reduce((a, b) => a + b, 0) + gap * (tabs.length - 1);
+    if (total > bar.clientWidth - 8) {
+      more.hidden = false;
+      const budget = bar.clientWidth - moreWrap.offsetWidth - 18;
+      // reserve the active tab's slot first, then fill the rest in IA order —
+      // the row never reorders, the active tab just never falls into the menu
+      const active = tabs.find(t => t.classList.contains('is-active'));
+      let used = active ? active.offsetWidth : 0;
+      let count = active ? 1 : 0;
+      tabs.forEach((t, i) => {
+        if (t === active) return;
+        const need = w[i] + (count ? gap : 0);
+        if (used + need <= budget) { used += need; count++; }
+        else t.hidden = true;
+      });
+      const hiddenTabs = tabs.filter(t => t.hidden);
+      if (hiddenTabs.length) {
+        menu.innerHTML = hiddenTabs.map(t => '<button type="button" class="mt-menu-item" data-goto="' + t.dataset.goto + '">' + esc(t.textContent) + '</button>').join('');
+      } else {
+        more.hidden = true;
+      }
+    }
+    positionUnderline(tabsEl);
+  }
+
+  // ---------------------------------------------------------------- option A
+  // One-page category: every second-level page stacks as a section; tabs only
+  // appear where a tertiary level exists (Proposal Presentation).
+  function tertTabsHTML(cat, ch, activeKey) {
+    return '<div class="stn-tabwrap is-static" data-tabwrap>'
+      + '<div class="mt-tabbar is-sm"><nav class="mt-tabs" data-tabs aria-label="' + esc(ch.label) + ' pages">'
+      + ch.children.map(g => '<button type="button" class="mt-tab' + (g.key === activeKey ? ' is-active' : '') + '" data-goto="' + cat.key + '/' + ch.key + '/' + g.key + '">' + esc(g.label) + '</button>').join('')
+      + '<span class="mt-tab-underline" aria-hidden="true"></span>'
+      + '</nav>'
+      + '<div class="stn-more-wrap"><button type="button" class="stn-more" data-stn-more hidden>More' + I.chevDown + '</button><div class="mt-menu stn-more-menu" hidden></div></div>'
+      + '</div></div>';
+  }
+  function stackedSecsHTML(cat, child, grand) {
+    let secs = '';
+    cat.children.forEach(ch => {
+      // a section must not repeat the page header verbatim (Accounts >
+      // Accounts) — reword it as an action instead of dropping it
+      const title = ch.label === cat.label ? 'Manage ' + ch.label.toLowerCase() : ch.label;
+      secs += '<section class="stn-sec">'
+        + '<h2 class="stn-sec-title">' + esc(title) + '</h2><p class="stn-lede">' + esc(ch.desc) + '</p>'
+        + ((ch.type === 'list') ? listCard(ch, { quiet: true, truncate: true }) : formCards(ch));
+      if (ch.children) {
+        const gKey = (child && child.key === ch.key && grand) ? grand.key : ch.children[0].key;
+        const g = ch.children.find(x => x.key === gKey);
+        secs += '<div class="stn-sec-subhead">Pages</div>'
+          + tertTabsHTML(cat, ch, g.key)
+          + ((g.type === 'list') ? listCard(g, { quiet: true, truncate: true }) : formCards(g));
+      }
+      secs += '</section>';
+    });
+    return secs;
+  }
+  function renderA2(shell) {
+    const { cat, child, grand } = effective('a');
+    shell.querySelector('[data-nav]').innerHTML = navHTML(cat.key, 'page', 'igroup');
+    const main = shell.querySelector('[data-main]');
+    const keep = main.dataset.cat === cat.key ? main.scrollTop : 0;
+    main.dataset.cat = cat.key;
+    main.innerHTML = '<div class="stn-main-inner">'
+      + '<header class="stn-pagehead"><h1>' + esc(cat.label) + '</h1><p class="stn-lede">' + esc(cat.desc) + '</p></header>'
+      + stackedSecsHTML(cat, child, grand)
+      + '<p class="stn-placeholder-note">Placeholder content — page bodies land later.</p></div>';
+    main.scrollTop = keep;
+    requestAnimationFrame(() => { const w = main.querySelector('[data-tabwrap]'); if (w) layoutTabs(w); });
+  }
+
+  // ---------------------------------------------------------------- option B
+  // hub-or-detail body, shared by the B page and the B2 modal (the modal head
+  // already names the category, so it skips the page h1)
+  function bBodyHTML(cat, child, grand, forModal) {
+    if (!child) {
+      // category hub — Squarespace's move: cards with a one-line description each
+      return (forModal
+          ? '<p class="stn-lede">' + esc(cat.desc) + '</p>'
+          : '<header class="stn-pagehead"><h1>' + esc(cat.label) + '</h1><p class="stn-lede">' + esc(cat.desc) + '</p></header>')
+        + '<div class="stn-hub">' + cat.children.map(ch => hubCard(ch, cat.key + '/' + ch.key)).join('') + '</div>';
+    }
+    const leaf = grand || child;
+    let crumbs = [{ label: cat.label, goto: cat.key }];
+    if (grand) crumbs.push({ label: child.label, goto: cat.key + '/' + child.key });
+    crumbs.push({ label: leaf.label });
+    // the modal head already names the category — drop that segment there,
+    // and a lone current-page crumb says nothing
+    if (forModal) crumbs = crumbs.slice(1);
+    const title = leaf.label === cat.label ? 'Manage ' + leaf.label.toLowerCase() : leaf.label;
+    return paneHTML(leaf, {
+      crumbs: crumbs.length > 1 ? crumbs : null, title, titleTag: forModal ? 'h2' : 'h1',
+      subHub: (!grand && child.children) ? cat.key + '/' + child.key : null
+    });
+  }
+  function renderB(shell) {
+    const { cat, child, grand } = effective('b');
+    shell.querySelector('[data-nav]').innerHTML = navHTML(cat.key, 'page', 'igroup');
+    const main = shell.querySelector('[data-main]');
+    main.innerHTML = '<div class="stn-main-inner">' + bBodyHTML(cat, child, grand, false) + '</div>';
+    main.scrollTop = 0;
+  }
+
+  // ---------------------------------------------------------------- A2 / B2 — the settings modal
+  function renderModal() {
+    const isB = state.opt === 'b2';
+    const { cat, child, grand } = effective(state.opt);
+    modalEl.querySelector('[data-nav]').innerHTML = navHTML(cat.key, 'modal', 'igroup');
+    modalEl.querySelector('[data-c-title]').textContent = cat.label;
+    const body = modalEl.querySelector('[data-c-body]');
+    if (isB) {
+      body.dataset.cat = '';
+      body.innerHTML = bBodyHTML(cat, child, grand, true);
+      body.scrollTop = 0;
+    } else {
+      // A's stacked sections — keep scroll while staying in the same category
+      const keep = body.dataset.cat === cat.key ? body.scrollTop : 0;
+      body.dataset.cat = cat.key;
+      body.innerHTML = '<p class="stn-lede">' + esc(cat.desc) + '</p>'
+        + stackedSecsHTML(cat, child, grand)
+        + '<p class="stn-placeholder-note">Placeholder content — page bodies land later.</p>';
+      body.scrollTop = keep;
+      requestAnimationFrame(() => { const w = body.querySelector('[data-tabwrap]'); if (w) layoutTabs(w); });
+    }
+  }
+
+  // ---------------------------------------------------------------- mobile drill-down
+  // A and B deliberately converge on one phone pattern: a drill-down list.
+  // Two stacked panes animate; deeper = slide in from the right.
+  function drillPane(closable) {
+    const depth = state.path.length;
+    const { cat, child, grand } = resolve(state.path);
+    let hd = '', bd = '';
+    if (depth === 0) {
+      hd = closable
+        ? '<div class="stn-drill-hd" style="justify-content:flex-end"><div class="stn-grabber"></div><button type="button" class="btn btn-icon stn-close" data-stn-close title="Close settings" aria-label="Close settings">' + I.x + '</button></div>'
+        : '';
+      bd = (closable ? '' : '<a class="btn btn-icon stn-exit" href="../review.html" title="Back" aria-label="Back">' + I.arrowLeft + '</a>')
+        + '<div class="stn-drill-bighead"><div class="stn-nav-title">Settings</div></div>'
+        + '<div class="stn-mgroup">'
+        + IA.map(c => '<button type="button" class="stn-mrow" data-goto="' + c.key + '">' + I[CAT_ICON[c.key]] + '<span>' + esc(c.label) + '</span><span class="chev">' + I.chevRight + '</span></button>').join('')
+        + '</div>';
+    } else if (depth === 1) {
+      hd = drillHead('Settings', '', cat.label, closable);
+      bd = '<div class="stn-mgroup">'
+        + cat.children.map(ch => '<button type="button" class="stn-mrow" data-goto="' + cat.key + '/' + ch.key + '"><span>' + esc(ch.label) + '<span class="sub">' + esc(ch.desc) + '</span></span><span class="chev">' + I.chevRight + '</span></button>').join('')
+        + '</div>';
+    } else if (depth === 2) {
+      hd = drillHead(cat.label, cat.key, child.label, closable);
+      bd = paneHTML(child, child.children ? { subLinks: cat.key + '/' + child.key } : {});
+    } else {
+      hd = drillHead(child.label, cat.key + '/' + child.key, grand.label, closable);
+      bd = paneHTML(grand);
+    }
+    return '<div class="stn-drill-pane">' + hd + '<div class="stn-drill-bd">' + bd + '</div></div>';
+  }
+  function drillHead(backLabel, backGoto, title, closable) {
+    return '<div class="stn-drill-hd">'
+      + '<button type="button" class="stn-drill-back" data-goto="' + backGoto + '">' + I.chevLeft + esc(backLabel) + '</button>'
+      + '<div class="stn-drill-ttl">' + esc(title) + '</div>'
+      + (closable ? '<button type="button" class="btn btn-icon stn-close" data-stn-close title="Close settings" aria-label="Close settings">' + I.x + '</button>' : '')
+      + '</div>';
+  }
+  function renderDrill(rootEl, closable) {
+    const depth = state.path.length;
+    const prevDepth = rootEl.dataset.depth === '' || rootEl.dataset.depth === undefined ? NaN : Number(rootEl.dataset.depth);
+    rootEl.querySelectorAll('.is-dying').forEach(p => p.remove());
+    const prev = rootEl.querySelector('.stn-drill-pane');
+    const tpl = document.createElement('div');
+    tpl.innerHTML = drillPane(closable);
+    const pane = tpl.firstChild;
+    rootEl.dataset.depth = depth;
+    if (!prev || isNaN(prevDepth) || prevDepth === depth || REDUCED) {
+      if (prev) prev.remove();
+      rootEl.appendChild(pane);
+      return;
+    }
+    const push = depth > prevDepth;
+    prev.classList.add('is-dying');
+    pane.style.transition = 'none';
+    pane.style.transform = 'translateX(' + (push ? '100%' : '-28%') + ')';
+    if (!push) { prev.style.zIndex = '2'; pane.style.zIndex = '1'; }
+    rootEl.appendChild(pane);
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      pane.style.transition = '';
+      pane.style.transform = 'translateX(0)';
+      prev.style.transform = 'translateX(' + (push ? '-28%' : '100%') + ')';
+      if (push) prev.style.opacity = '.5';
+      setTimeout(() => prev.remove(), 340);
+    }));
+  }
+
+  // ---------------------------------------------------------------- render
+  const stage = document.getElementById('stnStage');
+  const pageA2 = document.getElementById('stnPageA2');
+  const pageB = document.getElementById('stnPageB');
+  const blankEl = document.getElementById('stnBlank');
+  const backdropEl = document.getElementById('stnBackdrop');
+  const modalEl = document.getElementById('stnModal');
+  const toastEl = document.getElementById('stnToast');
+
+  function render() {
+    // ribbon pills
+    document.querySelectorAll('[data-stn-opt]').forEach(b => {
+      const on = b.dataset.stnOpt === state.opt;
+      b.classList.toggle('is-active', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    const open = state.view === 'settings';
+    // shells: hidden = not this option; is-shown/is-open drive the transitions
+    pageA2.hidden = state.opt !== 'a';
+    pageB.hidden = state.opt !== 'b';
+    const modalOpt = state.opt === 'a2' || state.opt === 'b2';
+    backdropEl.hidden = !modalOpt;
+    modalEl.hidden = !modalOpt;
+    pageA2.classList.toggle('is-shown', state.opt === 'a' && open);
+    pageB.classList.toggle('is-shown', state.opt === 'b' && open);
+    backdropEl.classList.toggle('is-open', modalOpt && open);
+    modalEl.classList.toggle('is-open', modalOpt && open);
+    // the page beneath the modal stays unspecified in the demo — a neutral
+    // canvas with a reopen affordance stands in
+    blankEl.hidden = !modalOpt;
+    blankEl.inert = open; // keep the reopen button out of the tab order under the backdrop
+
+    if (open) {
+      if (state.opt === 'a') { if (isMobile()) renderDrill(pageA2.querySelector('[data-drill]'), false); else renderA2(pageA2); }
+      if (state.opt === 'b') { if (isMobile()) renderDrill(pageB.querySelector('[data-drill]'), false); else renderB(pageB); }
+      if (modalOpt) { if (isMobile()) renderDrill(modalEl.querySelector('[data-drill]'), true); else renderModal(); }
+    }
+  }
+
+  function toast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add('is-show');
+    clearTimeout(toast.t);
+    toast.t = setTimeout(() => toastEl.classList.remove('is-show'), 2400);
+  }
+  function exitSettings() {
+    if (state.view === 'editor') return;
+    setState({ view: 'editor' });
+    toast('Settings closed — right back where you were');
+  }
+
+  // ---------------------------------------------------------------- events
+  stage.addEventListener('click', e => {
+    const gear = e.target.closest('[data-stn-gear]');
+    if (gear) { setState({ view: 'settings' }); return; }
+    const close = e.target.closest('[data-stn-close], [data-stn-exit]');
+    if (close) { exitSettings(); return; }
+    const navBtn = e.target.closest('[data-nav-key]');
+    if (navBtn) { setState({ path: [navBtn.dataset.navKey] }); return; }
+    const sa = e.target.closest('[data-stn-showall]');
+    if (sa) {
+      // expand the truncated list in place — no navigation, no re-render
+      const card = sa.closest('.stn-card');
+      card.querySelectorAll('.stn-lrow[hidden]').forEach(r => { r.hidden = false; });
+      const total = card.querySelectorAll('.stn-lrow').length;
+      card.querySelector('[data-stn-count]').textContent = 'Showing ' + total + ' of ' + total;
+      sa.remove();
+      return;
+    }
+    const more = e.target.closest('[data-stn-more]');
+    if (more) {
+      const menu = more.parentElement.querySelector('.stn-more-menu');
+      menu.hidden = !menu.hidden;
+      e.stopPropagation();
+      return;
+    }
+    const g = e.target.closest('[data-goto]');
+    if (g) {
+      e.preventDefault();
+      setState({ path: g.dataset.goto ? g.dataset.goto.split('/') : [] });
+      return;
+    }
+  });
+  // modal nav search: live-filter the category list (input events bubble)
+  stage.addEventListener('input', e => {
+    if (!e.target.matches('[data-stn-navfilter]')) return;
+    const q = e.target.value.trim().toLowerCase();
+    const nav = e.target.closest('[data-nav]');
+    nav.querySelectorAll('.stn-navitem').forEach(item => {
+      item.hidden = q !== '' && !item.textContent.toLowerCase().includes(q);
+    });
+    // drop group headers whose whole group got filtered out
+    nav.querySelectorAll('.stn-nav-group').forEach(g => {
+      let sib = g.nextElementSibling, any = false;
+      while (sib && !sib.classList.contains('stn-nav-group')) {
+        if (!sib.hidden) any = true;
+        sib = sib.nextElementSibling;
+      }
+      g.hidden = !any;
+    });
+  });
+  backdropEl.addEventListener('click', exitSettings);
+  // ribbon option pills (demo chrome) — switching options always re-enters settings
+  document.querySelectorAll('[data-stn-opt]').forEach(b => b.addEventListener('click', () => {
+    if (b.dataset.stnOpt === state.opt && state.view === 'settings') return;
+    setState({ opt: b.dataset.stnOpt, view: 'settings' });
+  }));
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.stn-more-wrap')) document.querySelectorAll('.stn-more-menu').forEach(m => { m.hidden = true; });
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    if (!IS_EMBED && typeof vpOpen !== 'undefined' && vpOpen) return; // vp handler owns it
+    if ((state.opt === 'a2' || state.opt === 'b2') && state.view === 'settings') exitSettings();
+  });
+  window.addEventListener('resize', () => {
+    document.querySelectorAll('[data-tabwrap]').forEach(layoutTabs);
+  });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => {
+    document.querySelectorAll('[data-tabwrap]').forEach(layoutTabs);
+  });
+  const onMQ = () => { resetShells(); render(); };
+  if (mqMobile.addEventListener) mqMobile.addEventListener('change', onMQ); else mqMobile.addListener(onMQ);
+  // wipe cached DOM so desktop/mobile renderers rebuild from scratch
+  function resetShells() {
+    [pageA2, pageB].forEach(p => {
+      p.querySelector('[data-main]').innerHTML = '';
+      p.querySelector('[data-main]').dataset.cat = '';
+      p.querySelector('[data-drill]').innerHTML = '';
+      delete p.querySelector('[data-drill]').dataset.depth;
+    });
+    modalEl.querySelector('[data-c-body]').innerHTML = '';
+    modalEl.querySelector('[data-c-body]').dataset.cat = '';
+    modalEl.querySelector('[data-drill]').innerHTML = '';
+    delete modalEl.querySelector('[data-drill]').dataset.depth;
+  }
+
+  render();
+  syncURL();
+
+  // ---- device preview: load this page in an iframe at the real device width ----
+  let vpOpen = false, vpRefresh = null;
+  if (!IS_EMBED) {
+    const DEVICES = { pad: { name: 'iPad', w: 834, h: 1112, pad: 32 }, mobile: { name: 'Mobile', w: 390, h: 844, pad: 24 } };
+    const vp = document.getElementById('stnVp');
+    const vpScale = document.getElementById('stnVpScale');
+    const vpIframe = document.getElementById('stnVpFrame');
+    const vpName = document.getElementById('stnVpName');
+    const vpSize = document.getElementById('stnVpSize');
+    let vpMode = 'mobile';
+    const baseURL = () => location.href.split('#')[0].split('?')[0];
+    const vpSrc = () => {
+      const q = new URLSearchParams({ embed: '1', opt: state.opt, view: state.view });
+      if (state.path.length) q.set('path', state.path.join('/'));
+      q.set('t', Date.now());
+      return baseURL() + '?' + q.toString();
+    };
+    const setDev = m => document.querySelectorAll('[data-dev]').forEach(b => b.classList.toggle('is-active', b.dataset.dev === m));
+    function fitVP() {
+      if (!vpOpen) return;
+      const d = DEVICES[vpMode], fw = d.w + d.pad, fh = d.h + d.pad;
+      vpScale.style.transform = 'scale(' + Math.min(1, (window.innerWidth - 80) / fw, (window.innerHeight - 120) / fh) + ')';
+    }
+    function openVP(mode) {
+      vpMode = mode; vpOpen = true;
+      const d = DEVICES[mode];
+      vp.dataset.mode = mode; vpName.textContent = d.name; vpSize.textContent = d.w + ' × ' + d.h;
+      vp.hidden = false; vp.classList.add('is-open');
+      vpIframe.src = vpSrc();
+      fitVP();
+    }
+    function closeVP() { vpOpen = false; vp.classList.remove('is-open'); vp.hidden = true; vpIframe.src = 'about:blank'; setDev('desktop'); }
+    vpRefresh = () => { if (vpOpen) vpIframe.src = vpSrc(); };
+    document.querySelectorAll('[data-dev]').forEach(btn => btn.addEventListener('click', () => {
+      const mode = btn.dataset.dev; setDev(mode);
+      if (mode === 'desktop') closeVP(); else openVP(mode);
+    }));
+    document.getElementById('stnVpClose').addEventListener('click', closeVP);
+    vp.addEventListener('click', e => { if (e.target === vp || e.target === vpScale) closeVP(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && vpOpen) closeVP(); });
+    window.addEventListener('resize', fitVP);
+  }
+</script>
+</body>
+</html>
