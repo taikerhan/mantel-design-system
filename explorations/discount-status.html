@@ -24,7 +24,7 @@
      Everything inside the table / toolbar is shipped kit CSS; the only
      new rules here are the app frame around it.
      =================================================================== */
-  body.dx-body { display: block; margin: 0; min-height: 100vh; background: var(--ink-50); color: var(--ink-900); }
+  body.dx-body { --dx-c1: 236px; display: block; margin: 0; min-height: 100vh; background: var(--ink-50); color: var(--ink-900); }
   .dx-body * { box-sizing: border-box; }
 
   .rq-back { transition: color .15s var(--ease); }
@@ -49,7 +49,15 @@
   .dx-account svg { width: 15px; height: 15px; color: var(--ink-500); }
 
   /* ===== page canvas ===== */
-  .dx-main { max-width: 1180px; margin: 0 auto; padding: 26px 28px 56px; }
+  .dx-main { max-width: 1440px; margin: 0 auto; padding: 26px 28px 56px; }
+
+  /* Responsive table. Description stays minmax(0,1fr) so it absorbs extra width on
+     wide screens; the row holds a floor so it stops squeezing and scrolls instead —
+     below the floor the columns used to collapse and the headers overlapped.
+     Name freezes with the kit's own .is-sticky. */
+  .dx-stage .mt-table { overflow-x: auto; }
+  .dx-stage .mt-table-head,
+  .dx-stage .mt-table-row { min-width: 1000px; }
   .dx-stage[hidden] { display: none; }
   /* .mt-table-row sets display:grid, which beats the UA [hidden] rule — filtering needs this */
   .mt-table-row[hidden] { display: none; }
@@ -73,13 +81,18 @@
   .dx-link:hover { color: var(--brand-700); text-decoration: underline; }
   .dx-link svg { width: 13px; height: 13px; }
 
+  /* No visually-hidden helper in the kit — scoped one. Gives the switch column a
+     sortable and announceable value, since a checkbox contributes no textContent. */
+  .dx-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+
+  /* Edge gutter — the kit's flat 16px leaves the first and last column sitting under
+     the card's 16px corner radius. Widen only the two outer cells; row rhythm is untouched. */
+  .dx-stage .mt-th:first-child, .dx-stage .mt-td:first-child { padding-left: 24px; }
+  .dx-stage .mt-th:last-child,  .dx-stage .mt-td:last-child  { padding-right: 24px; }
+
   /* variant C — the switch sits in its own trailing column */
   .dx-td-switch { justify-content: flex-start; }
 
-  /* footnote under each variant explaining what it is arguing */
-  .dx-note { display: flex; gap: 10px; align-items: flex-start; margin-top: 16px; padding: 13px 16px; border-radius: var(--radius-md); background: var(--brand-50); font-size: 13px; line-height: 1.55; color: var(--brand-800); }
-  .dx-note b { font-weight: 600; }
-  .dx-note svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 2px; color: var(--brand-600); }
 
   /* ===== bottom-right variant switcher (borrowed from company-settings exploration) ===== */
   .vx-switch { position: fixed; right: 22px; bottom: 22px; z-index: 90; display: inline-flex; align-items: center; padding: 5px; border-radius: var(--radius-xl); background: var(--ink-900); box-shadow: var(--shadow-pop); }
@@ -97,6 +110,13 @@
   .dx-footer { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 26px 34px; background: var(--brand-900); color: rgba(255,255,255,.62); font-size: 13px; }
   .dx-footer a { color: rgba(255,255,255,.62); text-decoration: none; }
   .dx-footer a:hover { color: #fff; }
+
+  /* Phones: the frozen Name column was eating most of the viewport, leaving almost
+     nothing to scroll the other columns through. Truncate harder, give the rest the room. */
+  @media (max-width: 768px) {
+    body.dx-body { --dx-c1: 150px; }
+    .dx-stage .mt-th:first-child, .dx-stage .mt-td:first-child { padding-left: 16px; }
+  }
 
   @media (max-width: 1080px) {
     .dx-main { padding: 20px 16px 64px; }
@@ -208,24 +228,19 @@
       </div>
     </div>
 
-    <div class="mt-table" data-sort-table style="--mt-cols: 236px 112px minmax(0,1fr) 124px 162px 176px;">
+    <div class="mt-table" data-sort-table style="--mt-cols: var(--dx-c1) 112px minmax(0,1fr) 124px 162px 176px;">
       <div class="mt-table-head">
-        <div class="mt-th"><button class="mt-th-sort is-active" data-sort-col="name">Name<svg class="mt-sort-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 15l5 5 5-5M7 9l5-5 5 5"></path></svg></button></div>
+        <div class="mt-th is-sticky"><button class="mt-th-sort is-active" data-sort-col="name">Name<svg class="mt-sort-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 15l5 5 5-5M7 9l5-5 5 5"></path></svg></button></div>
         <div class="mt-th"><button class="mt-th-sort" data-sort-col="status">Status<svg class="mt-sort-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 15l5 5 5-5M7 9l5-5 5 5"></path></svg></button></div>
         <div class="mt-th">Description</div>
-        <div class="mt-th is-num">Amount</div>
-        <div class="mt-th">Timed Discount</div>
+        <div class="mt-th is-num"><button class="mt-th-sort" data-sort-col="amount" data-sort-type="num">Amount<svg class="mt-sort-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 15l5 5 5-5M7 9l5-5 5 5"></path></svg></button></div>
+        <div class="mt-th"><button class="mt-th-sort" data-sort-col="timed">Timed Discount<svg class="mt-sort-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 15l5 5 5-5M7 9l5-5 5 5"></path></svg></button></div>
         <div class="mt-th">Link</div>
       </div>
       <div class="mt-table-body" data-rows="a"></div>
       <div class="mt-table-foot">
         <span class="mt-table-count">Showing <strong>14</strong> of <strong>14</strong></span>
       </div>
-    </div>
-
-    <div class="dx-note">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
-      <div><b>A — Status column.</b> The dot moves out of the Name cell and becomes a labelled <code>.pill</code>, so no legend is needed and the column can be sorted. Inactive rows keep <b>full text contrast</b> — they're still editable, so greying them out was telling users the wrong thing. Cost: one more column, and "Active" repeats ten times.</div>
     </div>
   </section>
 
@@ -248,24 +263,19 @@
       </div>
     </div>
 
-    <div class="mt-table" data-sort-table style="--mt-cols: 236px 112px minmax(0,1fr) 124px 162px 176px;">
+    <div class="mt-table" data-sort-table style="--mt-cols: var(--dx-c1) 112px minmax(0,1fr) 124px 162px 176px;">
       <div class="mt-table-head">
-        <div class="mt-th"><button class="mt-th-sort is-active" data-sort-col="name">Name<svg class="mt-sort-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 15l5 5 5-5M7 9l5-5 5 5"></path></svg></button></div>
+        <div class="mt-th is-sticky"><button class="mt-th-sort is-active" data-sort-col="name">Name<svg class="mt-sort-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 15l5 5 5-5M7 9l5-5 5 5"></path></svg></button></div>
         <div class="mt-th"><button class="mt-th-sort" data-sort-col="status">Status<svg class="mt-sort-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 15l5 5 5-5M7 9l5-5 5 5"></path></svg></button></div>
         <div class="mt-th">Description</div>
-        <div class="mt-th is-num">Amount</div>
-        <div class="mt-th">Timed Discount</div>
+        <div class="mt-th is-num"><button class="mt-th-sort" data-sort-col="amount" data-sort-type="num">Amount<svg class="mt-sort-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 15l5 5 5-5M7 9l5-5 5 5"></path></svg></button></div>
+        <div class="mt-th"><button class="mt-th-sort" data-sort-col="timed">Timed Discount<svg class="mt-sort-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 15l5 5 5-5M7 9l5-5 5 5"></path></svg></button></div>
         <div class="mt-th">Link</div>
       </div>
       <div class="mt-table-body" data-rows="b"></div>
       <div class="mt-table-foot">
         <span class="mt-table-count">Showing <strong data-count="b">14</strong> of <strong>14</strong></span>
       </div>
-    </div>
-
-    <div class="dx-note">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
-      <div><b>B — Demoted toolbar filter.</b> Two stacked bars only looked strange because they carried the <b>same weight</b>. The entity tabs stay at page level with the brand underline; the status filter drops into the table toolbar beside Search, while the two create actions sit at page-header level as outlined secondaries — the page is “Discounts &amp; Incentives”, so its header offers both. The differentiator is <b>kind, not loudness</b> — brand underline for navigation, neutral ink-thumb <code>.mt-segmented</code> for a table filter — the kit’s own comment names “Active / Inactive” as its example — so it stops reading as a second navigation. It carries the <b>same labelled Status column as A</b> — a bare coloured dot reads as “new / unread” (email, notifications), not as state, so it can’t be the legend on its own. A vs B is therefore one question only: is 14 rows small enough to skip filtering?</div>
     </div>
   </section>
 
@@ -283,24 +293,19 @@
       </div>
     </div>
 
-    <div class="mt-table" data-sort-table style="--mt-cols: 236px minmax(0,1fr) 124px 162px 176px 92px;">
+    <div class="mt-table" data-sort-table style="--mt-cols: var(--dx-c1) minmax(0,1fr) 124px 162px 176px 92px;">
       <div class="mt-table-head">
-        <div class="mt-th"><button class="mt-th-sort is-active" data-sort-col="name">Name<svg class="mt-sort-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 15l5 5 5-5M7 9l5-5 5 5"></path></svg></button></div>
+        <div class="mt-th is-sticky"><button class="mt-th-sort is-active" data-sort-col="name">Name<svg class="mt-sort-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 15l5 5 5-5M7 9l5-5 5 5"></path></svg></button></div>
         <div class="mt-th">Description</div>
-        <div class="mt-th is-num">Amount</div>
-        <div class="mt-th">Timed Discount</div>
+        <div class="mt-th is-num"><button class="mt-th-sort" data-sort-col="amount" data-sort-type="num">Amount<svg class="mt-sort-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 15l5 5 5-5M7 9l5-5 5 5"></path></svg></button></div>
+        <div class="mt-th"><button class="mt-th-sort" data-sort-col="timed">Timed Discount<svg class="mt-sort-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 15l5 5 5-5M7 9l5-5 5 5"></path></svg></button></div>
         <div class="mt-th">Link</div>
-        <div class="mt-th">Active</div>
+        <div class="mt-th"><button class="mt-th-sort" data-sort-col="active">Active<svg class="mt-sort-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 15l5 5 5-5M7 9l5-5 5 5"></path></svg></button></div>
       </div>
       <div class="mt-table-body" data-rows="c"></div>
       <div class="mt-table-foot">
         <span class="mt-table-count">Showing <strong>14</strong> of <strong>14</strong></span>
       </div>
-    </div>
-
-    <div class="dx-note">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
-      <div><b>C — Status becomes the control.</b> The only reason anyone reads this column is to change it. So it's a <code>.mt-switch.is-strong</code> — the variant the kit already recommends for settings pages with many toggles — and reading state collapses into changing it: one click instead of row → ⋯ → Deactivate. A switch is self-labelling, so no legend and no greying. It also carries <b>no status filter</b> on purpose: filtering to Active and then switching a row off would make that row vanish from under the cursor, so the filter and the control fight each other — the counts are stated passively instead. <b>Try toggling a row</b> — the undo toast is the safety net that makes a one-click mutation acceptable in a dense list.</div>
     </div>
   </section>
 
@@ -362,7 +367,7 @@
   // A — labelled status pill, no dot in the Name cell, inactive rows at FULL contrast
   function rowA(d) {
     return '<div class="mt-table-row" data-active="' + d.active + '">'
-      + '<div class="mt-td is-strong"><span class="mt-td-truncate">' + esc(d.name) + '</span></div>'
+      + '<div class="mt-td is-strong is-sticky"><span class="mt-td-truncate">' + esc(d.name) + '</span></div>'
       + '<div class="mt-td">' + (d.active
           ? '<span class="pill pill-success"><span class="dot"></span>Active</span>'
           : '<span class="pill pill-neutral">Inactive</span>') + '</div>'
@@ -377,13 +382,14 @@
   // C — trailing switch column; state and control are the same object
   function rowC(d, i) {
     return '<div class="mt-table-row" data-active="' + d.active + '">'
-      + '<div class="mt-td is-strong"><span class="mt-td-truncate">' + esc(d.name) + '</span></div>'
+      + '<div class="mt-td is-strong is-sticky"><span class="mt-td-truncate">' + esc(d.name) + '</span></div>'
       + descCell(d) + amountCell(d) + timedCell(d) + linkCell(d)
       + '<div class="mt-td dx-td-switch">'
         + '<label class="mt-switch is-strong">'
           + '<input type="checkbox" data-toggle="' + i + '"' + (d.active ? ' checked' : '') + ' aria-label="' + esc(d.name) + ' active">'
           + '<span class="mt-switch-track"></span>'
         + '</label>'
+        + '<span class="dx-sr">' + (d.active ? 'Active' : 'Inactive') + '</span>'
       + '</div>'
       + '</div>';
   }
