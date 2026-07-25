@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Discounts — active &amp; inactive · Mantel review</title>
+
+<!--
+  EXPLORATION — Settings › Discounts, how active vs inactive should read.
+  Engineering merged both states into one table and separated them with a StatusDot
+  plus greyed row text. The grey lies (inactive rows are still editable), the dot has
+  no legend, and the actives-first order dies the moment anyone sorts or searches.
+  Gesture: state should be either LABELLED or FILTERABLE — never encoded as disabled chrome.
+  Three directions, switchable bottom-right, on the real page with the real data.
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/kit.css">
+<style>
+  /* ===================================================================
+     SCOPED EXPLORATION CSS — review only, NOT promoted into tokens yet.
+     Everything inside the table / toolbar is shipped kit CSS; the only
+     new rules here are the app frame around it.
+     =================================================================== */
+  body.dx-body { display: block; margin: 0; min-height: 100vh; background: var(--ink-50); color: var(--ink-900); }
+  .dx-body * { box-sizing: border-box; }
+
+  .rq-back { transition: color .15s var(--ease); }
+  .rq-back:hover { color: var(--brand-700); }
+  .rq-back .rq-arrow { transition: transform .15s var(--ease); }
+  .rq-back:hover .rq-arrow { transform: translateX(-2px); }
+
+  /* ===== app bar (product chrome — context only, not under review) ===== */
+  .dx-appbar { display: flex; align-items: center; gap: 16px; height: 62px; padding: 0 22px; background: #fff; border-bottom: 1px solid var(--ink-150); }
+  .dx-appbar-left, .dx-appbar-right { display: flex; align-items: center; gap: 9px; flex: 1; min-width: 0; }
+  .dx-appbar-right { justify-content: flex-end; }
+  .dx-home { display: inline-flex; align-items: center; gap: 8px; margin-right: 6px; color: var(--brand-600); text-decoration: none; }
+  .dx-home svg { width: 19px; height: 19px; }
+  .dx-home img { height: 21px; }
+  .dx-sunrise { display: flex; align-items: center; gap: 8px; flex: none; }
+  .dx-sun { width: 30px; height: 30px; flex-shrink: 0; }
+  .dx-sunrise-wm { display: flex; flex-direction: column; line-height: 1; }
+  .dx-sunrise-wm .a { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; color: #C8472A; }
+  .dx-sunrise-wm .b { font-size: 7.5px; font-weight: 600; letter-spacing: 0.14em; color: var(--ink-500); margin-top: 2px; }
+  .dx-account { display: inline-flex; align-items: center; gap: 7px; height: 34px; padding: 0 10px 0 5px; border: 1px solid var(--ink-300); border-radius: var(--radius-md); background: #fff; font-family: var(--font-sans); font-size: 14px; font-weight: 500; color: var(--ink-800); cursor: pointer; }
+  .dx-account img { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; }
+  .dx-account svg { width: 15px; height: 15px; color: var(--ink-500); }
+
+  /* ===== page canvas ===== */
+  .dx-main { max-width: 1180px; margin: 0 auto; padding: 26px 28px 56px; }
+  .dx-stage[hidden] { display: none; }
+  /* .mt-table-row sets display:grid, which beats the UA [hidden] rule — filtering needs this */
+  .mt-table-row[hidden] { display: none; }
+
+  /* PROPOSED KIT CHANGE — .mt-segmented's ink-150 track (#EBEEF2) was drawn to sit on a
+     white surface. On the ink-50 page background (#F8F9FB) the two are ~4% apart in
+     lightness and the track edge disappears. Step it to ink-200 when the control sits
+     directly on the page rather than on a card. */
+  .dx-toolbar .mt-segmented { background: var(--ink-200); }
+
+  /* toolbar row — 36px baseline shared by filter, search and the compact primary */
+  .dx-toolbar { display: flex; align-items: center; gap: 12px; margin: 20px 0 16px; }
+  .dx-toolbar-right { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+  .dx-toolbar .search { width: 260px; }
+  /* .mt-table-count is 12.5px — right for the table foot, too quiet for the toolbar's
+     left slot, which holds a 14px .mt-segmented in B and C. Put it on the scale. */
+  .dx-toolbar .mt-table-count { font-size: var(--fs-base); }
+
+  /* the Link cell */
+  .dx-link { display: inline-flex; align-items: center; gap: 5px; color: var(--brand-600); font-weight: 500; text-decoration: none; white-space: nowrap; }
+  .dx-link:hover { color: var(--brand-700); text-decoration: underline; }
+  .dx-link svg { width: 13px; height: 13px; }
+
+  /* variant C — the switch sits in its own trailing column */
+  .dx-td-switch { justify-content: flex-start; }
+
+  /* footnote under each variant explaining what it is arguing */
+  .dx-note { display: flex; gap: 10px; align-items: flex-start; margin-top: 16px; padding: 13px 16px; border-radius: var(--radius-md); background: var(--brand-50); font-size: 13px; line-height: 1.55; color: var(--brand-800); }
+  .dx-note b { font-weight: 600; }
+  .dx-note svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 2px; color: var(--brand-600); }
+
+  /* ===== bottom-right variant switcher (borrowed from company-settings exploration) ===== */
+  .vx-switch { position: fixed; right: 22px; bottom: 22px; z-index: 90; display: inline-flex; align-items: center; padding: 5px; border-radius: var(--radius-xl); background: var(--ink-900); box-shadow: var(--shadow-pop); }
+  .vx-seg { display: inline-flex; background: transparent; border-radius: 10px; padding: 0; gap: 2px; }
+  .vx-seg button { font-family: var(--font-sans); border: 0; cursor: pointer; background: transparent; height: 34px; padding: 0 14px; border-radius: var(--radius-md); font-size: 13px; font-weight: 500; color: rgba(255,255,255,.65); display: inline-flex; align-items: center; gap: 7px; transition: color .2s var(--ease), background-color .2s var(--ease); }
+  .vx-seg button .k { font-weight: 700; color: rgba(255,255,255,.4); transition: color .2s var(--ease); }
+  .vx-seg button:hover { color: #fff; background: rgba(255,255,255,.08); }
+  .vx-seg button.is-active { background: #fff; color: var(--ink-900); box-shadow: 0 1px 2px rgba(0,0,0,.2); }
+  .vx-seg button.is-active .k { color: var(--brand-600); }
+  .vx-seg-label { font-family: var(--font-sans); font-size: 11px; font-weight: 600; text-transform: uppercase; color: rgba(255,255,255,.5); padding: 0 9px 0 12px; letter-spacing: .08em; white-space: nowrap; }
+  /* lift the toast clear of the fixed switcher — exploration chrome only */
+  .mt-toast-viewport { bottom: 84px; }
+
+  /* ===== product footer (context only) ===== */
+  .dx-footer { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 26px 34px; background: var(--brand-900); color: rgba(255,255,255,.62); font-size: 13px; }
+  .dx-footer a { color: rgba(255,255,255,.62); text-decoration: none; }
+  .dx-footer a:hover { color: #fff; }
+
+  @media (max-width: 1080px) {
+    .dx-main { padding: 20px 16px 64px; }
+    .dx-toolbar { flex-wrap: wrap; }
+    .dx-toolbar-right { margin-left: 0; width: 100%; }
+    .dx-toolbar .search { flex: 1; width: auto; }
+    .dx-appbar { gap: 10px; padding: 0 14px; }
+    .dx-appbar .dx-collapsible .lbl { display: none; }
+    .dx-footer { flex-direction: column; align-items: flex-start; gap: 8px; }
+  }
+</style>
+</head>
+<body class="dx-body" data-variant="a">
+
+<a href="../review.html" class="rq-back" style="display:flex;align-items:center;gap:9px;padding:10px 20px;background:#fff;border-bottom:1px solid var(--ink-150);font-size:13px;font-weight:500;color:var(--ink-600);text-decoration:none">
+  <svg class="rq-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"></path><path d="M12 19l-7-7 7-7"></path></svg>
+  <span>Back to Review queue</span>
+  <span style="margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-amber)"><span style="width:7px;height:7px;border-radius:50%;background:currentColor"></span>Needs a call</span>
+</a>
+
+<!-- ===== app bar — product chrome, matches the live build ===== -->
+<header class="dx-appbar">
+  <div class="dx-appbar-left">
+    <a class="dx-home" href="#" aria-label="Mantel home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+      <img src="../assets/mantel-logo.svg" alt="Mantel">
+    </a>
+    <button class="btn btn-neutral btn-compact dx-collapsible">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+      <span class="lbl">Sample</span>
+    </button>
+    <button class="btn btn-neutral btn-compact dx-collapsible">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path></svg>
+      <span class="lbl">Reminders</span>
+    </button>
+  </div>
+
+  <div class="dx-sunrise">
+    <svg class="dx-sun" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+      <circle cx="16" cy="17" r="6.4" fill="#F2A03D"/>
+      <g stroke="#C8472A" stroke-width="2.1" stroke-linecap="round">
+        <path d="M16 3.4v3.2"/><path d="M16 27.4v1.2"/><path d="M5.4 6.4l2.2 2.2"/>
+        <path d="M24.4 6.4l-2.2 2.2"/><path d="M2.6 17h3.2"/><path d="M26.2 17h3.2"/>
+      </g>
+    </svg>
+    <div class="dx-sunrise-wm"><span class="a">SUNRISE</span><span class="b">HEATING AND AIR</span></div>
+  </div>
+
+  <div class="dx-appbar-right">
+    <button class="btn btn-neutral btn-compact dx-collapsible">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"></rect><path d="M12 18h.01"></path></svg>
+      <span class="lbl">Message Hub</span>
+    </button>
+    <button class="btn btn-default btn-compact dx-collapsible">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"></rect><path d="M8 12h8"></path><path d="M12 8v8"></path></svg>
+      <span class="lbl">Proposal</span>
+    </button>
+    <button class="dx-account">
+      <img src="https://i.pravatar.cc/48?img=12" alt="">
+      <span>Account</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+    </button>
+  </div>
+</header>
+
+<main class="dx-main">
+
+  <!-- ===== page header — shared by all three directions ===== -->
+  <header class="mt-page-header">
+    <nav class="mt-crumbs" aria-label="Breadcrumb">
+      <ol class="mt-crumb-list">
+        <li class="mt-crumb-item"><a href="#">Settings</a></li>
+        <li class="mt-crumb-sep" role="presentation" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></li>
+        <li class="mt-crumb-item"><span class="mt-crumb-current" aria-current="page">Discounts &amp; Incentives</span></li>
+      </ol>
+    </nav>
+    <div class="mt-page-header-main">
+      <div class="mt-page-header-text">
+        <h1 class="mt-page-title">Discounts &amp; Incentives</h1>
+        <p class="mt-page-desc">Manage the discounts and incentives sellers can apply to proposals.</p>
+      </div>
+      <div class="mt-page-header-actions">
+        <button class="btn btn-secondary btn-compact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg> Discount</button>
+        <button class="btn btn-secondary btn-compact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg> Incentive</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- entity tabs — page-level navigation, NOT a status filter -->
+  <div class="mt-tabbar" style="margin-top:18px;">
+    <div class="mt-tabs" data-mt-tabs>
+      <button class="mt-tab is-active">Discounts <span class="mt-tab-count">14</span></button>
+      <button class="mt-tab">Incentives <span class="mt-tab-count">4</span></button>
+      <span class="mt-tab-underline" aria-hidden="true"></span>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       A — Status column. Labelled, full contrast, sortable.
+       ===================================================================== -->
+  <section class="dx-stage" data-stage="a">
+    <div class="dx-toolbar">
+      <span class="mt-table-count" data-summary></span>
+      <div class="dx-toolbar-right">
+        <div class="search">
+          <svg class="icn" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+          <input type="search" placeholder="Search discounts…" aria-label="Search discounts">
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-table" data-sort-table style="--mt-cols: 236px 112px minmax(0,1fr) 124px 162px 176px;">
+      <div class="mt-table-head">
+        <div class="mt-th"><button class="mt-th-sort is-active" data-sort-col="name">Name<svg class="mt-sort-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 15l5 5 5-5M7 9l5-5 5 5"></path></svg></button></div>
+        <div class="mt-th"><button class="mt-th-sort" data-sort-col="status">Status<svg class="mt-sort-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 15l5 5 5-5M7 9l5-5 5 5"></path></svg></button></div>
+        <div class="mt-th">Description</div>
+        <div class="mt-th is-num">Amount</div>
+        <div class="mt-th">Timed Discount</div>
+        <div class="mt-th">Link</div>
+      </div>
+      <div class="mt-table-body" data-rows="a"></div>
+      <div class="mt-table-foot">
+        <span class="mt-table-count">Showing <strong>14</strong> of <strong>14</strong></span>
+      </div>
+    </div>
+
+    <div class="dx-note">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+      <div><b>A — Status column.</b> The dot moves out of the Name cell and becomes a labelled <code>.pill</code>, so no legend is needed and the column can be sorted. Inactive rows keep <b>full text contrast</b> — they're still editable, so greying them out was telling users the wrong thing. Cost: one more column, and "Active" repeats ten times.</div>
+    </div>
+  </section>
+
+  <!-- =====================================================================
+       B — Status filter demoted into the table toolbar.
+       ===================================================================== -->
+  <section class="dx-stage" data-stage="b" hidden>
+    <div class="dx-toolbar">
+      <div class="mt-segmented" role="tablist" aria-label="Discount status">
+        <button class="mt-segmented-option is-active" role="tab" data-filter="all" data-scope="b">All <span class="mt-segmented-count">14</span></button>
+        <button class="mt-segmented-option" role="tab" data-filter="on" data-scope="b">Active <span class="mt-segmented-count">10</span></button>
+        <button class="mt-segmented-option" role="tab" data-filter="off" data-scope="b">Inactive <span class="mt-segmented-count">4</span></button>
+        <span class="mt-segmented-thumb" aria-hidden="true"></span>
+      </div>
+      <div class="dx-toolbar-right">
+        <div class="search">
+          <svg class="icn" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+          <input type="search" placeholder="Search discounts…" aria-label="Search discounts">
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-table" data-sort-table style="--mt-cols: 236px 112px minmax(0,1fr) 124px 162px 176px;">
+      <div class="mt-table-head">
+        <div class="mt-th"><button class="mt-th-sort is-active" data-sort-col="name">Name<svg class="mt-sort-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 15l5 5 5-5M7 9l5-5 5 5"></path></svg></button></div>
+        <div class="mt-th"><button class="mt-th-sort" data-sort-col="status">Status<svg class="mt-sort-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 15l5 5 5-5M7 9l5-5 5 5"></path></svg></button></div>
+        <div class="mt-th">Description</div>
+        <div class="mt-th is-num">Amount</div>
+        <div class="mt-th">Timed Discount</div>
+        <div class="mt-th">Link</div>
+      </div>
+      <div class="mt-table-body" data-rows="b"></div>
+      <div class="mt-table-foot">
+        <span class="mt-table-count">Showing <strong data-count="b">14</strong> of <strong>14</strong></span>
+      </div>
+    </div>
+
+    <div class="dx-note">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+      <div><b>B — Demoted toolbar filter.</b> Two stacked bars only looked strange because they carried the <b>same weight</b>. The entity tabs stay at page level with the brand underline; the status filter drops into the table toolbar beside Search, while the two create actions sit at page-header level as outlined secondaries — the page is “Discounts &amp; Incentives”, so its header offers both. The differentiator is <b>kind, not loudness</b> — brand underline for navigation, neutral ink-thumb <code>.mt-segmented</code> for a table filter — the kit’s own comment names “Active / Inactive” as its example — so it stops reading as a second navigation. It carries the <b>same labelled Status column as A</b> — a bare coloured dot reads as “new / unread” (email, notifications), not as state, so it can’t be the legend on its own. A vs B is therefore one question only: is 14 rows small enough to skip filtering?</div>
+    </div>
+  </section>
+
+  <!-- =====================================================================
+       C — Status becomes the control.
+       ===================================================================== -->
+  <section class="dx-stage" data-stage="c" hidden>
+    <div class="dx-toolbar">
+      <span class="mt-table-count" data-summary></span>
+      <div class="dx-toolbar-right">
+        <div class="search">
+          <svg class="icn" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+          <input type="search" placeholder="Search discounts…" aria-label="Search discounts">
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-table" data-sort-table style="--mt-cols: 236px minmax(0,1fr) 124px 162px 176px 92px;">
+      <div class="mt-table-head">
+        <div class="mt-th"><button class="mt-th-sort is-active" data-sort-col="name">Name<svg class="mt-sort-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 15l5 5 5-5M7 9l5-5 5 5"></path></svg></button></div>
+        <div class="mt-th">Description</div>
+        <div class="mt-th is-num">Amount</div>
+        <div class="mt-th">Timed Discount</div>
+        <div class="mt-th">Link</div>
+        <div class="mt-th">Active</div>
+      </div>
+      <div class="mt-table-body" data-rows="c"></div>
+      <div class="mt-table-foot">
+        <span class="mt-table-count">Showing <strong>14</strong> of <strong>14</strong></span>
+      </div>
+    </div>
+
+    <div class="dx-note">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+      <div><b>C — Status becomes the control.</b> The only reason anyone reads this column is to change it. So it's a <code>.mt-switch.is-strong</code> — the variant the kit already recommends for settings pages with many toggles — and reading state collapses into changing it: one click instead of row → ⋯ → Deactivate. A switch is self-labelling, so no legend and no greying. It also carries <b>no status filter</b> on purpose: filtering to Active and then switching a row off would make that row vanish from under the cursor, so the filter and the control fight each other — the counts are stated passively instead. <b>Try toggling a row</b> — the undo toast is the safety net that makes a one-click mutation acceptable in a dense list.</div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="dx-footer">
+  <a href="#">Terms of Use</a>
+  <span>Copyright © 2023-2026 Mantel Inc.</span>
+  <a href="#">Privacy Policy</a>
+</footer>
+
+<!-- ===== variant switcher ===== -->
+<header class="vx-switch">
+  <span class="vx-seg-label">Switch</span>
+  <div class="vx-seg" role="group" aria-label="Design direction — for team review">
+    <button data-go="a" class="is-active"><span class="k">A</span>Status column</button>
+    <button data-go="b"><span class="k">B</span>Toolbar filter</button>
+    <button data-go="c"><span class="k">C</span>Row switch</button>
+  </div>
+</header>
+
+<div class="mt-toast-viewport" id="dx-toasts" aria-live="polite"></div>
+
+<script src="../assets/kit.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  // ---- one dataset, rendered into all three directions so the comparison is honest ----
+  var DISCOUNTS = [
+    { name: 'Sunrise Manager Approved Discount', desc: 'A special discount on the option',                              amount: 'Seller-defined', timed: 'Not Timed',   link: true,  active: true  },
+    { name: 'Sunrise Percentage Discount',       desc: 'A discount (from us to you) to make this investment easier',    amount: 'Seller-defined', timed: 'Not Timed',   link: true,  active: true  },
+    { name: 'Sunrise Flat Discount',             desc: 'A flat dollar amount off the total investment',                 amount: '$250.00',        timed: 'Not Timed',   link: true,  active: true  },
+    { name: 'Senior Discount',                   desc: 'Thank-you discount for customers aged 65 and over',             amount: '5%',             timed: 'Not Timed',   link: true,  active: true  },
+    { name: 'Military Discount',                 desc: 'For active-duty and retired service members',                   amount: '10%',            timed: 'Not Timed',   link: true,  active: true  },
+    { name: 'Maintenance Member',                desc: 'Applies to customers on an active maintenance plan',            amount: '$150.00',        timed: 'Not Timed',   link: true,  active: true  },
+    { name: 'Spring Promo',                      desc: 'Seasonal promotion on select high-efficiency systems',          amount: '12%',            timed: 'Ends Jun 30', link: true,  active: true  },
+    { name: 'Referral Credit',                   desc: 'Credit applied when the customer came from a referral',         amount: '$100.00',        timed: 'Not Timed',   link: true,  active: true  },
+    { name: 'Test',                              desc: '123',                                                           amount: '10%',            timed: '—',           link: true,  active: true  },
+    { name: 'testing',                           desc: 'varun testing',                                                 amount: '$500.00',        timed: 'Seller-defined', link: true, active: true },
+    { name: 'asdf',                              desc: 'asdf',                                                          amount: '$0.00',          timed: '—',           link: false, active: false },
+    { name: 'Copy of Test',                      desc: '123',                                                           amount: '10%',            timed: '—',           link: false, active: false },
+    { name: 'Test Discount',                     desc: 'Testing',                                                       amount: '$0.01',          timed: 'Seller-defined', link: false, active: false },
+    { name: 'Testing123',                        desc: 'testing testing 123',                                           amount: 'Seller-defined', timed: 'Not Timed',   link: false, active: false }
+  ];
+
+  var EXT_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg>';
+
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]; }); }
+  function linkCell(d) {
+    return d.link
+      ? '<div class="mt-td"><a class="dx-link" href="#">View in ServiceTitan' + EXT_ICON + '</a></div>'
+      : '<div class="mt-td"><span class="mt-td-soft">—</span></div>';
+  }
+  function descCell(d)   { return '<div class="mt-td is-muted"><span class="mt-td-truncate">' + esc(d.desc) + '</span></div>'; }
+  function amountCell(d) { return '<div class="mt-td is-num">' + esc(d.amount) + '</div>'; }
+  function timedCell(d)  { return d.timed === '—' ? '<div class="mt-td"><span class="mt-td-soft">—</span></div>' : '<div class="mt-td is-muted" style="white-space:nowrap;">' + esc(d.timed) + '</div>'; }
+
+  // A — labelled status pill, no dot in the Name cell, inactive rows at FULL contrast
+  function rowA(d) {
+    return '<div class="mt-table-row" data-active="' + d.active + '">'
+      + '<div class="mt-td is-strong"><span class="mt-td-truncate">' + esc(d.name) + '</span></div>'
+      + '<div class="mt-td">' + (d.active
+          ? '<span class="pill pill-success"><span class="dot"></span>Active</span>'
+          : '<span class="pill pill-neutral">Inactive</span>') + '</div>'
+      + descCell(d) + amountCell(d) + timedCell(d) + linkCell(d)
+      + '</div>';
+  }
+
+  // B — same labelled Status column as A (a bare dot reads as "new / unread", not as state),
+  //     plus the toolbar filter. A vs B is therefore purely: do we need filtering?
+  var rowB = rowA;
+
+  // C — trailing switch column; state and control are the same object
+  function rowC(d, i) {
+    return '<div class="mt-table-row" data-active="' + d.active + '">'
+      + '<div class="mt-td is-strong"><span class="mt-td-truncate">' + esc(d.name) + '</span></div>'
+      + descCell(d) + amountCell(d) + timedCell(d) + linkCell(d)
+      + '<div class="mt-td dx-td-switch">'
+        + '<label class="mt-switch is-strong">'
+          + '<input type="checkbox" data-toggle="' + i + '"' + (d.active ? ' checked' : '') + ' aria-label="' + esc(d.name) + ' active">'
+          + '<span class="mt-switch-track"></span>'
+        + '</label>'
+      + '</div>'
+      + '</div>';
+  }
+
+  function render() {
+    document.querySelector('[data-rows="a"]').innerHTML = DISCOUNTS.map(rowA).join('');
+    document.querySelector('[data-rows="b"]').innerHTML = DISCOUNTS.map(rowB).join('');
+    document.querySelector('[data-rows="c"]').innerHTML = DISCOUNTS.map(rowC).join('');
+    applyFilter('b');
+    syncCounts();
+  }
+
+  // ---- filter (directions B and C) ----
+  var filterState = { b: 'all' };
+
+  function applyFilter(scope) {
+    var mode = filterState[scope];
+    var rows = document.querySelectorAll('[data-rows="' + scope + '"] .mt-table-row');
+    var shown = 0;
+    rows.forEach(function (row) {
+      var on = row.dataset.active === 'true';
+      var keep = mode === 'all' || (mode === 'on' && on) || (mode === 'off' && !on);
+      row.hidden = !keep;
+      if (keep) shown++;
+    });
+    var count = document.querySelector('[data-count="' + scope + '"]');
+    if (count) count.textContent = shown;
+  }
+
+  function syncCounts() {
+    var on = DISCOUNTS.filter(function (d) { return d.active; }).length;
+    var off = DISCOUNTS.length - on;
+    document.querySelectorAll('[data-filter]').forEach(function (btn) {
+      var chip = btn.querySelector('.mt-segmented-count');
+      if (!chip) return;
+      chip.textContent = btn.dataset.filter === 'all' ? DISCOUNTS.length : (btn.dataset.filter === 'on' ? on : off);
+    });
+    // A and C have no filter control, so the same counts are stated as a summary instead
+    document.querySelectorAll('[data-summary]').forEach(function (el) {
+      el.innerHTML = '<strong>' + on + '</strong> active · <strong>' + off + '</strong> inactive';
+    });
+  }
+
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-filter]');
+    if (!btn) return;
+    var scope = btn.dataset.scope;
+    filterState[scope] = btn.dataset.filter;   // kit.js handles .is-active + the thumb
+    applyFilter(scope);
+  });
+
+  // ---- direction C: toggling mutates state, with undo ----
+  var toastHost = document.getElementById('dx-toasts');
+
+  function toast(item, wasActive) {
+    var el = document.createElement('div');
+    el.className = 'mt-toast is-inverse';
+    el.innerHTML =
+        '<svg class="mt-toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>'
+      + '<div class="mt-toast-body">'
+      +   '<div class="mt-toast-title">' + esc(item.name) + ' is now ' + (item.active ? 'active' : 'inactive') + '</div>'
+      +   '<div class="mt-toast-desc">' + (item.active ? 'Sellers can apply it to proposals again.' : 'Sellers can no longer apply it to new proposals.') + '</div>'
+      +   '<div class="mt-toast-actions"><button class="mt-toast-action" data-undo>Undo</button></div>'
+      + '</div>';
+    el.querySelector('[data-undo]').addEventListener('click', function () {
+      item.active = wasActive;
+      render();
+      dismiss(el);
+    });
+    toastHost.appendChild(el);
+    setTimeout(function () { dismiss(el); }, 6000);
+  }
+
+  function dismiss(el) {
+    if (!el.isConnected) return;
+    el.classList.add('is-closing');
+    setTimeout(function () { el.remove(); }, 260);
+  }
+
+  document.addEventListener('change', function (e) {
+    var input = e.target.closest('[data-toggle]');
+    if (!input) return;
+    var item = DISCOUNTS[+input.dataset.toggle];
+    var wasActive = item.active;
+    item.active = input.checked;
+    render();
+    toast(item, wasActive);
+  });
+
+  // ---- variant switcher ----
+  var stages = document.querySelectorAll('.dx-stage');
+  document.querySelectorAll('[data-go]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      stages.forEach(function (s) { s.hidden = s.dataset.stage !== btn.dataset.go; });
+      document.querySelectorAll('[data-go]').forEach(function (x) { x.classList.toggle('is-active', x === btn); });
+      document.body.dataset.variant = btn.dataset.go;
+      window.scrollTo({ top: 0 });
+      window.dispatchEvent(new Event('resize'));   // segmented thumbs measure 0 while hidden
+    });
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
